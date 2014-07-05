@@ -3,13 +3,12 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 20
     buildToolsVersion '20.0.0'
-
     defaultConfig {
-        applicationId "org.bspeice.minimalbible"
+        applicationId 'org.bspeice.minimalbible'
         minSdkVersion 8
         targetSdkVersion 20
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
     }
     buildTypes {
         release {
@@ -24,10 +23,22 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
     }
+    productFlavors {
+        testConfig {
+            minSdkVersion 8
+            applicationId 'org.bspeice.minimalbible'
+            targetSdkVersion 20
+        }
+        mainConfig {
+            minSdkVersion 8
+            applicationId 'org.bspeice.minimalbible'
+            targetSdkVersion 20
+        }
+    }
 }
 
 dependencies {
-    compile project(path: ':jsword-minimalbible', configuration: 'buildJSword')
-
+    compile 'com.squareup.dagger:dagger:1.2.1'
+    provided 'com.squareup.dagger:dagger-compiler:1.2.1'
     compile 'com.android.support:appcompat-v7:20.+'
 }
