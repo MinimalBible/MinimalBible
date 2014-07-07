@@ -2,6 +2,8 @@ package org.bspeice.minimalbible;
 
 import android.app.Application;
 
+import org.bspeice.minimalbible.activity.download.DownloadActivity;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -24,7 +26,7 @@ public class MinimalBibleModules {
         return app;
     }
 
-    @Provides String provideString() {
+    @Provides CharSequence provideString() {
         return "Main";
     }
 }

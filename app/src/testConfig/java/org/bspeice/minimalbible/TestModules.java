@@ -1,5 +1,7 @@
 package org.bspeice.minimalbible;
 
+import org.bspeice.minimalbible.activity.download.DownloadActivity;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -10,7 +12,8 @@ import dagger.Provides;
         overrides = true)
 public class TestModules {
 
-    @Provides String provideString() {
-        return "Test";
+    public static CharSequence testActivityTitle = "Test";
+    @Provides CharSequence provideString() {
+        return testActivityTitle;
     }
 }

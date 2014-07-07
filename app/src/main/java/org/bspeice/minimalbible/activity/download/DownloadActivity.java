@@ -1,4 +1,4 @@
-package org.bspeice.minimalbible;
+package org.bspeice.minimalbible.activity.download;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -14,6 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.bspeice.minimalbible.MinimalBible;
+import org.bspeice.minimalbible.NavigationDrawerFragment;
+import org.bspeice.minimalbible.R;
+
 import javax.inject.Inject;
 
 
@@ -28,9 +32,10 @@ public class DownloadActivity extends ActionBarActivity
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
-    private CharSequence mTitle;
+    protected CharSequence mTitle;
 
-    @Inject String actionTitle;
+    //TODO: This will need to be refactored out later, for now it's a proof of concept.
+    @Inject CharSequence testInject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +49,6 @@ public class DownloadActivity extends ActionBarActivity
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-        Log.w("DownloadActivity", "Title: " + mTitle.toString());
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
