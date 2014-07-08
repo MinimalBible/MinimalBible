@@ -1,6 +1,7 @@
 package org.bspeice.minimalbible;
 
-import org.bspeice.minimalbible.activity.download.DownloadActivity;
+
+import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 
 import dagger.Module;
 import dagger.Provides;
