@@ -4,7 +4,13 @@ import org.bspeice.minimalbible.MinimalBibleModules;
 import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadManager;
 import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadThread;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
+import org.crosswire.jsword.book.BookCategory;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Named;
+import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -20,7 +26,9 @@ import de.devland.esperandro.Esperandro;
                 BookItemHolder.class,
                 BookDownloadManager.class,
                 BookDownloadThread.class,
-                RefreshManager.class
+                RefreshManager.class,
+                DownloadNavDrawerFragment.class,
+                DownloadActivity.class
         },
         addsTo = MinimalBibleModules.class
 )
@@ -44,5 +52,16 @@ public class DownloadActivityModules {
     @Provides @Singleton
     BookDownloadManager provideBookDownloadManager() {
         return new BookDownloadManager(activity);
+    }
+
+    @Provides @Singleton
+    @Named("ValidCategories")
+    List<BookCategory> provideValidCategories() {
+        return new ArrayList<BookCategory>() {{
+            add(BookCategory.BIBLE);
+            add(BookCategory.COMMENTARY);
+            add(BookCategory.DICTIONARY);
+            add(BookCategory.MAPS);
+        }};
     }
 }

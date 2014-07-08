@@ -12,7 +12,12 @@ import org.bspeice.minimalbible.MinimalBible;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
 import org.bspeice.minimalbible.activity.BaseNavigationDrawerFragment;
-import org.bspeice.minimalbible.activity.downloader.manager.DownloadManager;
+import org.crosswire.jsword.book.BookCategory;
+
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import dagger.ObjectGraph;
 
@@ -32,6 +37,9 @@ public class DownloadActivity extends BaseActivity implements
 	 */
 	private CharSequence mTitle;
 
+    @Inject @Named("ValidCategories")
+    List<BookCategory> validCategories;
+
     private ObjectGraph daObjectGraph;
 
     /**
@@ -42,6 +50,7 @@ public class DownloadActivity extends BaseActivity implements
             daObjectGraph = MinimalBible.get(this)
                     .plus(new DownloadActivityModules(this));
         }
+        daObjectGraph.inject(this);
     }
 
     @Override
@@ -53,6 +62,7 @@ public class DownloadActivity extends BaseActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        buildObjGraph();
 		setContentView(R.layout.activity_download);
 
 		mNavigationDrawerFragment = (DownloadNavDrawerFragment) getSupportFragmentManager()
@@ -72,7 +82,7 @@ public class DownloadActivity extends BaseActivity implements
 		fragmentManager
 				.beginTransaction()
 				.replace(R.id.container,
-						BookListFragment.newInstance(DownloadManager.VALID_CATEGORIES[position])).commit();
+						BookListFragment.newInstance(validCategories.get(position))).commit();
 	}
 
 	public void onSectionAttached(String category) {

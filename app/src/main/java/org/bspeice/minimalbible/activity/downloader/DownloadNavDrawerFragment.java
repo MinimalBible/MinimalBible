@@ -10,13 +10,24 @@ import android.widget.ListView;
 
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseNavigationDrawerFragment;
-import org.bspeice.minimalbible.activity.downloader.manager.DownloadManager;
+import org.crosswire.jsword.book.Book;
+import org.crosswire.jsword.book.BookCategory;
+
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 public class DownloadNavDrawerFragment extends BaseNavigationDrawerFragment {
-	
+
+    @Inject @Named("ValidCategories")
+    List<BookCategory> validCategories;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+        ((DownloadActivity)getActivity()).inject(this);
+
 		mDrawerListView = (ListView) inflater.inflate(
 				R.layout.fragment_navigation_drawer, container, false);
 		mDrawerListView
@@ -27,15 +38,10 @@ public class DownloadNavDrawerFragment extends BaseNavigationDrawerFragment {
 						selectItem(position);
 					}
 				});
-		
-		String[] sCategories = new String[DownloadManager.VALID_CATEGORIES.length];
-		for (int i = 0; i < DownloadManager.VALID_CATEGORIES.length; i++) {
-			sCategories[i] = DownloadManager.VALID_CATEGORIES[i].toString();
-		}
-		
-		mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar()
+
+		mDrawerListView.setAdapter(new ArrayAdapter<BookCategory>(getActionBar()
 				.getThemedContext(), android.R.layout.simple_list_item_1,
-				android.R.id.text1, sCategories));
+				android.R.id.text1, validCategories));
 		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 		return mDrawerListView;
 	}
