@@ -3,6 +3,8 @@ package org.bspeice.minimalbible;
 
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 
+import javax.inject.Named;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -16,5 +18,28 @@ public class TestModules {
     public static CharSequence testActivityTitle = "Test";
     @Provides CharSequence provideString() {
         return testActivityTitle;
+    }
+
+    /**
+     * Provide an application-wide hub to enable/disable a "testing" mode
+     * Each application is free to interpret what this means, but allows for programming
+     * different behavior to respond to different testing needs in code that can't be mocked
+     * *cough cough* `Activities`.
+     * @return
+     */
+    @Provides
+    @Named("Testing")
+    boolean isTest() {
+        return isTest;
+    }
+
+    private boolean isTest;
+
+    public void setTestMode(boolean isTest) {
+        this.isTest = isTest;
+    }
+
+    public boolean getTestMode() {
+        return isTest;
     }
 }

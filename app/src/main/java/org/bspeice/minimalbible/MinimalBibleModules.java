@@ -2,8 +2,7 @@ package org.bspeice.minimalbible;
 
 import android.app.Application;
 
-import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
-
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -23,5 +22,18 @@ public class MinimalBibleModules {
     @Provides @Singleton
     Application provideApplication() {
         return app;
+    }
+
+    /**
+     * This field allows us to set application-wide whether we are in a test or not
+     * Allows components on down the line to know whether they should set some things up or not.
+     * Additionally, not a Singleton so we can enable/disable testing mode as needed. However,
+     * for production, it's always false.
+     * @return Whether we are in a test - false
+     */
+    @Provides
+    @Named("Testing")
+    boolean isTest() {
+        return false;
     }
 }
