@@ -2,6 +2,7 @@ package org.bspeice.minimalbible.activity.downloader.manager;
 
 import android.content.Context;
 
+import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBible;
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 import org.crosswire.jsword.book.Book;
@@ -39,8 +40,8 @@ public class RefreshManager {
     private final AtomicBoolean refreshComplete = new AtomicBoolean();
 
     @Inject
-    public RefreshManager(DownloadActivity activity) {
-        activity.inject(this);
+    public RefreshManager(Injector injector) {
+        injector.inject(this);
         refreshModules();
     }
 

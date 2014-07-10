@@ -3,6 +3,7 @@ package org.bspeice.minimalbible.activity.downloader.manager;
 import android.content.Context;
 import android.util.Log;
 
+import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBible;
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 import org.crosswire.jsword.book.Book;
@@ -28,8 +29,8 @@ public class BookDownloadThread {
     RefreshManager refreshManager;
 
     @Inject
-    public BookDownloadThread(DownloadActivity activity) {
-        activity.inject(this);
+    public BookDownloadThread(Injector injector) {
+        injector.inject(this);
     }
 
     public void downloadBook(final Book b) {

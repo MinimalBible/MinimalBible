@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 
+import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.crosswire.jsword.book.Book;
 
@@ -17,12 +18,12 @@ import java.util.List;
 public class BookListAdapter extends BaseAdapter implements AbsListView.RecyclerListener {
     private final List<Book> bookList;
     private final LayoutInflater inflater;
-    private final DownloadActivity activity;
+    private final Injector injector;
 
-    public BookListAdapter(LayoutInflater inflater, List<Book> bookList, DownloadActivity activity) {
+    public BookListAdapter(LayoutInflater inflater, List<Book> bookList, Injector injector) {
         this.bookList = bookList;
         this.inflater = inflater;
-        this.activity = activity;
+        this.injector = injector;
     }
 
     @Override
@@ -47,7 +48,7 @@ public class BookListAdapter extends BaseAdapter implements AbsListView.Recycler
         // and you'll get some really strange issues
         if (convertView == null || convertView.getTag() == null) {
             convertView = inflater.inflate(R.layout.list_download_items, parent, false);
-            viewHolder = new BookItemHolder(convertView, getItem(position), activity);
+            viewHolder = new BookItemHolder(convertView, getItem(position), injector);
         } else {
             viewHolder = (BookItemHolder) convertView.getTag();
         }

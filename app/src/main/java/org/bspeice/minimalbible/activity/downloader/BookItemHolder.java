@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.todddavies.components.progressbar.ProgressWheel;
 
+import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadManager;
 import org.bspeice.minimalbible.activity.downloader.manager.DLProgressEvent;
@@ -49,9 +50,9 @@ public class BookItemHolder {
     private Subscription subscription;
 
     // TODO: Factory style?
-    public BookItemHolder(View v, Book b, DownloadActivity activity) {
+    public BookItemHolder(View v, Book b, Injector injector) {
         ButterKnife.inject(this, v);
-        activity.inject(this);
+        injector.inject(this);
         this.b = b;
     }
 

@@ -3,6 +3,7 @@ package org.bspeice.minimalbible.activity.downloader.manager;
 import android.content.Context;
 import android.util.Log;
 
+import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBible;
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 import org.crosswire.common.progress.JobManager;
@@ -47,11 +48,11 @@ public class BookDownloadManager implements WorkListener, BooksListener {
     Provider<BookDownloadThread> dlThreadProvider;
 
     @Inject
-    public BookDownloadManager(DownloadActivity activity) {
+    public BookDownloadManager(Injector injector) {
         bookMappings = new HashMap<String, Book>();
         inProgressDownloads = new HashMap<Book, DLProgressEvent>();
         JobManager.addWorkListener(this);
-        activity.inject(this);
+        injector.inject(this);
         Books.installed().addBooksListener(this);
     }
 
