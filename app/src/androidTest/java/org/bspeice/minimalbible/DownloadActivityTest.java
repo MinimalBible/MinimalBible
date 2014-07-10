@@ -1,9 +1,8 @@
 package org.bspeice.minimalbible;
 
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
 
-import org.bspeice.minimalbible.activity.download.DownloadActivity;
+import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 
 import java.lang.reflect.Field;
 

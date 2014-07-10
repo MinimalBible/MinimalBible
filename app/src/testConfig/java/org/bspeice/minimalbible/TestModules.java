@@ -12,7 +12,9 @@ import dagger.Provides;
  * Created by Bradlee Speice on 7/5/2014.
  */
 @Module(injects = DownloadActivity.class,
-        overrides = true)
+        overrides = true,
+        complete = false,
+        library = true)
 public class TestModules {
 
     public static CharSequence testActivityTitle = "Test";
