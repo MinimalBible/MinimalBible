@@ -2,8 +2,13 @@ package org.bspeice.minimalbible;
 
 
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
+import org.crosswire.jsword.book.BookCategory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -13,7 +18,6 @@ import dagger.Provides;
  */
 @Module(injects = DownloadActivity.class,
         overrides = true,
-        complete = false,
         library = true)
 public class TestModules {
 
@@ -33,6 +37,17 @@ public class TestModules {
     @Named("Testing")
     boolean isTest() {
         return isTest;
+    }
+
+    @Provides @Singleton
+    @Named("ValidCategories")
+    List<BookCategory> provideValidCategories() {
+        return new ArrayList<BookCategory>() {{
+            add(BookCategory.BIBLE);
+            add(BookCategory.COMMENTARY);
+            add(BookCategory.DICTIONARY);
+            add(BookCategory.MAPS);
+        }};
     }
 
     private boolean isTest;
