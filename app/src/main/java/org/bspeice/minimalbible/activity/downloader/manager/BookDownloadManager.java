@@ -14,6 +14,8 @@ import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.Books;
 import org.crosswire.jsword.book.BooksEvent;
 import org.crosswire.jsword.book.BooksListener;
+import org.crosswire.jsword.book.install.InstallException;
+import org.crosswire.jsword.book.install.Installer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +24,9 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import rx.Observable;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -31,6 +36,7 @@ import rx.subjects.PublishSubject;
 //TODO: Install indexes for Bibles
 @Singleton
 public class BookDownloadManager implements WorkListener, BooksListener {
+    private String TAG = "BookDownloadManager";
 
     /**
      * Mapping of Job ID to the EventBus we should trigger progress on
@@ -44,8 +50,8 @@ public class BookDownloadManager implements WorkListener, BooksListener {
 
     private final PublishSubject<DLProgressEvent> downloadEvents = PublishSubject.create();
 
-    @Inject
-    Provider<BookDownloadThread> dlThreadProvider;
+    @Inject Books installedBooks;
+    @Inject RefreshManager refreshManager;
 
     @Inject
     public BookDownloadManager(Injector injector) {
@@ -53,18 +59,51 @@ public class BookDownloadManager implements WorkListener, BooksListener {
         inProgressDownloads = new HashMap<Book, DLProgressEvent>();
         JobManager.addWorkListener(this);
         injector.inject(this);
-        Books.installed().addBooksListener(this);
+        installedBooks.addBooksListener(this);
     }
 
     public void installBook(Book b) {
-        BookDownloadThread dlThread = dlThreadProvider.get();
-        dlThread.downloadBook(b);
-        addJob(BookDownloadThread.getJobId(b), b);
+        downloadBook(b);
+        addJob(getJobId(b), b);
         downloadEvents.onNext(new DLProgressEvent(DLProgressEvent.PROGRESS_BEGINNING, b));
     }
 
     public void addJob(String jobId, Book b) {
         bookMappings.put(jobId, b);
+    }
+
+    public void downloadBook(final Book b) {
+        // So, the JobManager can't be injected, but we'll make do
+
+        // First, look up where the Book came from
+        Observable.from(refreshManager.installerFromBook(b))
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Action1<Installer>() {
+                    @Override
+                    public void call(Installer installer) {
+                        try {
+                            installer.install(b);
+                        } catch (InstallException e) {
+                            Log.d(TAG, e.getMessage());
+                        }
+
+                        getDownloadEvents()
+                            .onNext(new DLProgressEvent(DLProgressEvent.PROGRESS_BEGINNING, b));
+                    }
+                });
+    }
+
+    /**
+     * Build what the installer creates the job name as.
+     * Likely prone to be brittle.
+     * TODO: Make sure to test that this is an accurate job name
+     *
+     * @param b The book to predict the download job name of
+     * @return The name of the job that will/is download/ing this book
+     */
+
+    public static String getJobId(Book b) {
+        return "INSTALL_BOOK-" + b.getInitials();
     }
 
     @Override

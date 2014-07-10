@@ -27,11 +27,11 @@ import rx.schedulers.Schedulers;
 
 /**
  * Handle refreshing the list of books available as needed
+ * Note that we don't refactor this class out since we need somewhere
+ * to track whether the refresh is done.
  */
 @Singleton
 public class RefreshManager {
-
-    @Inject InstalledManager installedManager;
 
     /**
      * Cached copy of modules that are available so we don't refresh for everyone who requests it.
@@ -50,7 +50,7 @@ public class RefreshManager {
      * when it's done.
      * TODO: Should I have a better way of scheduling than Schedulers.io()?
      */
-    private void refreshModules() {
+    private Observable<Map<Installer, List<Book>>> refreshModules() {
         if (availableModules == null) {
             availableModules = Observable.from(new InstallManager().getInstallers().values())
                     .map(new Func1<Installer, Map<Installer, List<Book>>>() {
@@ -78,9 +78,6 @@ public class RefreshManager {
                         }
                     });
         }
-    }
-
-    public Observable<Map<Installer, List<Book>>> getAvailableModules() {
         return availableModules;
     }
 
@@ -102,49 +99,28 @@ public class RefreshManager {
                 });
     }
 
-    /**
-     * Get the cached book list
-     * @return The cached book list, or null
-     */
-    public List<Book> getBookList() {
-        List<Book> availableList = new ArrayList<Book>();
-        availableModules.reduce(availableList,
-                new Func2<List<Book>, Map<Installer, List<Book>>, List<Book>>() {
-            @Override
-            public List<Book> call(List<Book> books, Map<Installer, List<Book>> installerListMap) {
-                for (List<Book> l : installerListMap.values()) {
-                    books.addAll(l);
-                }
-                return books;
-            }
-        });
-        return availableList;
-    }
 
     /**
      * Find the installer that a Book comes from.
      * @param b The book to search for
      * @return The Installer that should be used for this book.
      */
-    public Observable<Installer> installerFromBook(final Book b) {
-        return availableModules.filter(new Func1<Map<Installer, List<Book>>, Boolean>() {
-            @Override
-            public Boolean call(Map<Installer, List<Book>> installerListMap) {
+    public Installer installerFromBook(final Book b) {
+        Map<Installer, List<Book>> element = availableModules
+            .filter(new Func1<Map<Installer, List<Book>>, Boolean>() {
+                @Override
+                public Boolean call(Map<Installer, List<Book>> installerListMap) {
                 for (List<Book> element : installerListMap.values()) {
                     if (element.contains(b)) {
                         return true;
                     }
                 }
                 return false;
-            }
-        })
-        .first()
-        .map(new Func1<Map<Installer, List<Book>>, Installer>() {
-            @Override
-            public Installer call(Map<Installer, List<Book>> element) {
-                return element.entrySet().iterator().next().getKey();
-            }
-        });
+                }
+            })
+            .toBlocking()
+            .first();
+        return element.entrySet().iterator().next().getKey();
     }
 
     public boolean isRefreshComplete() {

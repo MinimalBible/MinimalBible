@@ -3,7 +3,6 @@ package org.bspeice.minimalbible.activity.downloader;
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBibleModules;
 import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadManager;
-import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadThread;
 import org.bspeice.minimalbible.activity.downloader.manager.InstalledManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.jsword.book.Book;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Named;
-import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -29,7 +27,6 @@ import de.devland.esperandro.Esperandro;
                 BookListFragment.class,
                 BookItemHolder.class,
                 BookDownloadManager.class,
-                BookDownloadThread.class,
                 RefreshManager.class,
                 DownloadNavDrawerFragment.class,
                 DownloadActivity.class,
