@@ -1,5 +1,6 @@
 package org.bspeice.minimalbible.activity.downloader;
 
+import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBibleModules;
 import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadManager;
 import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadThread;
@@ -46,6 +47,11 @@ public class DownloadActivityModules {
 
     @Provides @Singleton
     DownloadActivity provideDownloadActivity() {
+        return activity;
+    }
+
+    @Provides @Singleton
+    Injector provideActivityInjector() {
         return activity;
     }
 

@@ -11,6 +11,10 @@
         <activity
             android:name=".activity.downloader.DownloadActivity"
             android:label="@string/app_name" >
+        </activity>
+
+        <activity android:name=".activity.viewer.BibleViewer"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
