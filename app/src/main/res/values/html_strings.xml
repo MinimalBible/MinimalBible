@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="content_page">file:///android_asset/book.html</string>
+    <string name="asset_url">file:///android_asset/</string>
+    <string name="book_html">file:///android_asset/book.html</string>
 </resources>

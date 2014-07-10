@@ -105,7 +105,7 @@ public class BookFragment extends BaseFragment {
     private void displayBook(Book b) {
         Log.d("BookFragment", b.getName());
         ((BibleViewer)getActivity()).setActionBarTitle(b.getInitials());
-        mainContent.loadUrl(getString(R.string.content_page));
+        mainContent.loadUrl(getString(R.string.book_html));
         mainContent.setWebViewClient(new WebViewClient(){
             @Override
             public void onPageFinished(WebView view, String url) {
