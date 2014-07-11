@@ -17,7 +17,6 @@ import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
 import org.bspeice.minimalbible.activity.BaseNavigationDrawerFragment;
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
-import org.bspeice.minimalbible.activity.downloader.DownloadActivityModules;
 import org.crosswire.jsword.book.Book;
 
 import javax.inject.Inject;
@@ -39,7 +38,7 @@ public class BibleViewer extends BaseActivity implements
     private void buildObjGraph() {
         if (bvObjectGraph == null) {
             bvObjectGraph = MinimalBible.get(this)
-                    .plus(new BibleViewerModules());
+                    .plus(new BibleViewerModules(this));
         }
         bvObjectGraph.inject(this);
     }

@@ -10,41 +10,41 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import org.bspeice.minimalbible.Injector;
-import org.bspeice.minimalbible.MinimalBible;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseFragment;
 import org.crosswire.jsword.book.Book;
+import org.crosswire.jsword.book.BookMetaData;
+import org.crosswire.jsword.versification.Versification;
 
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
+
+import static org.crosswire.jsword.versification.system.Versifications.instance;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class BookFragment extends BaseFragment {
+    Injector i;
 
-    @Inject BookManager bookManager;
+    @Inject @Named("MainBook") Book mBook;
 
     @InjectView(R.id.book_content)
     WebView mainContent;
 
     private static final String ARG_BOOK_NAME = "book_name";
 
-    private Book mBook;
-
     /**
      * Returns a new instance of this fragment for the given section number.
      */
     public static BookFragment newInstance(String bookName, Injector injector) {
         BookFragment fragment = new BookFragment();
-        injector.inject(fragment);
+        fragment.i = injector;
         Bundle args = new Bundle();
         args.putString(ARG_BOOK_NAME, bookName);
         fragment.setArguments(args);
@@ -57,7 +57,7 @@ public class BookFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        ((Injector)getActivity()).inject(this);
+
     }
 
     @Override
@@ -65,35 +65,21 @@ public class BookFragment extends BaseFragment {
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_viewer_main, container,
                 false);
+        i.inject(this);
         ButterKnife.inject(this, rootView);
         mainContent.getSettings().setJavaScriptEnabled(true);
 
         // TODO: Load initial text from SharedPreferences
 
-        // And due to Observable async, we can kick off fetching the actual book asynchronously!
-        bookManager.getInstalledBooks()
-                .first(new Func1<Book, Boolean>() {
-                    @Override
-                    public Boolean call(Book book) {
-                        String mBookName = getArguments().getString(ARG_BOOK_NAME);
-                        return book.getName().equals(mBookName);
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Book>() {
-                    @Override
-                    public void call(Book book) {
-                        BookFragment.this.mBook = book;
-                        displayBook(book);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Log.d("BookFragment", "No books installed?");
-                    }
-                });
+        displayBook(mBook);
+
+        Log.d("BookFragment", getVersification(mBook).toString());
 
         return rootView;
+    }
+
+    private Versification getVersification(Book b) {
+        return instance().getVersification((String) b.getBookMetaData().getProperty(BookMetaData.KEY_VERSIFICATION));
     }
 
     // TODO: Remove?
