@@ -8,8 +8,11 @@ import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookCategory;
 import org.crosswire.jsword.book.Books;
+import org.crosswire.jsword.book.install.InstallManager;
+import org.crosswire.jsword.book.install.Installer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Named;
@@ -81,5 +84,10 @@ public class DownloadActivityModules {
     @Provides
     List<Book> provideInstalledBooks(Books b) {
         return b.getBooks();
+    }
+
+    @Provides @Singleton
+    Collection<Installer> provideInstallers() {
+        return new InstallManager().getInstallers().values();
     }
 }

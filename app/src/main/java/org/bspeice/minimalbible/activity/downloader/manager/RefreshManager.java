@@ -10,6 +10,7 @@ import org.crosswire.jsword.book.install.InstallManager;
 import org.crosswire.jsword.book.install.Installer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,9 @@ public class RefreshManager {
     private final AtomicBoolean refreshComplete = new AtomicBoolean();
 
     @Inject
+    Collection<Installer> installers;
+
+    @Inject
     public RefreshManager(Injector injector) {
         injector.inject(this);
         refreshModules();
@@ -52,7 +56,7 @@ public class RefreshManager {
      */
     private Observable<Map<Installer, List<Book>>> refreshModules() {
         if (availableModules == null) {
-            availableModules = Observable.from(new InstallManager().getInstallers().values())
+            availableModules = Observable.from(installers)
                     .map(new Func1<Installer, Map<Installer, List<Book>>>() {
                         @Override
                         public Map<Installer, List<Book>> call(Installer installer) {
