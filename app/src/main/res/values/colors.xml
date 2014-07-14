@@ -2,4 +2,6 @@
 <resources>
     <color name="statusbar">#dddddd</color>
     <color name="actionbar">#ffffff</color>
+    <color name="navbar_highlight">#cc0000</color>
+    <color name="navbar_unhighlighted">#00cc0000</color>
 </resources>

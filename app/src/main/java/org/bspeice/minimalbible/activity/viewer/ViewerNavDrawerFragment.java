@@ -11,6 +11,7 @@ import android.widget.ListView;
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseNavigationDrawerFragment;
+import org.bspeice.minimalbible.activity.NavDrawerAdapter;
 import org.bspeice.minimalbible.activity.viewer.bookutil.VersificationUtil;
 import org.crosswire.jsword.book.Book;
 
@@ -43,9 +44,9 @@ public class ViewerNavDrawerFragment extends BaseNavigationDrawerFragment {
         List<String> bookNames = vUtil.getNiceBookNames(mainBook)
                 .toList().toBlocking().first();
 
-		mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar()
-				.getThemedContext(), android.R.layout.simple_list_item_1,
-				android.R.id.text1, bookNames));
+        mDrawerListView.setAdapter(new NavDrawerAdapter<String>(getActionBar()
+				.getThemedContext(), bookNames));
+
 		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 		return mDrawerListView;
 	}
