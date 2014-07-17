@@ -178,7 +178,8 @@ public class BookListFragment extends BaseFragment {
 				refreshModules();
 				break;
 
-			case DialogInterface.BUTTON_NEGATIVE:
+			// case DialogInterface.BUTTON_NEGATIVE:
+            default:
 				// Clicked to not download - Permanently disable downloading
 				downloadPrefs.hasEnabledDownload(false);
 				Toast.makeText(getActivity(),
