@@ -88,8 +88,17 @@ public class InstalledManagerTest extends TestCase implements Injector {
         assertFalse(foundMismatch.get());
     }
 
-    /*
     public void testRemoveBook() throws Exception {
+        final AtomicBoolean isRemoved = new AtomicBoolean(false);
+        getInstalledBooks()
+                .first()
+                .subscribe(new Action1<Book>() {
+                    @Override
+                    public void call(Book book) {
+                        iM.removeBook(book);
+                        isRemoved.set(!book.getDriver().isDeletable(book));
+                    }
+                });
+        assertTrue(isRemoved.get());
     }
-    */
 }
