@@ -12,7 +12,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import org.bspeice.minimalbible.Injector;
-import org.bspeice.minimalbible.MinimalBible;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseFragment;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;

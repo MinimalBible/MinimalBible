@@ -30,7 +30,7 @@ import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
-import static com.jayway.awaitility.Awaitility.*;
+import static com.jayway.awaitility.Awaitility.await;
 
 public class BookDownloadManagerTest extends TestCase implements Injector {
 

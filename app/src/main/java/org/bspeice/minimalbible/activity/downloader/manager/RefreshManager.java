@@ -1,15 +1,9 @@
 package org.bspeice.minimalbible.activity.downloader.manager;
 
-import android.content.Context;
-
 import org.bspeice.minimalbible.Injector;
-import org.bspeice.minimalbible.MinimalBible;
-import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 import org.crosswire.jsword.book.Book;
-import org.crosswire.jsword.book.install.InstallManager;
 import org.crosswire.jsword.book.install.Installer;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +17,6 @@ import rx.Observable;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 /**

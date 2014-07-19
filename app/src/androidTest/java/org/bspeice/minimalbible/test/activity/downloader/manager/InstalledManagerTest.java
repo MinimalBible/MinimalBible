@@ -1,7 +1,5 @@
 package org.bspeice.minimalbible.test.activity.downloader.manager;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import junit.framework.TestCase;
@@ -13,16 +11,12 @@ import org.bspeice.minimalbible.activity.downloader.manager.InstalledManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.Books;
-import org.crosswire.jsword.book.BooksEvent;
-import org.crosswire.jsword.book.BooksListener;
 import org.crosswire.jsword.book.install.InstallManager;
 import org.crosswire.jsword.book.install.Installer;
 import org.crosswire.jsword.book.sword.SwordBook;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -33,7 +27,6 @@ import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;

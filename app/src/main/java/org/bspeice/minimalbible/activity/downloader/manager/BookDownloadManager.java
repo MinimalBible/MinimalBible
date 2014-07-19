@@ -1,11 +1,8 @@
 package org.bspeice.minimalbible.activity.downloader.manager;
 
-import android.content.Context;
 import android.util.Log;
 
 import org.bspeice.minimalbible.Injector;
-import org.bspeice.minimalbible.MinimalBible;
-import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 import org.crosswire.common.progress.JobManager;
 import org.crosswire.common.progress.Progress;
 import org.crosswire.common.progress.WorkEvent;
@@ -21,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import rx.Observable;

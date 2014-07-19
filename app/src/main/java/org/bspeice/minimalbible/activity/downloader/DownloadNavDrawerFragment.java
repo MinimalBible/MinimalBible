@@ -10,7 +10,6 @@ import android.widget.ListView;
 
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseNavigationDrawerFragment;
-import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookCategory;
 
 import java.util.List;
