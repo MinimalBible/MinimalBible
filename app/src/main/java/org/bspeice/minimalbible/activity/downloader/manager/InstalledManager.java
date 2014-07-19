@@ -14,6 +14,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import rx.Observable;
+
 /**
  * Manager to keep track of which books have been installed
  */
@@ -28,11 +30,18 @@ public class InstalledManager implements BooksListener {
     @Inject
     InstalledManager(Injector injector) {
         injector.inject(this);
+        installedBooksList.addAll(installedBooks.getBooks());
         installedBooks.addBooksListener(this);
     }
 
     public boolean isInstalled(Book b) {
         return installedBooksList.contains(b);
+    }
+
+    public Observable<Book> getInstalledBooks() {
+        // This method is needed to provide a fresher copy of what's installed
+        // than Books.getInstalled() does.
+        return Observable.from(installedBooksList);
     }
 
     @Override
@@ -54,16 +63,13 @@ public class InstalledManager implements BooksListener {
     }
 
     public void removeBook(Book b) {
-        // Not sure why we need to call this multiple times, but...
-        while (Books.installed().getBooks().contains(b)) {
-            try {
-                // This worked in the past, but isn't now...
-                // installedBooks.remove(b);
-                Book realBook = installedBooks.getBook(b.getInitials());
-                b.getDriver().delete(realBook);
-            } catch (BookException e) {
-                Log.e("InstalledManager", "Unable to remove book (already uninstalled?): " + e.getLocalizedMessage());
-            }
+        try {
+            // This worked in the past, but isn't now...
+            // installedBooks.remove(b);
+            Book realBook = installedBooks.getBook(b.getInitials());
+            b.getDriver().delete(realBook);
+        } catch (BookException e) {
+            Log.e("InstalledManager", "Unable to remove book (already uninstalled?): " + e.getLocalizedMessage());
         }
     }
 }

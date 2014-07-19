@@ -52,7 +52,9 @@ public class RefreshManager {
     /**
      * Do the work of kicking off the AsyncTask to refresh books, and make sure we know
      * when it's done.
-     * TODO: Should I have a better way of scheduling than Schedulers.io()?
+     * NOTE: This code assigns its own thread. This is because we are called privately, and
+     * don't want to expose this method. I don't like hiding the side effects like this, but
+     * in this case I'm making an exception.
      */
     private Observable<Map<Installer, List<Book>>> refreshModules() {
         if (availableModules == null) {
