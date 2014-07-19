@@ -6,17 +6,18 @@ import junit.framework.TestCase;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadManager;
-import org.bspeice.minimalbible.activity.downloader.manager.DLProgressEvent;
 import org.bspeice.minimalbible.activity.downloader.manager.InstalledManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.Books;
+import org.crosswire.jsword.book.BooksEvent;
+import org.crosswire.jsword.book.BooksListener;
 import org.crosswire.jsword.book.install.InstallManager;
 import org.crosswire.jsword.book.install.Installer;
-import org.crosswire.jsword.book.sword.SwordBook;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -27,7 +28,6 @@ import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
 import rx.Observable;
-import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
@@ -83,32 +83,25 @@ public class InstalledManagerTest extends TestCase implements Injector {
         mObjectGraph.inject(this);
 
         // Guarantee something is installed
-        getInstalledBooks()
-                .count()
-                .subscribe(new Action1<Integer>() {
-                    @Override
-                    public void call(Integer count) {
-                        if (count <= 0) {
-                            Log.i("InstalledManagerTest", "Nothing installed!");
-                            final AtomicBoolean isInstalled = new AtomicBoolean(false);
-                            final Book toInstall = rM.getAvailableModulesFlattened().toBlocking().first();
-                            bDM.installBook(toInstall);
-                            bDM.getDownloadEvents()
-                                    .subscribe(new Action1<DLProgressEvent>() {
-                                        @Override
-                                        public void call(DLProgressEvent dlProgressEvent) {
-                                            if (dlProgressEvent.getProgress() == DLProgressEvent.PROGRESS_COMPLETE &&
-                                                    dlProgressEvent.getB().getName().equals(toInstall.getName())) {
+        int count = getInstalledBooks().count().toBlocking().first();
 
-                                                isInstalled.set(true);
-                                            }
-                                        }
-                                    });
-                            await().atMost(30, TimeUnit.SECONDS)
-                                    .untilTrue(isInstalled);
+        if (count <= 0) {
+            Log.i("InstalledManagerTest", "Nothing installed!");
+            final Book toInstall = rM.getAvailableModulesFlattened()
+                    .toBlocking().first();
+            bDM.installBook(toInstall);
+
+            await().atMost(30, TimeUnit.SECONDS)
+                    .until(new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            return installedBooks.getBooks()
+                                    .contains(toInstall);
                         }
-                    }
-                });
+                    });
+            Log.e("setUp", Boolean.toString(toInstall.getDriver().isDeletable(toInstall)));
+            Log.e("setUp", "Found the book!: " + toInstall.getInitials());
+        }
     }
 
     public Observable<Book> getInstalledBooks() {
@@ -119,12 +112,6 @@ public class InstalledManagerTest extends TestCase implements Injector {
        */
         // TODO: Guarantee that we return newly-installed books
         return Observable.from(installedBooks.getBooks())
-                .filter(new Func1<Book, Boolean>() {
-                    @Override
-                    public Boolean call(Book book) {
-                        return book.getDriver().isDeletable(book);
-                    }
-                })
                 .filter(new Func1<Book, Boolean>() {
                     @Override
                     public Boolean call(Book book) {
@@ -157,30 +144,24 @@ public class InstalledManagerTest extends TestCase implements Injector {
      * @throws Exception
      */
     public void testRemoveBook() throws Exception {
-        final AtomicBoolean isRemoved = new AtomicBoolean(false);
-        getInstalledBooks()
-                .first()
-                .subscribe(new Action1<Book>() {
-                    @Override
-                    public void call(Book book) {
-                        iM.removeBook(book);
+        final Book book = getInstalledBooks().toBlocking().first();
 
-                        // The AbstractBook returns false all the time, make sure we have
-                        // an actual implementation
-                        Log.w("testRemoveBook", book.getInitials());
-                        isRemoved.set(!book.getDriver().isDeletable(book) &&
-                                book instanceof SwordBook);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        fail(throwable.getLocalizedMessage());
-                    }
-                }, new Action0() {
-                    @Override
-                    public void call() {
-                        assertTrue(isRemoved.get());
-                    }
-                });
+        final AtomicBoolean didRemove = new AtomicBoolean(false);
+
+        installedBooks.addBooksListener(new BooksListener() {
+            @Override
+            public void bookAdded(BooksEvent ev) {
+
+            }
+            @Override
+            public void bookRemoved(BooksEvent ev) {
+                if (ev.getBook().equals(book)) {
+                    didRemove.set(true);
+                }
+            }
+        });
+
+        iM.removeBook(book);
+        await().untilTrue(didRemove);
     }
 }
