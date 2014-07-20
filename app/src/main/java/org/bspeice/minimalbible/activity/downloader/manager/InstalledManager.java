@@ -62,14 +62,23 @@ public class InstalledManager implements BooksListener {
         }
     }
 
-    public void removeBook(Book b) {
+    /**
+     * Remove a book from being installed.
+     * Currently only supports books that have been installed outside the current application run.
+     * Not quite sure why this is, but And-Bible exhibits the same behavior.
+     * @param b The book to remove
+     * @return Whether the book was removed.
+     */
+    public boolean removeBook(Book b) {
         try {
             // This worked in the past, but isn't now...
             // installedBooks.remove(b);
             Book realBook = installedBooks.getBook(b.getInitials());
             b.getDriver().delete(realBook);
+            return true;
         } catch (BookException e) {
             Log.e("InstalledManager", "Unable to remove book (already uninstalled?): " + e.getLocalizedMessage());
+            return false;
         }
     }
 }

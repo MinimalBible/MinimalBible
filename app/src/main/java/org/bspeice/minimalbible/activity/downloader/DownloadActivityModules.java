@@ -1,5 +1,7 @@
 package org.bspeice.minimalbible.activity.downloader;
 
+import android.content.Context;
+
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBibleModules;
 import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadManager;
@@ -56,6 +58,16 @@ public class DownloadActivityModules {
 
     @Provides @Singleton
     Injector provideActivityInjector() {
+        return activity;
+    }
+
+    /**
+     * Provide the context for the DownloadActivity. We name it so that we don't have to
+     * \@Provides a specific class, but can keep track of what exactly we mean by "Context"
+     * @return
+     */
+    @Provides @Singleton @Named("DownloadActivityContext")
+    Context provideActivityContext() {
         return activity;
     }
 

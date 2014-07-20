@@ -1,9 +1,11 @@
 package org.bspeice.minimalbible.activity.downloader;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.todddavies.components.progressbar.ProgressWheel;
 
@@ -15,6 +17,7 @@ import org.bspeice.minimalbible.activity.downloader.manager.InstalledManager;
 import org.crosswire.jsword.book.Book;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -45,6 +48,8 @@ public class BookItemHolder {
     BookDownloadManager bookDownloadManager;
     @Inject
     InstalledManager installedManager;
+    @Inject @Named("DownloadActivityContext")
+    Context ctx;
 
     private final Book b;
     private Subscription subscription;
@@ -90,8 +95,13 @@ public class BookItemHolder {
     public void onDownloadItem(View v) {
         if (installedManager.isInstalled(b)) {
             // Remove the book
-            installedManager.removeBook(b);
-            isDownloaded.setImageResource(R.drawable.ic_action_download);
+            boolean didRemove = installedManager.removeBook(b);
+            if (didRemove) {
+                isDownloaded.setImageResource(R.drawable.ic_action_download);
+            } else {
+                Toast.makeText(ctx, "Unable to remove book, might need to restart the application."
+                        , Toast.LENGTH_SHORT).show();
+            }
         } else {
             bookDownloadManager.installBook(this.b);
         }
