@@ -99,7 +99,7 @@ public class BookItemHolder {
             if (didRemove) {
                 isDownloaded.setImageResource(R.drawable.ic_action_download);
             } else {
-                Toast.makeText(ctx, "Unable to remove book, might need to restart the application."
+                Toast.makeText(ctx, ctx.getText(R.string.book_removal_failure)
                         , Toast.LENGTH_SHORT).show();
             }
         } else {

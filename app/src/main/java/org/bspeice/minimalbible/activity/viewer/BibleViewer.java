@@ -149,7 +149,7 @@ public class BibleViewer extends BaseActivity implements
         Log.d("BibleViewer", "Initializing main book: " + b.getName());
         Log.d("MainThread?", Boolean.toString(Looper.myLooper() == Looper.getMainLooper()));
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment f = BookFragment.newInstance(b.getName(), this);
+        Fragment f = BookFragment.newInstance(b.getName());
         fragmentManager.beginTransaction()
                 .replace(R.id.container, f)
                 .commit();

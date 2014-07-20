@@ -30,8 +30,6 @@ import static org.crosswire.jsword.versification.system.Versifications.instance;
  * A placeholder fragment containing a simple view.
  */
 public class BookFragment extends BaseFragment {
-    Injector i;
-
     @Inject @Named("MainBook") Book mBook;
 
     @InjectView(R.id.book_content)
@@ -42,9 +40,8 @@ public class BookFragment extends BaseFragment {
     /**
      * Returns a new instance of this fragment for the given section number.
      */
-    public static BookFragment newInstance(String bookName, Injector injector) {
+    public static BookFragment newInstance(String bookName) {
         BookFragment fragment = new BookFragment();
-        fragment.i = injector;
         Bundle args = new Bundle();
         args.putString(ARG_BOOK_NAME, bookName);
         fragment.setArguments(args);
@@ -65,7 +62,7 @@ public class BookFragment extends BaseFragment {
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_viewer_main, container,
                 false);
-        i.inject(this);
+        ((Injector)getActivity()).inject(this);
         ButterKnife.inject(this, rootView);
         mainContent.getSettings().setJavaScriptEnabled(true);
 
