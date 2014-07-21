@@ -1,12 +1,10 @@
 package org.bspeice.minimalbible.activity;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.bspeice.minimalbible.R;
@@ -74,9 +72,6 @@ public class NavDrawerAdapter<T> extends BaseAdapter {
      */
 
     protected class NavItemHolder {
-        @InjectView(R.id.navlist_selected_highlight)
-        ImageView highlight;
-
         @InjectView(R.id.navlist_content)
         TextView content;
 
@@ -94,11 +89,9 @@ public class NavDrawerAdapter<T> extends BaseAdapter {
         public void bind() {
             content.setText(object.toString());
             if (highlighted) {
-                highlight.setImageDrawable(new ColorDrawable(v.getResources()
-                    .getColor(R.color.navbar_highlight)));
+                content.setTextColor(v.getResources().getColor(R.color.navbar_highlight));
             } else {
-                highlight.setImageDrawable(new ColorDrawable(v.getResources()
-                    .getColor(R.color.navbar_unhighlighted)));
+                content.setTextColor(v.getResources().getColor(R.color.navbar_unhighlighted));
             }
         }
     }
