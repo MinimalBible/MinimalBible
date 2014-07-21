@@ -37,11 +37,11 @@ public class RefreshManagerTest extends TestCase implements Injector {
     @Inject RefreshManager rM;
 
     @Module (injects = {RefreshManagerTest.class, RefreshManager.class})
-    class TGAMFModules {
+    class RMTModules {
         Injector i;
         Collection<Installer> installers;
 
-        TGAMFModules(Injector i, Collection<Installer> installers) {
+        RMTModules(Injector i, Collection<Installer> installers) {
             this.i = i;
             this.installers = installers;
         }
@@ -71,7 +71,7 @@ public class RefreshManagerTest extends TestCase implements Injector {
         Collection<Installer> mockInstallers = new ArrayList<Installer>();
         mockInstallers.add(mockInstaller);
 
-        TGAMFModules modules = new TGAMFModules(this, mockInstallers);
+        RMTModules modules = new RMTModules(this, mockInstallers);
         mObjectGraph = ObjectGraph.create(modules);
 
         // Now the actual test
@@ -90,11 +90,30 @@ public class RefreshManagerTest extends TestCase implements Injector {
         verify(mockBook).getName();
     }
 
-    /*
     public void testInstallerFromBook() throws Exception {
+        // Environment setup
+        Book mockBook = mock(Book.class);
 
+        Installer mockInstaller = mock(Installer.class);
+        List<Book> bookList = new ArrayList<Book>();
+        bookList.add(mockBook);
+        when(mockInstaller.getBooks()).thenReturn(bookList);
+
+        Collection<Installer> mockInstallers = new ArrayList<Installer>();
+        mockInstallers.add(mockInstaller);
+
+        RMTModules modules = new RMTModules(this, mockInstallers);
+        mObjectGraph = ObjectGraph.create(modules);
+
+        // And the actual test
+        mObjectGraph.inject(this);
+        Installer i = rM.installerFromBook(mockBook);
+
+        assertSame(mockInstaller, i);
+        verify(mockInstaller).getBooks();
     }
 
+    /*
     public void testIsRefreshComplete() throws Exception {
 
     }

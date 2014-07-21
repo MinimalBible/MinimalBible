@@ -101,6 +101,7 @@ public class RefreshManager {
 
     /**
      * Find the installer that a Book comes from.
+     * TODO: Should this be @link{Observable} so we don't have to block?
      * @param b The book to search for
      * @return The Installer that should be used for this book.
      */
