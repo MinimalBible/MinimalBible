@@ -8,8 +8,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseNavigationDrawerFragment;
+import org.bspeice.minimalbible.activity.NavDrawerAdapter;
 import org.crosswire.jsword.book.BookCategory;
 
 import java.util.List;
@@ -25,7 +27,7 @@ public class DownloadNavDrawerFragment extends BaseNavigationDrawerFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-        ((DownloadActivity)getActivity()).inject(this);
+        ((Injector)getActivity()).inject(this);
 
 		mDrawerListView = (ListView) inflater.inflate(
 				R.layout.fragment_navigation_drawer, container, false);
@@ -38,9 +40,8 @@ public class DownloadNavDrawerFragment extends BaseNavigationDrawerFragment {
 					}
 				});
 
-		mDrawerListView.setAdapter(new ArrayAdapter<BookCategory>(getActionBar()
-				.getThemedContext(), android.R.layout.simple_list_item_1,
-				android.R.id.text1, validCategories));
+		mDrawerListView.setAdapter(new NavDrawerAdapter<BookCategory>(getActivity(),
+                validCategories));
 		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 		return mDrawerListView;
 	}
