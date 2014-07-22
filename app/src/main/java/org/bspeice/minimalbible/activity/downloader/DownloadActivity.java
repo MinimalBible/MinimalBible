@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBible;
+import org.bspeice.minimalbible.OGHolder;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
 import org.bspeice.minimalbible.activity.BaseNavigationDrawerFragment;
@@ -25,6 +26,8 @@ import dagger.ObjectGraph;
 public class DownloadActivity extends BaseActivity implements
 		BaseNavigationDrawerFragment.NavigationDrawerCallbacks,
         Injector {
+
+    private final String TAG = "DownloadActivity";
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the
@@ -48,19 +51,15 @@ public class DownloadActivity extends BaseActivity implements
      */
     private void buildObjGraph() {
         if (daObjectGraph == null) {
-            FragmentManager fM = getSupportFragmentManager();
-            DownloadOGHolder ogHolder = (DownloadOGHolder) fM.findFragmentByTag("OG_HOLDER");
-            if (ogHolder == null) {
-                Log.e("DownloadActivity", "Creating new holder...");
-                ogHolder = new DownloadOGHolder();
+            OGHolder holder = OGHolder.get(this);
+            ObjectGraph holderGraph = holder.fetchGraph();
+            if (holderGraph == null) {
+                Log.i(TAG, "Rebuilding ObjectGraph...");
                 daObjectGraph = MinimalBible.get(this)
                         .plus(new DownloadActivityModules(this));
-                ogHolder.persistObjectGraph(daObjectGraph);
-                fM.beginTransaction().add(ogHolder, "OG_HOLDER").commit();
+                holder.persistGraph(daObjectGraph);
             } else {
-                Log.e("DownloadActivity", "Found existing holder...");
-                daObjectGraph = ogHolder.fetchObjectGraph();
-                daObjectGraph.inject(this);
+                daObjectGraph = holderGraph;
             }
         }
         daObjectGraph.inject(this);
