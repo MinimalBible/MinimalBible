@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -47,8 +48,20 @@ public class DownloadActivity extends BaseActivity implements
      */
     private void buildObjGraph() {
         if (daObjectGraph == null) {
-            daObjectGraph = MinimalBible.get(this)
-                    .plus(new DownloadActivityModules(this));
+            FragmentManager fM = getSupportFragmentManager();
+            DownloadOGHolder ogHolder = (DownloadOGHolder) fM.findFragmentByTag("OG_HOLDER");
+            if (ogHolder == null) {
+                Log.e("DownloadActivity", "Creating new holder...");
+                ogHolder = new DownloadOGHolder();
+                daObjectGraph = MinimalBible.get(this)
+                        .plus(new DownloadActivityModules(this));
+                ogHolder.persistObjectGraph(daObjectGraph);
+                fM.beginTransaction().add(ogHolder, "OG_HOLDER").commit();
+            } else {
+                Log.e("DownloadActivity", "Found existing holder...");
+                daObjectGraph = ogHolder.fetchObjectGraph();
+                daObjectGraph.inject(this);
+            }
         }
         daObjectGraph.inject(this);
     }
@@ -62,7 +75,8 @@ public class DownloadActivity extends BaseActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        buildObjGraph();
+        inject(this);
+
 		setContentView(R.layout.activity_download);
 
 		mNavigationDrawerFragment = (DownloadNavDrawerFragment) getSupportFragmentManager()

@@ -37,7 +37,8 @@ import de.devland.esperandro.Esperandro;
                 DownloadActivity.class,
                 InstalledManager.class
         },
-        addsTo = MinimalBibleModules.class
+        addsTo = MinimalBibleModules.class,
+        library = true
 )
 public class DownloadActivityModules {
     DownloadActivity activity;
@@ -101,5 +102,10 @@ public class DownloadActivityModules {
     @Provides @Singleton
     Collection<Installer> provideInstallers() {
         return new InstallManager().getInstallers().values();
+    }
+
+    @Provides @Singleton
+    RefreshManager provideRefreshManager() {
+        return new RefreshManager(activity);
     }
 }
