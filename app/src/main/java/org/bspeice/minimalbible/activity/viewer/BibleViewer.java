@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBible;
+import org.bspeice.minimalbible.OGHolder;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
 import org.bspeice.minimalbible.activity.BaseNavigationDrawerFragment;
@@ -33,12 +34,30 @@ public class BibleViewer extends BaseActivity implements
 
     private ObjectGraph bvObjectGraph;
     /**
+     * Fragment managing the behaviors, interactions and presentation of the
+     * navigation drawer.
+     */
+    private ViewerNavDrawerFragment mNavigationDrawerFragment;
+    /**
+     * Used to store the last screen title. For use in
+     * {@link #restoreActionBar()}.
+     */
+    private CharSequence mTitle;
+
+    /**
      * Build a scoped object graph for anything used by the DownloadActivity
      */
     private void buildObjGraph() {
         if (bvObjectGraph == null) {
-            bvObjectGraph = MinimalBible.get(this)
-                    .plus(new BibleViewerModules(this));
+            OGHolder holder = OGHolder.get(this);
+            ObjectGraph holderGraph = holder.fetchGraph();
+            if (holderGraph == null) {
+                bvObjectGraph = MinimalBible.get(this)
+                        .plus(new BibleViewerModules(this));
+                holder.persistGraph(holderGraph);
+            } else {
+                bvObjectGraph = holderGraph;
+            }
         }
         bvObjectGraph.inject(this);
     }
@@ -48,18 +67,6 @@ public class BibleViewer extends BaseActivity implements
         buildObjGraph();
         bvObjectGraph.inject(o);
     }
-
-	/**
-	 * Fragment managing the behaviors, interactions and presentation of the
-	 * navigation drawer.
-	 */
-	private ViewerNavDrawerFragment mNavigationDrawerFragment;
-
-	/**
-	 * Used to store the last screen title. For use in
-	 * {@link #restoreActionBar()}.
-	 */
-	private CharSequence mTitle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
