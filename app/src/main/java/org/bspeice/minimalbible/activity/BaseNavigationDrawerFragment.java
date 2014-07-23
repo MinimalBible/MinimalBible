@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -28,6 +29,7 @@ import org.bspeice.minimalbible.R;
  * "https://developer.android.com/design/patterns/navigation-drawer.html#Interaction"
  * > design guidelines</a> for a complete explanation of the behaviors
  * implemented here.
+ * TODO: Refactor to allow ExpandableListView
  */
 public class BaseNavigationDrawerFragment extends Fragment {
 
@@ -41,22 +43,18 @@ public class BaseNavigationDrawerFragment extends Fragment {
 	 * user manually expands it. This shared preference tracks this.
 	 */
 	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
-
-	/**
-	 * A pointer to the current callbacks instance (the Activity).
-	 */
-	private NavigationDrawerCallbacks mCallbacks;
-
-	/**
-	 * Helper component that ties the action bar to the navigation drawer.
+    protected ListView mDrawerListView;
+    protected int mCurrentSelectedPosition = 0;
+    /**
+     * A pointer to the current callbacks instance (the Activity).
+     */
+    private NavigationDrawerCallbacks mCallbacks;
+    /**
+     * Helper component that ties the action bar to the navigation drawer.
 	 */
 	private ActionBarDrawerToggle mDrawerToggle;
-
 	private DrawerLayout mDrawerLayout;
-	protected ListView mDrawerListView;
 	private View mFragmentContainerView;
-
-	protected int mCurrentSelectedPosition = 0;
 	private boolean mFromSavedInstanceState;
 	private boolean mUserLearnedDrawer;
 
@@ -281,8 +279,8 @@ public class BaseNavigationDrawerFragment extends Fragment {
 		super.onViewCreated(view, savedInstanceState);
 
 		// This could also be a ScrollView
-		ListView list = (ListView) view.findViewById(R.id.list_nav_drawer);
-		// This could also be set in your layout, allows the list items to
+        ExpandableListView list = (ExpandableListView) view.findViewById(R.id.list_nav_drawer);
+        // This could also be set in your layout, allows the list items to
 		// scroll through the bottom padded area (navigation bar)
 		list.setClipToPadding(false);
 		// Sets the padding to the insets (include action bar and navigation bar

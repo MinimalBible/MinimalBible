@@ -24,7 +24,8 @@ import rx.functions.Func1;
         injects = {
                 BibleViewer.class,
                 BookFragment.class,
-                ViewerNavDrawerFragment.class
+                ViewerNavDrawerFragment.class,
+                BibleNavAdapter.class
         },
         library = true
 )
@@ -35,17 +36,20 @@ public class BibleViewerModules {
         this.activity = activity;
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     Injector provideInjector() {
         return activity;
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     BibleViewerPreferences providePrefs() {
         return Esperandro.getPreferences(BibleViewerPreferences.class, activity);
     }
 
-    @Provides @Named("MainBook")
+    @Provides
+    @Named("MainBook")
     Book provideMainBook(BookManager bookManager, final BibleViewerPreferences prefs) {
         final AtomicReference<Book> mBook = new AtomicReference<Book>(null);
         bookManager.getInstalledBooks()
@@ -60,7 +64,7 @@ public class BibleViewerModules {
                     public void call(Book book) {
                         mBook.set(book);
                     }
-                },new Action1<Throwable>() {
+                }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
                         Log.d("BibleViewerModules", throwable.getLocalizedMessage());

@@ -24,13 +24,14 @@ public class VersificationUtil {
         add(BibleBook.INTRO_NT);
     }};
 
+    // TODO: Cache the versification?
     public Versification getVersification(Book b) {
         return Versifications.instance().getVersification(
                 (String) b.getBookMetaData().getProperty(BookMetaData.KEY_VERSIFICATION)
         );
     }
 
-    public Observable<BibleBook> getBookNames(Book b) {
+    public Observable<BibleBook> getBooks(Book b) {
         Versification v = getVersification(b);
         return Observable.from(IteratorUtil.copyIterator(v.getBookIterator()))
                 .filter(new Func1<BibleBook, Boolean>() {
@@ -41,14 +42,21 @@ public class VersificationUtil {
                 });
     }
 
-    public Observable<String> getNiceBookNames(final Book b) {
-
-        return getBookNames(b)
+    public Observable<String> getBookNames(final Book b) {
+        return getBooks(b)
                 .map(new Func1<BibleBook, String>() {
                     @Override
                     public String call(BibleBook bibleBook) {
-                        return getVersification(b).getLongName(bibleBook);
+                        return getBookName(b, bibleBook);
                     }
                 });
+    }
+
+    public Integer getChapterCount(Book b, BibleBook bibleBook) {
+        return getVersification(b).getLastChapter(bibleBook);
+    }
+
+    public String getBookName(Book book, BibleBook bibleBook) {
+        return getVersification(book).getLongName(bibleBook);
     }
 }
