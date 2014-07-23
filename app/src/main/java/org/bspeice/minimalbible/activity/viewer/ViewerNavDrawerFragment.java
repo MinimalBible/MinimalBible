@@ -19,6 +19,7 @@ import javax.inject.Named;
  * ExpandableListView for managing books of the Bible.
  * We extend from @link{BaseNavigationDrawerFragment} so we can inherit some of the lifecycle
  * pieces, but the actual view inflation is done by us.
+ * TODO: Extend BaseExpNavigationDrawerFragment?
  */
 public class ViewerNavDrawerFragment extends BaseNavigationDrawerFragment {
 

@@ -24,6 +24,10 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import rx.functions.Action1;
 
+/**
+ * ExpandableListView Navigation Drawer
+ * TODO: Refactor out to ExpandableNavDrawerAdapter?
+ */
 public class BibleNavAdapter extends BaseExpandableListAdapter {
 
     @Inject
