@@ -7,6 +7,6 @@
     android:choiceMode="singleChoice"
     android:divider="@android:color/transparent"
     android:dividerHeight="0dp"
-    tools:context="org.bspeice.minimalbible.activity.viewer.ViewerNavDrawerFragment">
+    tools:context="org.bspeice.minimalbible.activity.viewer.ExpListNavDrawerFragment">
 
 </ExpandableListView>

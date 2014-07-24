@@ -1,4 +1,4 @@
-package org.bspeice.minimalbible.activity;
+package org.bspeice.minimalbible.activity.navigation;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -19,22 +19,22 @@ import butterknife.InjectView;
  * This class (and its usage) needs some work refactoring,
  * but the PoC is looking good!
  */
-public class NavDrawerAdapter<T> extends BaseAdapter {
+public class ListNavAdapter<T> extends BaseAdapter {
     Context context;
     List<T> objects;
     int currentlyHighlighted;
 
-    public NavDrawerAdapter(Context context, List<T> objects) {
+    public ListNavAdapter(Context context, List<T> objects) {
         this.context = context;
         this.objects = objects;
     }
 
-    public void setCurrentlyHighlighted(int currentlyHighlighted) {
-        this.currentlyHighlighted = currentlyHighlighted;
-    }
-
     public int getCurrentlyHighlighted() {
         return this.currentlyHighlighted;
+    }
+
+    public void setCurrentlyHighlighted(int currentlyHighlighted) {
+        this.currentlyHighlighted = currentlyHighlighted;
     }
 
     @Override

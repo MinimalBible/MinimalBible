@@ -16,8 +16,8 @@ import org.bspeice.minimalbible.MinimalBible;
 import org.bspeice.minimalbible.OGHolder;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
-import org.bspeice.minimalbible.activity.BaseNavigationDrawerFragment;
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
+import org.bspeice.minimalbible.activity.navigation.NavDrawerFragment;
 import org.crosswire.jsword.book.Book;
 
 import javax.inject.Inject;
@@ -27,7 +27,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
 public class BibleViewer extends BaseActivity implements
-		BaseNavigationDrawerFragment.NavigationDrawerCallbacks,
+        NavDrawerFragment.NavigationDrawerCallbacks,
         Injector {
 
     @Inject BookManager bookManager;
@@ -37,7 +37,7 @@ public class BibleViewer extends BaseActivity implements
      * Fragment managing the behaviors, interactions and presentation of the
      * navigation drawer.
      */
-    private ViewerNavDrawerFragment mNavigationDrawerFragment;
+    private ExpListNavDrawerFragment mNavigationDrawerFragment;
     /**
      * Used to store the last screen title. For use in
      * {@link #restoreActionBar()}.
@@ -50,13 +50,11 @@ public class BibleViewer extends BaseActivity implements
     private void buildObjGraph() {
         if (bvObjectGraph == null) {
             OGHolder holder = OGHolder.get(this);
-            ObjectGraph holderGraph = holder.fetchGraph();
-            if (holderGraph == null) {
+            bvObjectGraph = holder.fetchGraph();
+            if (bvObjectGraph == null) {
                 bvObjectGraph = MinimalBible.get(this)
                         .plus(new BibleViewerModules(this));
-                holder.persistGraph(holderGraph);
-            } else {
-                bvObjectGraph = holderGraph;
+                holder.persistGraph(bvObjectGraph);
             }
         }
         bvObjectGraph.inject(this);
@@ -98,9 +96,9 @@ public class BibleViewer extends BaseActivity implements
 
 		setContentView(R.layout.activity_bible_viewer);
 
-		mNavigationDrawerFragment = (ViewerNavDrawerFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.navigation_drawer);
-		mTitle = getTitle();
+        mNavigationDrawerFragment = (ExpListNavDrawerFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.navigation_drawer);
+        mTitle = getTitle();
 
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,

@@ -3,6 +3,7 @@ package org.bspeice.minimalbible.activity.viewer;
 import android.util.Log;
 
 import org.bspeice.minimalbible.Injector;
+import org.bspeice.minimalbible.activity.navigation.ExpListNavAdapter;
 import org.bspeice.minimalbible.activity.viewer.bookutil.VersificationUtil;
 import org.crosswire.jsword.book.Book;
 
@@ -24,8 +25,8 @@ import rx.functions.Func1;
         injects = {
                 BibleViewer.class,
                 BookFragment.class,
-                ViewerNavDrawerFragment.class,
-                BibleNavAdapter.class
+                ExpListNavDrawerFragment.class,
+                ExpListNavAdapter.class
         },
         library = true
 )

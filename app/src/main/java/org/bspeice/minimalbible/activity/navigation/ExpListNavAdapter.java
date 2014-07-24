@@ -1,4 +1,4 @@
-package org.bspeice.minimalbible.activity.viewer;
+package org.bspeice.minimalbible.activity.navigation;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,61 +7,44 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
-import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
-import org.bspeice.minimalbible.activity.viewer.bookutil.VersificationUtil;
-import org.crosswire.jsword.book.Book;
-import org.crosswire.jsword.versification.BibleBook;
-import org.crosswire.jsword.versification.Versification;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import rx.functions.Action1;
 
 /**
  * ExpandableListView Navigation Drawer
- * TODO: Refactor out to ExpandableNavDrawerAdapter?
+ * T1 represents Group objects, T2 is child objects
+ * Not sure if I'll ever actually need to re-use this, but go ahead and make it generic.
+ * TODO: Document this.
  */
-public class BibleNavAdapter extends BaseExpandableListAdapter {
-
-    @Inject
-    VersificationUtil vUtil;
-    Versification versification;
-    Book book;
+public class ExpListNavAdapter<T1, T2> extends BaseExpandableListAdapter {
 
     // Now we could technically implement this structure using a LinkedHashMap, but
     // it's easier both to understand and program if we implement this using two maps.
-    Map<Integer, BibleBook> indexableBibleBooks;
-    Map<BibleBook, Integer> chaptersForBook;
+    Map<Integer, T1> indexableBibleBooks;
+    Map<T1, List<T2>> chaptersForBook;
 
     private int groupHighlighted;
     private int childHighlighted;
 
-    public BibleNavAdapter(final Book b, Injector injector) {
-        injector.inject(this);
-        this.book = b;
-        versification = vUtil.getVersification(book);
+    public ExpListNavAdapter(List<T1> groups, Map<T1, List<T2>> children) {
 
         // Let the map know ahead of time how big it will be
         // int bookCount = versification.getBookCount();
-        indexableBibleBooks = new HashMap<Integer, BibleBook>();
-        chaptersForBook = new HashMap<BibleBook, Integer>();
+        indexableBibleBooks = new HashMap<Integer, T1>(groups.size());
+        chaptersForBook = new HashMap<T1, List<T2>>(groups.size());
 
-        final AtomicInteger counter = new AtomicInteger(0);
-        vUtil.getBooks(book)
-                .forEach(new Action1<BibleBook>() {
-                    @Override
-                    public void call(BibleBook bibleBook) {
-                        indexableBibleBooks.put(counter.getAndIncrement(), bibleBook);
-                        chaptersForBook.put(bibleBook, vUtil.getChapterCount(b, bibleBook));
-                    }
-                });
+        // Is it terrible that I don't like using an actual for loop?
+        for (int index = 0; index < groups.size(); index++) {
+            T1 gItem = groups.get(index);
+            indexableBibleBooks.put(index, gItem);
+            chaptersForBook.put(gItem, children.get(gItem));
+        }
     }
 
     @Override
@@ -71,25 +54,22 @@ public class BibleNavAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int i) {
-        return chaptersForBook.get(indexableBibleBooks.get(i));
+        return chaptersForBook.get(indexableBibleBooks.get(i)).size();
     }
 
     @Override
-    public String getGroup(int i) {
-        return vUtil.getBookName(book, indexableBibleBooks.get(i));
+    public T1 getGroup(int i) {
+        return indexableBibleBooks.get(i);
     }
 
     /**
-     * Take a shortcut - since the second item is the (indexed) chapter number,
-     * we just need to add one to remove the off-by-one
-     *
      * @param i  The group position
      * @param i2 The child position
      * @return The child chapter value
      */
     @Override
-    public Integer getChild(int i, int i2) {
-        return i2 + 1;
+    public T2 getChild(int i, int i2) {
+        return chaptersForBook.get(indexableBibleBooks.get(i)).get(i2);
     }
 
     @Override
@@ -104,7 +84,7 @@ public class BibleNavAdapter extends BaseExpandableListAdapter {
 
     @Override
     public boolean hasStableIds() {
-        return false;
+        return true;
     }
 
     /**
@@ -119,16 +99,16 @@ public class BibleNavAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int position, boolean expanded,
                              View convertView, ViewGroup parent) {
-        NavItemHolder<String> bookHolder;
+        NavItemHolder<T1> bookHolder;
         if (convertView == null || convertView.getTag() == null) {
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.list_navigation_drawer,
                     parent, false);
-            bookHolder = new NavItemHolder<String>(convertView);
+            bookHolder = new NavItemHolder<T1>(convertView);
             convertView.setTag(bookHolder);
         } else {
-            bookHolder = (NavItemHolder<String>) convertView.getTag();
+            bookHolder = (NavItemHolder<T1>) convertView.getTag();
         }
 
         bookHolder.bind(getGroup(position), position == groupHighlighted);
@@ -148,16 +128,16 @@ public class BibleNavAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
-        NavItemHolder<Integer> chapterHolder;
+        NavItemHolder<T2> chapterHolder;
         if (convertView == null || convertView.getTag() == null) {
             LayoutInflater inflater = (LayoutInflater) parent.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.list_navigation_drawer,
                     parent, false);
-            chapterHolder = new NavItemHolder<Integer>(convertView);
+            chapterHolder = new NavItemHolder<T2>(convertView);
             convertView.setTag(chapterHolder);
         } else {
-            chapterHolder = (NavItemHolder<Integer>) convertView.getTag();
+            chapterHolder = (NavItemHolder<T2>) convertView.getTag();
         }
 
         chapterHolder.bind(getChild(groupPosition, childPosition),
@@ -180,8 +160,9 @@ public class BibleNavAdapter extends BaseExpandableListAdapter {
 
     /**
      * Class to hold elements for the navbar - doesn't matter if they're group or child.
+     * T3 is either T1 or T2, doesn't matter.
      */
-    class NavItemHolder<T> {
+    class NavItemHolder<T3> {
         @InjectView(R.id.navlist_content)
         TextView content;
 
@@ -192,7 +173,7 @@ public class BibleNavAdapter extends BaseExpandableListAdapter {
             ButterKnife.inject(this, v);
         }
 
-        public void bind(T object, boolean highlighted) {
+        public void bind(T3 object, boolean highlighted) {
             content.setText(object.toString());
             if (highlighted) {
                 content.setTextColor(v.getResources().getColor(R.color.navbar_highlight));
