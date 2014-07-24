@@ -28,6 +28,8 @@ public class DownloadActivity extends BaseActivity implements
         Injector {
 
     private final String TAG = "DownloadActivity";
+    private final String TAG_CURRENT_CATEGORY = "CurrentCategory";
+
     @Inject
     @Named("ValidCategories")
     List<BookCategory> validCategories;
@@ -41,6 +43,7 @@ public class DownloadActivity extends BaseActivity implements
      * {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+
     private ObjectGraph daObjectGraph;
 
     /**
@@ -82,7 +85,13 @@ public class DownloadActivity extends BaseActivity implements
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-        mNavigationDrawerFragment.selectItem(0);
+
+        // And select our first item
+        int itemToSelect = 0;
+        if (savedInstanceState != null) {
+            itemToSelect = savedInstanceState.getInt(TAG_CURRENT_CATEGORY);
+        }
+        mNavigationDrawerFragment.selectItem(itemToSelect);
     }
 
     @Override
@@ -132,5 +141,10 @@ public class DownloadActivity extends BaseActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(TAG_CURRENT_CATEGORY,
+                mNavigationDrawerFragment.getCurrentPosition());
+    }
 }

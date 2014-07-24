@@ -45,4 +45,8 @@ public class NavDrawerFragment extends AbstractNavDrawerFragment {
             mCallbacks.onNavigationDrawerItemSelected(position);
         }
     }
+
+    public int getCurrentPosition() {
+        return mCurrentSelectedPosition;
+    }
 }
