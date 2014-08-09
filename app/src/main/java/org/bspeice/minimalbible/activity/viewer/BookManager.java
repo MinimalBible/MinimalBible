@@ -22,6 +22,7 @@ public class BookManager {
 
     @Inject
     BookManager() {
+        // TODO:  Any way this can be sped up goes straight to the initialization time.
         installedBooks = Observable.from(Books.installed().getBooks())
             .cache();
         installedBooks.subscribeOn(Schedulers.io())
@@ -46,5 +47,4 @@ public class BookManager {
     public Boolean isRefreshComplete() {
         return refreshComplete;
     }
-
 }

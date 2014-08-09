@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.bspeice.minimalbible" >
+    package="org.bspeice.minimalbible">
 
     <application
+        android:name=".MinimalBible"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:name=".MinimalBible" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".activity.downloader.DownloadActivity"
-            android:label="@string/app_name" >
-        </activity>
-
-        <activity android:name=".activity.viewer.BibleViewer"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name=".activity.viewer.BibleViewer"
+            android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>

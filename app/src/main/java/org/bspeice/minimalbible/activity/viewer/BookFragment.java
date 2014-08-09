@@ -12,9 +12,11 @@ import android.webkit.WebViewClient;
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseFragment;
+import org.bspeice.minimalbible.activity.viewer.bookutil.VersificationUtil;
+import org.bspeice.minimalbible.service.book.VerseLookupService;
 import org.crosswire.jsword.book.Book;
-import org.crosswire.jsword.book.BookMetaData;
-import org.crosswire.jsword.versification.Versification;
+import org.crosswire.jsword.passage.Verse;
+import org.crosswire.jsword.versification.BibleBook;
 
 import java.util.List;
 
@@ -23,22 +25,31 @@ import javax.inject.Named;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import dagger.Lazy;
 
-import static org.crosswire.jsword.versification.system.Versifications.instance;
+import static org.bspeice.minimalbible.util.StringUtil.joinString;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class BookFragment extends BaseFragment {
-    @Inject @Named("MainBook") Book mBook;
 
+    private static final String ARG_BOOK_NAME = "book_name";
+    @Inject
+    @Named("MainBook")
+    Lazy<Book> mBook;
+    @Inject
+    VersificationUtil vUtil;
+    // TODO: Factory?
+    VerseLookupService lookupService;
     @InjectView(R.id.book_content)
     WebView mainContent;
 
-    private static final String ARG_BOOK_NAME = "book_name";
+    public BookFragment() {
+    }
 
     /**
-     * Returns a new instance of this fragment for the given section number.
+     * Returns a new instance of this fragment for the given book.
      */
     public static BookFragment newInstance(String bookName) {
         BookFragment fragment = new BookFragment();
@@ -46,9 +57,6 @@ public class BookFragment extends BaseFragment {
         args.putString(ARG_BOOK_NAME, bookName);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public BookFragment() {
     }
 
     @Override
@@ -63,20 +71,16 @@ public class BookFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_viewer_main, container,
                 false);
         ((Injector)getActivity()).inject(this);
+        // TODO: Defer lookup until after webview created? When exactly is WebView created?
+        this.lookupService = new VerseLookupService(mBook.get(), this.getActivity());
         ButterKnife.inject(this, rootView);
         mainContent.getSettings().setJavaScriptEnabled(true);
 
-        // TODO: Load initial text from SharedPreferences
+        // TODO: Load initial text from SharedPreferences, rather than getting the actual book.
 
-        displayBook(mBook);
-
-        Log.d("BookFragment", getVersification(mBook).toString());
+        displayBook(mBook.get());
 
         return rootView;
-    }
-
-    private Versification getVersification(Book b) {
-        return instance().getVersification((String) b.getBookMetaData().getProperty(BookMetaData.KEY_VERSIFICATION));
     }
 
     // TODO: Remove?
@@ -85,6 +89,17 @@ public class BookFragment extends BaseFragment {
         super.onAttach(activity);
     }
 
+    /*----------------------------------------
+        Here be all the methods you want to spend time with
+      ----------------------------------------
+     */
+
+    /**
+     * Do the initial work of displaying a book. Requires setting up WebView, etc.
+     * TODO: Get initial content from cache?
+     *
+     * @param b
+     */
     private void displayBook(Book b) {
         Log.d("BookFragment", b.getName());
         ((BibleViewer)getActivity()).setActionBarTitle(b.getInitials());
@@ -92,12 +107,29 @@ public class BookFragment extends BaseFragment {
         mainContent.setWebViewClient(new WebViewClient(){
             @Override
             public void onPageFinished(WebView view, String url) {
+                // TODO: Restore this verse from a SharedPref
+                Verse initial = new Verse(vUtil.getVersification(mBook.get()),
+                        BibleBook.GEN, 1, 1);
                 super.onPageFinished(view, url);
-                invokeJavascript("set_content", BookFragment.this.mBook.getName());
+                invokeJavascript("set_content", lookupService.getHTMLVerse(initial));
             }
         });
-
     }
+
+    /**
+     * Do the heavy listing of getting the actual text for a verse
+     *
+     * @param v
+     */
+    public void displayVerse(Verse v) {
+        Book b = mBook.get();
+        lookupService.getHTMLVerse(v);
+    }
+
+    /*-----------------------------------------
+        Here be the methods you wish didn't have to exist.
+      -----------------------------------------
+     */
 
     private void invokeJavascript(String function, Object arg) {
         mainContent.loadUrl("javascript:" + function + "('" + arg.toString() + "')");
@@ -105,21 +137,5 @@ public class BookFragment extends BaseFragment {
 
     private void invokeJavascript(String function, List<Object> args) {
         mainContent.loadUrl("javascript:" + function + "(" + joinString(",", args.toArray()) + ")");
-    }
-
-    // Convenience from http://stackoverflow.com/a/17795110/1454178
-    public static String joinString(String join, Object... strings) {
-        if (strings == null || strings.length == 0) {
-            return "";
-        } else if (strings.length == 1) {
-            return strings[0].toString();
-        } else {
-            StringBuilder sb = new StringBuilder();
-            sb.append(strings[0]);
-            for (int i = 1; i < strings.length; i++) {
-                sb.append(join).append(strings[i].toString());
-            }
-            return sb.toString();
-        }
     }
 }
