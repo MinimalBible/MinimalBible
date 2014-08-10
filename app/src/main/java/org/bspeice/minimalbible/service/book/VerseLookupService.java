@@ -3,18 +3,8 @@ package org.bspeice.minimalbible.service.book;
 import android.content.Context;
 import android.support.v4.util.LruCache;
 
-import org.crosswire.common.xml.Converter;
-import org.crosswire.common.xml.TransformingSAXEventProvider;
-import org.crosswire.common.xml.XMLUtil;
 import org.crosswire.jsword.book.Book;
-import org.crosswire.jsword.book.BookData;
-import org.crosswire.jsword.book.BookException;
-import org.crosswire.jsword.book.BookMetaData;
 import org.crosswire.jsword.passage.Verse;
-import org.crosswire.jsword.util.ConverterFactory;
-import org.xml.sax.SAXException;
-
-import javax.xml.transform.TransformerException;
 
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -72,30 +62,13 @@ public class VerseLookupService implements Action1<Verse> {
 
     /**
      * Perform the ugly work of getting the actual data for a verse
+     * @param v
+     * @return
      */
     public String doVerseLookup(Verse v) {
-        BookData bookData = new BookData(book, v);
+        //BookData bookData = new BookData(book, v);
 
-        String verseHTML = null;
-
-        try {
-            Converter styler = ConverterFactory.getConverter();
-            TransformingSAXEventProvider htmlsep = (TransformingSAXEventProvider)
-                    styler.convert(bookData.getSAXEventProvider());
-            BookMetaData bmd = book.getBookMetaData();
-            boolean direction = bmd.isLeftToRight();
-            htmlsep.setParameter("direction", direction ? "ltr" : "rtl");
-
-            verseHTML = XMLUtil.writeToString(htmlsep);
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        } catch (BookException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        }
-
-        return verseHTML;
+        return "Not yet implemented!";
     }
 
     /**
