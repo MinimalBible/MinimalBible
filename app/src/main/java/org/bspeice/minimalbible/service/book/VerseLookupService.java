@@ -1,9 +1,11 @@
 package org.bspeice.minimalbible.service.book;
 
-import android.content.Context;
 import android.support.v4.util.LruCache;
 
+import org.crosswire.common.xml.SAXEventProvider;
 import org.crosswire.jsword.book.Book;
+import org.crosswire.jsword.book.BookData;
+import org.crosswire.jsword.book.BookException;
 import org.crosswire.jsword.passage.Verse;
 
 import rx.functions.Action1;
@@ -33,7 +35,7 @@ public class VerseLookupService implements Action1<Verse> {
      */
     private PublishSubject<Verse> listener = PublishSubject.create();
 
-    public VerseLookupService(Book b, Context ctx) {
+    public VerseLookupService(Book b) {
         listener.subscribeOn(Schedulers.io())
                 .subscribe(this);
         this.book = b;
@@ -66,9 +68,14 @@ public class VerseLookupService implements Action1<Verse> {
      * @return
      */
     public String doVerseLookup(Verse v) {
-        //BookData bookData = new BookData(book, v);
-
-        return "Not yet implemented!";
+        BookData bookData = new BookData(book, v);
+        try {
+            SAXEventProvider provider = bookData.getSAXEventProvider();
+            return provider.toString();
+        } catch (BookException e) {
+            e.printStackTrace();
+            return "Unable to locate " + v.toString() + "!";
+        }
     }
 
     /**

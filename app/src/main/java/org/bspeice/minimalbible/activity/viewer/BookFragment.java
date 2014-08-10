@@ -72,7 +72,7 @@ public class BookFragment extends BaseFragment {
                 false);
         ((Injector)getActivity()).inject(this);
         // TODO: Defer lookup until after webview created? When exactly is WebView created?
-        this.lookupService = new VerseLookupService(mBook.get(), this.getActivity());
+        this.lookupService = new VerseLookupService(mBook.get());
         ButterKnife.inject(this, rootView);
         mainContent.getSettings().setJavaScriptEnabled(true);
 
