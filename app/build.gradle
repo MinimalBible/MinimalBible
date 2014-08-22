@@ -67,6 +67,7 @@ dependencies {
     compile 'com.readystatesoftware.systembartint:systembartint:+'
     compile 'com.netflix.rxjava:rxjava-android:+'
     compile 'com.android.support:appcompat-v7:20.+'
+    compile 'org.apache.commons:commons-lang3:+'
 
     androidTestCompile 'com.jayway.awaitility:awaitility:+'
     androidTestCompile 'org.mockito:mockito-core:+'

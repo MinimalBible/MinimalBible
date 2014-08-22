@@ -64,6 +64,7 @@ public class VerseLookupService implements Action1<Verse> {
 
     /**
      * Perform the ugly work of getting the actual data for a verse
+     *
      * @param v
      * @return
      */
@@ -71,11 +72,15 @@ public class VerseLookupService implements Action1<Verse> {
         BookData bookData = new BookData(book, v);
         try {
             SAXEventProvider provider = bookData.getSAXEventProvider();
+//            provider.provideSAXEvents(new OsisParser());
             return provider.toString();
         } catch (BookException e) {
             e.printStackTrace();
             return "Unable to locate " + v.toString() + "!";
+//        } catch (SAXException e) {
+//            e.printStackTrace();
         }
+//        return null;
     }
 
     /**
