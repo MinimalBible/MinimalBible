@@ -72,7 +72,7 @@ public class BookDownloadManager implements WorkListener, BooksListener {
         // So, the JobManager can't be injected, but we'll make do
 
         // First, look up where the Book came from
-        Observable.from(refreshManager.installerFromBook(b))
+        Observable.just(refreshManager.installerFromBook(b))
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Action1<Installer>() {
                     @Override
