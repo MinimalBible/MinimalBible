@@ -2,6 +2,8 @@ package org.bspeice.minimalbible.activity.viewer;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import org.bspeice.minimalbible.activity.navigation.ExpListNavAdapter;
 import org.bspeice.minimalbible.activity.viewer.bookutil.VersificationUtil;
 import org.bspeice.minimalbible.service.book.VerseLookupModules;
@@ -82,5 +84,10 @@ public class BibleViewerModules {
     @Provides
     VersificationUtil provideVersificationUtil() {
         return new VersificationUtil();
+    }
+
+    @Provides
+    Gson gson() {
+        return new Gson();
     }
 }
