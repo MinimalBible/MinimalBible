@@ -81,6 +81,7 @@ public class OsisToHtmlSaxHandler extends OsisSaxHandler {
         verseHandler = new VerseHandler(parameters, verseInfo, getWriter());
         myNoteMarker = new MyNoteMarker(parameters, verseInfo, getWriter());
         bookmarkMarker = new BookmarkMarker(parameters, verseInfo, getWriter());
+        noteHandler = new NoteHandler(parameters, verseInfo, getWriter());
         referenceHandler = new ReferenceHandler(parameters, noteHandler, getWriter());
         refHandler = new RefHandler(parameters, noteHandler, getWriter());
         titleHandler = new TitleHandler(parameters, verseInfo, getWriter());

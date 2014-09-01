@@ -1,8 +1,10 @@
 package org.bspeice.minimalbible.service.book;
 
 import android.support.v4.util.LruCache;
+import android.util.Log;
 
-import org.bspeice.minimalbible.service.format.OsisToCanonicalTextSaxHandler;
+import org.bspeice.minimalbible.service.format.osistohtml.OsisToHtmlParameters;
+import org.bspeice.minimalbible.service.format.osistohtml.OsisToHtmlSaxHandler;
 import org.crosswire.common.xml.SAXEventProvider;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookData;
@@ -74,8 +76,9 @@ public class VerseLookupService implements Action1<Verse> {
         BookData bookData = new BookData(book, v);
         try {
             SAXEventProvider provider = bookData.getSAXEventProvider();
-            OsisToCanonicalTextSaxHandler handler = new OsisToCanonicalTextSaxHandler();
+            OsisToHtmlSaxHandler handler = new OsisToHtmlSaxHandler(new OsisToHtmlParameters());
             provider.provideSAXEvents(handler);
+            Log.e(this.getClass().getName(), handler.toString());
             return handler.toString();
         } catch (BookException e) {
             e.printStackTrace();
