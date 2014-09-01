@@ -10,8 +10,6 @@ import org.bspeice.minimalbible.activity.downloader.manager.InstalledManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.Books;
-import org.crosswire.jsword.book.BooksEvent;
-import org.crosswire.jsword.book.BooksListener;
 import org.crosswire.jsword.book.install.InstallManager;
 import org.crosswire.jsword.book.install.Installer;
 
@@ -122,34 +120,5 @@ public class InstalledManagerTest extends TestCase implements Injector {
                     }
                 });
         assertFalse(foundMismatch.get());
-    }
-
-    /**
-     * Test that we can remove a book. Currently this test is neutered until I can fix
-     * issues with @link{getInstalledBooks}.
-     * @throws Exception
-     */
-    public void testRemoveBook() throws Exception {
-        final Book book = getInstalledBooks().toBlocking().first();
-
-        final AtomicBoolean didRemove = new AtomicBoolean(false);
-
-        installedBooks.addBooksListener(new BooksListener() {
-            @Override
-            public void bookAdded(BooksEvent ev) {
-
-            }
-            @Override
-            public void bookRemoved(BooksEvent ev) {
-                if (ev.getBook().equals(book)) {
-                    didRemove.set(true);
-                }
-            }
-        });
-
-        iM.removeBook(book);
-        if (!didRemove.get()) {
-            Log.w("testRemoveBook", "Could not remove book, not necessarily fatal.");
-        }
     }
 }
