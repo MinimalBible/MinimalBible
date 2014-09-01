@@ -23,6 +23,8 @@ window.appendVerse = (text) ->
 	# Since we're calling outside of angular, we need to manually apply
 	scope.$apply()
 
+console.log Android.testReturn "Good morning."
+
 ###
 Future reference: Get the controller scope like so:
 angular.element($("<controller-element>")).scope().<function>

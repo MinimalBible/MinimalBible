@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -124,6 +125,15 @@ public class BookFragment extends BaseFragment {
                     description);
             }
         });
+
+        // We can receive and return only primitives and Strings. Still means we can use JSON :)
+        mainContent.addJavascriptInterface(new Object() {
+            @JavascriptInterface
+            @SuppressWarnings("unused")
+            public String testReturn(String echo) {
+                return echo;
+            }
+        }, "Android");
 
         // TODO: Remove remote debugging when ready - or should this be removed?
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

@@ -31,6 +31,8 @@ window.appendVerse = function(text) {
   return scope.$apply();
 };
 
+console.log(Android.testReturn("Good morning."));
+
 
 /*
 Future reference: Get the controller scope like so:
