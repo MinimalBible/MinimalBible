@@ -3,6 +3,7 @@ package org.bspeice.minimalbible.service.book;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
+import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.service.format.osistohtml.OsisToHtmlParameters;
 import org.bspeice.minimalbible.service.format.osistohtml.OsisToHtmlSaxHandler;
 import org.crosswire.common.xml.SAXEventProvider;
@@ -11,6 +12,8 @@ import org.crosswire.jsword.book.BookData;
 import org.crosswire.jsword.book.BookException;
 import org.crosswire.jsword.passage.Verse;
 import org.xml.sax.SAXException;
+
+import javax.inject.Inject;
 
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -29,8 +32,10 @@ import rx.subjects.PublishSubject;
  */
 public class VerseLookupService implements Action1<Verse> {
 
-    private static final int MAX_SIZE = 1000000; // 1MB
+
     Book book;
+
+    @Inject
     LruCache<String, String> cache;
     /**
      * The listener is responsible for delegating calls to cache verses.
@@ -39,11 +44,11 @@ public class VerseLookupService implements Action1<Verse> {
      */
     private PublishSubject<Verse> listener = PublishSubject.create();
 
-    public VerseLookupService(Book b) {
+    public VerseLookupService(Injector i, Book b) {
         listener.subscribeOn(Schedulers.io())
                 .subscribe(this);
         this.book = b;
-        this.cache = new LruCache<String, String>(MAX_SIZE);
+        i.inject(this);
     }
 
     /**

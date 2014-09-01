@@ -2,9 +2,9 @@ package org.bspeice.minimalbible.activity.viewer;
 
 import android.util.Log;
 
-import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.activity.navigation.ExpListNavAdapter;
 import org.bspeice.minimalbible.activity.viewer.bookutil.VersificationUtil;
+import org.bspeice.minimalbible.service.book.VerseLookupModules;
 import org.crosswire.jsword.book.Book;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,19 +28,13 @@ import rx.functions.Func1;
                 ExpListNavDrawerFragment.class,
                 ExpListNavAdapter.class
         },
-        library = true
+        includes = VerseLookupModules.class
 )
 public class BibleViewerModules {
     BibleViewer activity;
 
     public BibleViewerModules(BibleViewer activity) {
         this.activity = activity;
-    }
-
-    @Provides
-    @Singleton
-    Injector provideInjector() {
-        return activity;
     }
 
     @Provides

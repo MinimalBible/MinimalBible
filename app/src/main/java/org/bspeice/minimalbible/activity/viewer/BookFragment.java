@@ -70,9 +70,10 @@ public class BookFragment extends BaseFragment {
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_viewer_main, container,
                 false);
-        ((Injector)getActivity()).inject(this);
+        Injector i = (Injector) getActivity();
+        i.inject(this);
         // TODO: Defer lookup until after webview created? When exactly is WebView created?
-        this.lookupService = new VerseLookupService(mBook.get());
+        this.lookupService = new VerseLookupService(i, mBook.get());
         ButterKnife.inject(this, rootView);
         mainContent.getSettings().setJavaScriptEnabled(true);
 
@@ -98,7 +99,7 @@ public class BookFragment extends BaseFragment {
      * Do the initial work of displaying a book. Requires setting up WebView, etc.
      * TODO: Get initial content from cache?
      *
-     * @param b
+     * @param b The book we want to display
      */
     private void displayBook(Book b) {
         Log.d("BookFragment", b.getName());
@@ -117,10 +118,11 @@ public class BookFragment extends BaseFragment {
     }
 
     /**
-     * Do the heavy listing of getting the actual text for a verse
+     * Do the heavy lifting of getting the actual text for a verse
      *
-     * @param v
+     * @param v The verse to display
      */
+    @SuppressWarnings("unused")
     public void displayVerse(Verse v) {
         Book b = mBook.get();
         lookupService.getHTMLVerse(v);
@@ -135,6 +137,7 @@ public class BookFragment extends BaseFragment {
         mainContent.loadUrl("javascript:" + function + "('" + arg.toString() + "')");
     }
 
+    @SuppressWarnings("unused")
     private void invokeJavascript(String function, List<Object> args) {
         mainContent.loadUrl("javascript:" + function + "(" + joinString(",", args.toArray()) + ")");
     }
