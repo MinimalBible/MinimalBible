@@ -6,13 +6,12 @@ import org.crosswire.jsword.book.OSISUtil;
 import org.xml.sax.Attributes;
 
 import java.util.Stack;
-
 /**
  * Convert OSIS input into Canonical text (used when creating search index)
- *
+ * 
  * @author Martin Denham [mjdenham at gmail dot com]
  * @see gnu.lgpl.License for license details.<br>
- * The copyright to this program is held by it's author.
+ *      The copyright to this program is held by it's author.
  */
 public class OsisToCanonicalTextSaxHandler extends OsisSaxHandler {
 
@@ -24,8 +23,6 @@ public class OsisToCanonicalTextSaxHandler extends OsisSaxHandler {
     public OsisToCanonicalTextSaxHandler() {
         super();
     }
-
-    ;
 
     @Override
     public void startDocument() {

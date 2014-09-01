@@ -2,11 +2,13 @@ package org.bspeice.minimalbible.service.book;
 
 import android.support.v4.util.LruCache;
 
+import org.bspeice.minimalbible.service.format.OsisToCanonicalTextSaxHandler;
 import org.crosswire.common.xml.SAXEventProvider;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookData;
 import org.crosswire.jsword.book.BookException;
 import org.crosswire.jsword.passage.Verse;
+import org.xml.sax.SAXException;
 
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -64,23 +66,24 @@ public class VerseLookupService implements Action1<Verse> {
 
     /**
      * Perform the ugly work of getting the actual data for a verse
-     *
-     * @param v
-     * @return
+     * TODO: Return a verse object, JS should be left to templating.
+     * @param v The verse to look up
+     * @return The string content of this verse
      */
     public String doVerseLookup(Verse v) {
         BookData bookData = new BookData(book, v);
         try {
             SAXEventProvider provider = bookData.getSAXEventProvider();
-//            provider.provideSAXEvents(new OsisParser());
-            return provider.toString();
+            OsisToCanonicalTextSaxHandler handler = new OsisToCanonicalTextSaxHandler();
+            provider.provideSAXEvents(handler);
+            return handler.toString();
         } catch (BookException e) {
             e.printStackTrace();
             return "Unable to locate " + v.toString() + "!";
-//        } catch (SAXException e) {
-//            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
         }
-//        return null;
+        return null;
     }
 
     /**
@@ -114,11 +117,9 @@ public class VerseLookupService implements Action1<Verse> {
      * @return The name this verse should have in the cache
      */
     private String getEntryName(Verse v) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(v.getBook().toString() + "_");
-        sb.append(v.getChapter() + "_");
-        sb.append(v.getVerse());
-        return sb.toString();
+        return v.getBook().toString() + "_" +
+                v.getChapter() + "_" +
+                v.getVerse();
     }
 
     /*------------------------------------------------------------------------

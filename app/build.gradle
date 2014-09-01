@@ -55,13 +55,12 @@ android {
 dependencies {
     compile project(path: ':jsword-minimalbible', configuration: 'buildJSword')
 
-    // Not sure why, but using dagger 1.2.2 breaks esperandro's use of JavaWriter.
-    // TODO: Migrate to Dagger 1.2.2
-    compile 'com.squareup.dagger:dagger:1.2.1'
-    provided 'com.squareup.dagger:dagger-compiler:1.2.1'
+    compile 'com.squareup.dagger:dagger:+'
+    provided 'com.squareup.dagger:dagger-compiler:+'
 
-    compile 'de.devland.esperandro:esperandro-api:+'
-    provided 'de.devland.esperandro:esperandro:+'
+    // TODO: Figure out why I need to force 2.1.0 and can't just use +
+    compile 'de.devland.esperandro:esperandro-api:2.1.0'
+    provided 'de.devland.esperandro:esperandro:2.1.0'
 
     compile 'com.jakewharton:butterknife:+'
     compile 'com.readystatesoftware.systembartint:systembartint:+'
