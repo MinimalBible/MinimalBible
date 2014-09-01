@@ -1,0 +1,32 @@
+{
+	"name": "MinimalBible",
+	"description": "A Bible reading app for Android focused on user experience and speed",
+	"version": "0.0.1",
+	"homepage": "https://minimalbible.github.io/",
+	"repository": {
+		"type:": "git",
+		"url": "https://github.com/MinimalBible/MinimalBible.git"
+	},
+	"bugs": {
+		"url": "https://github.com/MinimalBible/MinimalBible/issues"
+	},
+	"author": {
+		"name": "Bradlee Speice",
+		"email": "bspeice.nc@gmail.com",
+		"url": "https://minimalbible.github.io/"
+	},
+	"main": "src/",
+	"dependencies": {
+		"angular": ">=1.2.23",
+		"jquery": ">=2.1.1"
+	},
+	"devDependencies": {
+		"browserify": ">=5.11.0",
+		"coffeeify": ">=0.7.0",
+		"gulp": ">=3.8.7",
+		"gulp-buffer": ">=0.0.2",
+		"gulp-util": ">=3.0.1",
+		"vinyl-source-stream": ">=0.1.1",
+		"watchify": ">=1.0.2"
+	}
+}

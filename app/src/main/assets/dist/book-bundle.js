@@ -44,12 +44,12 @@ angular.element($("#bookController")).scope().<function>
 
 
 
-},{"angular":"/home/bspeice/Android Studio Projects/MinimalBible/node_modules/angular/index-browserify.js","jquery":"/home/bspeice/Android Studio Projects/MinimalBible/node_modules/jquery/dist/jquery.js"}],"/home/bspeice/Android Studio Projects/MinimalBible/node_modules/angular/index-browserify.js":[function(require,module,exports){
+},{"angular":"/home/bspeice/Android Studio Projects/MinimalBible/app/src/main/assets/node_modules/angular/index-browserify.js","jquery":"/home/bspeice/Android Studio Projects/MinimalBible/app/src/main/assets/node_modules/jquery/dist/jquery.js"}],"/home/bspeice/Android Studio Projects/MinimalBible/app/src/main/assets/node_modules/angular/index-browserify.js":[function(require,module,exports){
 require('./lib/angular.js');
 
 module.exports = angular;
 
-},{"./lib/angular.js":"/home/bspeice/Android Studio Projects/MinimalBible/node_modules/angular/lib/angular.js"}],"/home/bspeice/Android Studio Projects/MinimalBible/node_modules/angular/lib/angular.js":[function(require,module,exports){
+},{"./lib/angular.js":"/home/bspeice/Android Studio Projects/MinimalBible/app/src/main/assets/node_modules/angular/lib/angular.js"}],"/home/bspeice/Android Studio Projects/MinimalBible/app/src/main/assets/node_modules/angular/lib/angular.js":[function(require,module,exports){
 /**
  * @license AngularJS v1.2.23
  * (c) 2010-2014 Google, Inc. http://angularjs.org
@@ -22004,7 +22004,7 @@ var styleDirective = valueFn({
 })(window, document);
 
 !window.angular.$$csp() && window.angular.element(document).find('head').prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}.ng-hide-add-active,.ng-hide-remove{display:block!important;}</style>');
-},{}],"/home/bspeice/Android Studio Projects/MinimalBible/node_modules/jquery/dist/jquery.js":[function(require,module,exports){
+},{}],"/home/bspeice/Android Studio Projects/MinimalBible/app/src/main/assets/node_modules/jquery/dist/jquery.js":[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.1
  * http://jquery.com/

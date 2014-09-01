@@ -3,7 +3,6 @@ var gutil = require('gulp-util');
 var source = require('vinyl-source-stream');
 var watchify = require('watchify');
 var browserify = require('browserify');
-var uglify = require('gulp-uglify');
 var buffer = require('gulp-buffer');
 
 gulp.task('watch', function() {
