@@ -85,9 +85,4 @@ public class BibleViewerModules {
     VersificationUtil provideVersificationUtil() {
         return new VersificationUtil();
     }
-
-    @Provides
-    Gson gson() {
-        return new Gson();
-    }
 }
