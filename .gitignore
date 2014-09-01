@@ -4,3 +4,5 @@
 .DS_Store
 /build
 *.iml
+/node_modules
+npm-debug.log

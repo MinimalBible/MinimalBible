@@ -105,24 +105,9 @@ public class OsisToHtmlSaxHandler extends OsisSaxHandler {
 
     @Override
     public void startDocument() {
-        String jsTag = "\n<script type='text/javascript' src='file:///android_asset/web/script.js'></script>\n";
-        String styleSheetTag = "<link href='file:///android_asset/web/style.css' rel='stylesheet' type='text/css'/>";
-        String extraStyleSheetTag = "";
-        if (parameters.getExtraStylesheet() != null) {
-            extraStyleSheetTag = "<link href='file:///android_asset/web/"
-                    + parameters.getExtraStylesheet()
-                    + "' rel='stylesheet' type='text/css'/>";
-        }
-        write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"> "
-                + "<html xmlns='http://www.w3.org/1999/xhtml' dir='" + getDirection() + "'><head>"
-                + styleSheetTag + extraStyleSheetTag + "\n"
-                + jsTag
-                + "<meta charset='utf-8'/>"
-                + "</head>"
-                + "<body onscroll='jsonscroll()' onload='jsonload()' >");
-
         // force rtl for rtl languages - rtl support on Android is poor but
         // forcing it seems to help occasionally
+        write("<p>");
         if (!parameters.isLeftToRight()) {
             write("<span dir='rtl'>");
         }
@@ -150,9 +135,7 @@ public class OsisToHtmlSaxHandler extends OsisSaxHandler {
         if (!parameters.isLeftToRight()) {
             write("</span>");
         }
-        // add padding at bottom to allow last verse to scroll to top of page
-        // and become current verse
-        write("</body></html>");
+        write("</p>");
     }
 
     /*
