@@ -1,8 +1,10 @@
-<html lang="en" ng-app>
+<html lang="en" ng-app="bookApp">
 <head>
     <script type="text/javascript" src="file:///android_asset/dist/book-bundle.js"></script>
 </head>
-<body>
-<div id="content">Hello {{ 'Android!' }}</div>
+<body ng-controller="BookCtrl">
+<div ng-repeat="verse in verses">
+    {{ verse.text }}
+</div>
 </body>
 </html>
