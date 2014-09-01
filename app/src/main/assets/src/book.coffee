@@ -1,4 +1,4 @@
-require 'jquery' # For using selectors to access scope
+$ = require 'jquery' # For using selectors to access scope
 require 'angular'
 
 app = angular.module('bookApp', [])
@@ -8,9 +8,20 @@ app.controller 'BookCtrl', ['$scope', ($scope) ->
 		{'text': 'hello.'}
 	];
 
-	$scope.alert = ->
-		alert "Hello!"
+	$scope.appendVerse = (text) ->
+		$scope.verses.push {'text': text}
 ]
+
+# Due to page initialization, we can only store the controller string.
+# The actual element changes, so there's nothing we can do with JQuery
+# etc. to grab the scope ahead of time and re-use it.
+controller = "#bookController"
+
+window.appendVerse = (text) ->
+	scope = angular.element($("#bookController")).scope()
+	scope.appendVerse text
+	# Since we're calling outside of angular, we need to manually apply
+	scope.$apply()
 
 ###
 Future reference: Get the controller scope like so:

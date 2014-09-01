@@ -113,7 +113,8 @@ public class BookFragment extends BaseFragment {
                 Verse initial = new Verse(vUtil.getVersification(mBook.get()),
                         BibleBook.GEN, 1, 1);
                 super.onPageFinished(view, url);
-//                invokeJavascript("set_content", lookupService.getHTMLVerse(initial));
+//                invokeJavascript("appendVerse", lookupService.getHTMLVerse(initial));
+                invokeJavascript("appendVerse", "Testing string...");
             }
 
             @Override
@@ -124,7 +125,7 @@ public class BookFragment extends BaseFragment {
             }
         });
 
-        // TODO: Remove remote debugging when ready
+        // TODO: Remove remote debugging when ready - or should this be removed?
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true);
         }

@@ -22,7 +22,7 @@ gulp.task('watch', function() {
       .on('error', gutil.log.bind(gutil, 'Browserify Error'))
       .pipe(source('book-bundle.js'))
 	  .pipe(buffer())
-	  .pipe(uglify())
+	  //.pipe(uglify()) // Since Android needs to call in, can't minify
       .pipe(gulp.dest('./dist'));
   }
 
