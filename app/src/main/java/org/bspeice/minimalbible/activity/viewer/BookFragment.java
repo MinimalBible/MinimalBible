@@ -1,6 +1,7 @@
 package org.bspeice.minimalbible.activity.viewer;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -112,7 +113,7 @@ public class BookFragment extends BaseFragment {
                 Verse initial = new Verse(vUtil.getVersification(mBook.get()),
                         BibleBook.GEN, 1, 1);
                 super.onPageFinished(view, url);
-                invokeJavascript("set_content", lookupService.getHTMLVerse(initial));
+//                invokeJavascript("set_content", lookupService.getHTMLVerse(initial));
             }
 
             @Override
@@ -122,6 +123,11 @@ public class BookFragment extends BaseFragment {
                     description);
             }
         });
+
+        // TODO: Remove remote debugging when ready
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
     }
 
     /**
