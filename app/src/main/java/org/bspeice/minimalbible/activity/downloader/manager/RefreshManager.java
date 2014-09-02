@@ -2,6 +2,7 @@ package org.bspeice.minimalbible.activity.downloader.manager;
 
 import org.bspeice.minimalbible.Injector;
 import org.crosswire.jsword.book.Book;
+import org.crosswire.jsword.book.install.InstallException;
 import org.crosswire.jsword.book.install.Installer;
 
 import java.util.Collection;
@@ -48,6 +49,7 @@ public class RefreshManager {
      * NOTE: This code assigns its own thread. This is because we are called privately, and
      * don't want to expose this method. I don't like hiding the side effects like this, but
      * in this case I'm making an exception.
+     * TODO: Need logic for when to do reloadBookList() vs. getBooks()
      */
     private Observable<Map<Installer, List<Book>>> refreshModules() {
         if (availableModules == null) {
@@ -56,7 +58,13 @@ public class RefreshManager {
                         @Override
                         public Map<Installer, List<Book>> call(Installer installer) {
                             Map<Installer, List<Book>> map = new HashMap<Installer, List<Book>>();
-                            map.put(installer, installer.getBooks());
+                            try {
+                                installer.reloadBookList();
+                                map.put(installer, installer.getBooks());
+                            } catch (InstallException e) {
+                                e.printStackTrace();
+                            }
+
                             return map;
                         }
                     }).subscribeOn(Schedulers.io())
