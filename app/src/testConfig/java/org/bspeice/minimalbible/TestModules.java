@@ -26,19 +26,6 @@ public class TestModules {
         return testActivityTitle;
     }
 
-    /**
-     * Provide an application-wide hub to enable/disable a "testing" mode
-     * Each application is free to interpret what this means, but allows for programming
-     * different behavior to respond to different testing needs in code that can't be mocked
-     * *cough cough* `Activities`.
-     * @return
-     */
-    @Provides
-    @Named("Testing")
-    boolean isTest() {
-        return isTest;
-    }
-
     @Provides @Singleton
     @Named("ValidCategories")
     List<BookCategory> provideValidCategories() {
@@ -48,15 +35,5 @@ public class TestModules {
             add(BookCategory.DICTIONARY);
             add(BookCategory.MAPS);
         }};
-    }
-
-    private boolean isTest;
-
-    public void setTestMode(boolean isTest) {
-        this.isTest = isTest;
-    }
-
-    public boolean getTestMode() {
-        return isTest;
     }
 }
