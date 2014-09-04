@@ -2,6 +2,7 @@ package org.bspeice.minimalbible;
 
 
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
+import org.bspeice.minimalbible.activity.viewer.BookManager;
 import org.crosswire.jsword.book.BookCategory;
 
 import java.util.ArrayList;
@@ -22,7 +23,10 @@ import dagger.Provides;
 public class TestModules {
 
     public static CharSequence testActivityTitle = "Test";
-    @Provides CharSequence provideString() {
+    private BookManager bookManager;
+
+    @Provides
+    CharSequence provideString() {
         return testActivityTitle;
     }
 
@@ -35,5 +39,14 @@ public class TestModules {
             add(BookCategory.DICTIONARY);
             add(BookCategory.MAPS);
         }};
+    }
+
+    public void setBookManager(BookManager bookManager) {
+        this.bookManager = bookManager;
+    }
+
+    @Provides
+    BookManager provideBookManager() {
+        return bookManager;
     }
 }

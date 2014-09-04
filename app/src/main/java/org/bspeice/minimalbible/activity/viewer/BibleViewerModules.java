@@ -2,13 +2,12 @@ package org.bspeice.minimalbible.activity.viewer;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import org.bspeice.minimalbible.activity.navigation.ExpListNavAdapter;
 import org.bspeice.minimalbible.activity.viewer.bookutil.VersificationUtil;
 import org.bspeice.minimalbible.service.book.VerseLookupModules;
 import org.crosswire.jsword.book.Book;
 
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
@@ -69,13 +68,25 @@ public class BibleViewerModules {
                 });
 
         if (mBook.get() == null) {
-            Book fallback;
-            fallback = bookManager.getInstalledBooks()
-                    .toBlocking().first();
+            try {
+                Book fallback;
+                fallback = bookManager.getInstalledBooks()
+                        .onErrorReturn(new Func1<Throwable, Book>() {
+                            @Override
+                            public Book call(Throwable throwable) {
+                                // If there's no book installed, we can't select the main one...
+                                return null;
+                            }
+                        })
+                        .toBlocking().first();
 
-            prefs.defaultBookName(fallback.getName());
-            return fallback;
-
+                prefs.defaultBookName(fallback.getName());
+                return fallback;
+            } catch (NoSuchElementException e) {
+                // If no books are installed, there's really nothing we can do...
+                Log.d("BibleViewerModules", "No books are installed, so can't select a main book.");
+                return null;
+            }
         } else {
             return mBook.get();
         }

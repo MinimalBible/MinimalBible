@@ -58,46 +58,52 @@ public class ExpListNavDrawerFragment extends NavDrawerFragment {
                 });
         */
 
-        List<String> bibleBooks = vUtil.getBookNames(mainBook)
-                .toList().toBlocking().first();
+        List<String> bibleBooks;
+        if (mainBook != null) {
+            bibleBooks = vUtil.getBookNames(mainBook)
+                    .toList().toBlocking().first();
+        } else {
+            bibleBooks = new ArrayList<String>();
+        }
 
 
         // I really don't like how we build the chapters, but I'm not adding Guava just for Range.
         // RXJava does get ridiculous with the angle brackets, you have me there. But Intellij
         // folds nicely.
-        Map<String, List<Integer>> chapterMap =
-                vUtil.getBooks(mainBook).map(new Func1<BibleBook, Map<String, List<Integer>>>() {
-                    @Override
-                    public Map<String, List<Integer>> call(BibleBook bibleBook) {
-                        // These lines are important
-                        int bookCount = vUtil.getChapterCount(mainBook, bibleBook);
-                        List<Integer> chapterList = new ArrayList<Integer>(bookCount);
-                        for (int i = 0; i < bookCount; i++) {
-                            chapterList.add(i + 1); // Index to chapter number
-                        }
-                        // </important>
-                        Map<String, List<Integer>> bookListMap =
-                                new HashMap<String, List<Integer>>(1);
-                        bookListMap.put(vUtil.getBookName(mainBook, bibleBook), chapterList);
-                        return bookListMap;
+        Map<String, List<Integer>> chapterMap = new HashMap<String, List<Integer>>();
+        if (mainBook != null) {
+            vUtil.getBooks(mainBook).map(new Func1<BibleBook, Map<String, List<Integer>>>() {
+                @Override
+                public Map<String, List<Integer>> call(BibleBook bibleBook) {
+                    // These lines are important
+                    int bookCount = vUtil.getChapterCount(mainBook, bibleBook);
+                    List<Integer> chapterList = new ArrayList<Integer>(bookCount);
+                    for (int i = 0; i < bookCount; i++) {
+                        chapterList.add(i + 1); // Index to chapter number
                     }
-                })
-                        .reduce(new Func2<Map<String, List<Integer>>,
-                                Map<String, List<Integer>>,
-                                Map<String, List<Integer>>>() {
-                            @Override
-                            public Map<String, List<Integer>>
-                            call(Map<String, List<Integer>> acc,
-                                 Map<String, List<Integer>> value) {
-                                // These lines are important
-                                acc.putAll(value);
-                                return acc;
-                                // </important>
-                            }
-                        })
-                        .toBlocking()
-                        .first();
-
+                    // </important>
+                    Map<String, List<Integer>> bookListMap =
+                            new HashMap<String, List<Integer>>(1);
+                    bookListMap.put(vUtil.getBookName(mainBook, bibleBook), chapterList);
+                    return bookListMap;
+                }
+            })
+                    .reduce(new Func2<Map<String, List<Integer>>,
+                            Map<String, List<Integer>>,
+                            Map<String, List<Integer>>>() {
+                        @Override
+                        public Map<String, List<Integer>>
+                        call(Map<String, List<Integer>> acc,
+                             Map<String, List<Integer>> value) {
+                            // These lines are important
+                            acc.putAll(value);
+                            return acc;
+                            // </important>
+                        }
+                    })
+                    .toBlocking()
+                    .first();
+        }
 
         ExpListNavAdapter<String, Integer> adapter =
                 new ExpListNavAdapter<String, Integer>(bibleBooks, chapterMap);

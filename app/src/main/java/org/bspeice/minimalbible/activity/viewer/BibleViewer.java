@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import dagger.ObjectGraph;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 
 public class BibleViewer extends BaseActivity implements
         NavDrawerFragment.NavigationDrawerCallbacks,
@@ -66,35 +67,42 @@ public class BibleViewer extends BaseActivity implements
         bvObjectGraph.inject(o);
     }
 
-	@Override
+    /**
+     * Set up the application
+     * TODO: Get the main book, rather than the first installed book.
+     *
+     * @param savedInstanceState Android's savedInstanceState
+     */
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
         this.inject(this);
 
-        // If no books are installed, we need to download one first.
-        int count = bookManager.getInstalledBooks()
-                .count()
-                .toBlocking()
-                .last();
-        if (count <= 0) {
-            Intent i = new Intent(this, DownloadActivity.class);
-            startActivityForResult(i, 0);
-            finish();
-        } else {
-            bookManager.getInstalledBooks()
-                    .first()
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Action1<Book>() {
-                        @Override
-                        public void call(Book book) {
-                            Log.d("BibleViewer", "Subscribed to display book: " + book.getName());
-                            displayMainBook(book);
-                        }
-                    });
-        }
-
-		setContentView(R.layout.activity_bible_viewer);
+        // If no books are installed, we need to download one first. However,
+        // RxJava will error if there's nothing installed.
+        bookManager.getInstalledBooks()
+                .first()
+                .onErrorReturn(new Func1<Throwable, Book>() {
+                    @Override
+                    public Book call(Throwable throwable) {
+                        // If there are no books installed...
+                        Log.e(getLocalClassName(), "No books are currently installed, starting DownloadManager");
+                        Intent i = new Intent(BibleViewer.this, DownloadActivity.class);
+                        startActivityForResult(i, 0);
+                        finish();
+                        return null;
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Book>() {
+                    @Override
+                    public void call(Book book) {
+                        Log.e("BibleViewer", "Subscribed to display book: " + book.getName());
+                        displayMainBook(book);
+                    }
+                });
+        setContentView(R.layout.activity_bible_viewer);
 
         mNavigationDrawerFragment = (ExpListNavDrawerFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.navigation_drawer);
