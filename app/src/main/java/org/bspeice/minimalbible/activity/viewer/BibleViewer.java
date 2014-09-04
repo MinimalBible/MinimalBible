@@ -45,7 +45,7 @@ public class BibleViewer extends BaseActivity implements
     private CharSequence mTitle;
 
     /**
-     * Build a scoped object graph for anything used by the DownloadActivity
+     * Build a scoped object graph for anything used by the BibleViewer
      */
     private void buildObjGraph() {
         if (bvObjectGraph == null) {
