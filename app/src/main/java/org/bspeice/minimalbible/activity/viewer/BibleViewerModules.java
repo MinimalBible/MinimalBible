@@ -93,6 +93,12 @@ public class BibleViewerModules {
     }
 
     @Provides
+    @Singleton
+    BookManager bookManager() {
+        return new BookManager();
+    }
+
+    @Provides
     VersificationUtil provideVersificationUtil() {
         return new VersificationUtil();
     }

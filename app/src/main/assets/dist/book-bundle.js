@@ -9,11 +9,7 @@ app = angular.module('bookApp', []);
 
 app.controller('BookCtrl', [
   '$scope', function($scope) {
-    $scope.verses = [
-      {
-        'text': 'hello.'
-      }
-    ];
+    $scope.verses = [];
     return $scope.appendVerse = function(text) {
       return $scope.verses.push({
         'text': text
@@ -30,8 +26,6 @@ window.appendVerse = function(text) {
   scope.appendVerse(text);
   return scope.$apply();
 };
-
-console.log(Android.testReturn("Good morning."));
 
 
 /*

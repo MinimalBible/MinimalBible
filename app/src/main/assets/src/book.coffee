@@ -4,9 +4,7 @@ require 'angular'
 app = angular.module('bookApp', [])
 
 app.controller 'BookCtrl', ['$scope', ($scope) ->
-	$scope.verses = [
-		{'text': 'hello.'}
-	];
+	$scope.verses = []
 
 	$scope.appendVerse = (text) ->
 		$scope.verses.push {'text': text}
@@ -22,8 +20,6 @@ window.appendVerse = (text) ->
 	scope.appendVerse text
 	# Since we're calling outside of angular, we need to manually apply
 	scope.$apply()
-
-console.log Android.testReturn "Good morning."
 
 ###
 Future reference: Get the controller scope like so:

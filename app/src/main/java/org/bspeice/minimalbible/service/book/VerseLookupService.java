@@ -4,8 +4,7 @@ import android.support.v4.util.LruCache;
 import android.util.Log;
 
 import org.bspeice.minimalbible.Injector;
-import org.bspeice.minimalbible.service.format.osistohtml.OsisToHtmlParameters;
-import org.bspeice.minimalbible.service.format.osistohtml.OsisToHtmlSaxHandler;
+import org.bspeice.minimalbible.service.osisparser.OsisParser;
 import org.crosswire.common.xml.SAXEventProvider;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookData;
@@ -81,10 +80,11 @@ public class VerseLookupService implements Action1<Verse> {
         BookData bookData = new BookData(book, v);
         try {
             SAXEventProvider provider = bookData.getSAXEventProvider();
-            OsisToHtmlSaxHandler handler = new OsisToHtmlSaxHandler(new OsisToHtmlParameters());
+//            OsisToHtmlSaxHandler handler = new OsisToHtmlSaxHandler(new OsisToHtmlParameters());
+            OsisParser handler = new OsisParser(v);
             provider.provideSAXEvents(handler);
             Log.e(this.getClass().getName(), handler.toString());
-            return handler.toString();
+            return handler.getContent().getContent();
         } catch (BookException e) {
             e.printStackTrace();
             return "Unable to locate " + v.toString() + "!";
