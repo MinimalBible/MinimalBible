@@ -40,6 +40,7 @@ public class BookFragment extends BaseFragment {
     @Inject
     @Named("MainBook")
     Lazy<Book> mBook;
+    // TODO: Once
     @Inject
     VersificationUtil vUtil;
     // TODO: Factory?
