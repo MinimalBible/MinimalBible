@@ -98,7 +98,6 @@ public class BibleViewerModules {
         return new BookManager();
     }
 
-    // If this is ever injected by more than one person, switch to extension functions in Kotlin
     @Provides
     VersificationUtil provideVersificationUtil() {
         return new VersificationUtil();
