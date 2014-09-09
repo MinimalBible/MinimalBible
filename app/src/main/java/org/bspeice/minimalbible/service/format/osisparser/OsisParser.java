@@ -2,7 +2,6 @@ package org.bspeice.minimalbible.service.format.osisparser;
 
 import org.crosswire.jsword.book.OSISUtil;
 import org.crosswire.jsword.passage.Verse;
-import org.jetbrains.annotations.NotNull;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -24,8 +23,7 @@ public class OsisParser extends DefaultHandler {
     }
 
     @Override
-    public void startElement(@NotNull String uri, @NotNull String localName,
-                             @NotNull String qName, @NotNull Attributes attributes)
+    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
         String name = getName(localName, qName);
 
@@ -38,8 +36,7 @@ public class OsisParser extends DefaultHandler {
     }
 
     @Override
-    public void endElement(String uri, @NotNull String localName,
-                           @NotNull String qName) throws SAXException {
+    public void endElement(String uri, String localName, String qName) throws SAXException {
         doWrite.pop();
     }
 
