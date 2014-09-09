@@ -4,7 +4,7 @@ import android.support.v4.util.LruCache;
 import android.util.Log;
 
 import org.bspeice.minimalbible.Injector;
-import org.bspeice.minimalbible.service.osisparser.OsisParser;
+import org.bspeice.minimalbible.service.format.osisparser.OsisParser;
 import org.crosswire.common.xml.SAXEventProvider;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookData;
@@ -73,6 +73,7 @@ public class VerseLookupService implements Action1<Verse> {
     /**
      * Perform the ugly work of getting the actual data for a verse
      * TODO: Return a verse object, JS should be left to templating.
+     *
      * @param v The verse to look up
      * @return The string content of this verse
      */
