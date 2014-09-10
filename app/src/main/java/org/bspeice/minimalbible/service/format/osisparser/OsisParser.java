@@ -1,5 +1,7 @@
 package org.bspeice.minimalbible.service.format.osisparser;
 
+import android.util.Log;
+
 import org.crosswire.jsword.book.OSISUtil;
 import org.crosswire.jsword.passage.Verse;
 import org.xml.sax.Attributes;
@@ -9,17 +11,18 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.Stack;
 
 /**
- * Created by bspeice on 9/8/14.
+ * Parse a single verse into a VerseContent object.
+ * Need to benchmark if I should process ranges at a time...
  */
 public class OsisParser extends DefaultHandler {
 
     VerseContent verseContent;
     // ArrayDeque requires API 9
     Stack<Boolean> doWrite;
-    Verse verse;
 
     public OsisParser(Verse v) {
-        this.verse = v;
+        verseContent = new VerseContent(v);
+        doWrite = new Stack<Boolean>();
     }
 
     @Override
@@ -29,7 +32,6 @@ public class OsisParser extends DefaultHandler {
 
         if (name.equals(OSISUtil.OSIS_ELEMENT_VERSE)) {
             doWrite.push(true);
-            verseContent.setId(getId(attributes));
         } else {
             doWrite.push(false);
         }
@@ -43,13 +45,9 @@ public class OsisParser extends DefaultHandler {
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (ch != null && doWrite.peek()) {
-            verseContent.appendContent(new String(ch));
+            Log.e(getClass().getName(), new String(ch, start, length));
+            verseContent.appendContent(new String(ch, start, length));
         }
-    }
-
-    @Override
-    public void startDocument() throws SAXException {
-        super.startDocument();
     }
 
     @Override

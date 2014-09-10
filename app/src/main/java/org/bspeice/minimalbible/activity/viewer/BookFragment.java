@@ -114,7 +114,8 @@ public class BookFragment extends BaseFragment {
                 Verse initial = new Verse(vUtil.getVersification(mBook.get()),
                         BibleBook.GEN, 1, 1);
                 super.onPageFinished(view, url);
-                invokeJavascript("appendVerse", lookupService.getHTMLVerse(initial));
+                Log.e(getClass().getSimpleName(), lookupService.getJsonVerse(initial));
+                invokeJavascript("appendVerse", lookupService.getJsonVerse(initial));
             }
 
             @Override
@@ -148,7 +149,7 @@ public class BookFragment extends BaseFragment {
     @SuppressWarnings("unused")
     public void displayVerse(Verse v) {
         Book b = mBook.get();
-        lookupService.getHTMLVerse(v);
+        lookupService.getJsonVerse(v);
     }
 
     /*-----------------------------------------

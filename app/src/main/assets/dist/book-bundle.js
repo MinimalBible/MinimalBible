@@ -8,22 +8,24 @@ require('angular');
 app = angular.module('bookApp', []);
 
 app.controller('BookCtrl', [
-  '$scope', function($scope) {
+  '$scope', '$filter', function($scope, $filter) {
     $scope.verses = [];
-    return $scope.appendVerse = function(text) {
-      return $scope.verses.push({
-        'text': text
-      });
+    $scope.order_verses = function() {
+      return $scope.verses = $filter('orderBy')($scope.verses, 'id', false);
+    };
+    return $scope.appendVerse = function(verse) {
+      $scope.verses.push(verse);
+      return $scope.order_verses();
     };
   }
 ]);
 
 controller = "#bookController";
 
-window.appendVerse = function(text) {
+window.appendVerse = function(jsonVerseString) {
   var scope;
   scope = angular.element($("#bookController")).scope();
-  scope.appendVerse(text);
+  scope.appendVerse(angular.fromJson(jsonVerseString));
   return scope.$apply();
 };
 

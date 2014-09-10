@@ -1,7 +1,6 @@
 package org.bspeice.minimalbible.service.book;
 
 import android.support.v4.util.LruCache;
-import android.util.Log;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.service.format.osisparser.OsisParser;
@@ -56,9 +55,9 @@ public class VerseLookupService implements Action1<Verse> {
      * In all cases, notify that we're looking up a verse so we can get the surrounding ones.
      *
      * @param v The verse to look up
-     * @return The HTML text for this verse (\<p\/>)
+     * @return The JSON object for this verse (\<p\/>)
      */
-    public String getHTMLVerse(Verse v) {
+    public String getJsonVerse(Verse v) {
         if (contains(v)) {
             return cache.get(getEntryName(v));
         } else {
@@ -72,20 +71,19 @@ public class VerseLookupService implements Action1<Verse> {
 
     /**
      * Perform the ugly work of getting the actual data for a verse
-     * TODO: Return a verse object, JS should be left to templating.
+     * Note that we build the verse object, JS should be left to determine how
+     * it is displayed.
      *
      * @param v The verse to look up
-     * @return The string content of this verse
+     * @return The JSON content of this verse
      */
     public String doVerseLookup(Verse v) {
         BookData bookData = new BookData(book, v);
         try {
             SAXEventProvider provider = bookData.getSAXEventProvider();
-//            OsisToHtmlSaxHandler handler = new OsisToHtmlSaxHandler(new OsisToHtmlParameters());
             OsisParser handler = new OsisParser(v);
             provider.provideSAXEvents(handler);
-            Log.e(this.getClass().getName(), handler.toString());
-            return handler.getContent().getContent();
+            return handler.getContent().toJson();
         } catch (BookException e) {
             e.printStackTrace();
             return "Unable to locate " + v.toString() + "!";
