@@ -2,7 +2,7 @@ package org.bspeice.minimalbible;
 
 
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
-import org.bspeice.minimalbible.activity.viewer.BookManager;
+import org.bspeice.minimalbible.service.manager.BookManager;
 import org.crosswire.jsword.book.BookCategory;
 
 import java.util.ArrayList;
@@ -30,7 +30,8 @@ public class TestModules {
         return testActivityTitle;
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     @Named("ValidCategories")
     List<BookCategory> provideValidCategories() {
         return new ArrayList<BookCategory>() {{
@@ -46,6 +47,7 @@ public class TestModules {
     }
 
     @Provides
+    @Singleton
     BookManager provideBookManager() {
         return bookManager;
     }

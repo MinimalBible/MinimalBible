@@ -5,6 +5,8 @@ import java.util.ArrayList
 import org.crosswire.jsword.versification.system.Versifications
 import org.crosswire.jsword.book.BookMetaData
 import rx.Observable
+import android.util.Log
+import org.bspeice.minimalbible.service.manager.InvalidBookException
 
 /**
  * Created by bspeice on 9/10/14.
@@ -20,11 +22,11 @@ class VersificationUtil() {
     }
 
     fun getBookNames(b: Book): Observable<String> {
-        return Observable.from(b.getVersification().getBookNames(b)) as Observable
+        return Observable.from(b.getVersification().getBookNames()) as Observable
     }
 
     fun getBooks(b: Book): Observable<BibleBook> {
-        return Observable.from(b.getVersification().getBooks(b)) as Observable
+        return Observable.from(b.getVersification().getBooks()) as Observable
     }
 
     fun getChapterCount(b: Book, bibleBook: BibleBook): Int {
@@ -40,7 +42,7 @@ class VersificationUtil() {
     }
 }
 
-// There's probably a better way to do this
+// TODO: Refactor (is there a better way to accomplish this?) and move
 fun <T> Iterator<T>.iterable(): Iterable<T> {
     val list: MutableList<T> = ArrayList()
     while (this.hasNext()) {
@@ -50,13 +52,13 @@ fun <T> Iterator<T>.iterable(): Iterable<T> {
     return list
 }
 
-fun Versification.getBooks(b: Book): List<BibleBook> {
+fun Versification.getBooks(): List<BibleBook> {
     return this.getBookIterator()!!.iterable()
             .filter { VersificationUtil.INTROS.contains(it) }
 }
 
-fun Versification.getBookNames(b: Book): List<String> {
-    return this.getBooks(b).map { this.getLongName(it) as String }
+fun Versification.getBookNames(): List<String> {
+    return this.getBooks().map { this.getLongName(it) as String }
 }
 
 fun Versification.getChapterCount(b: BibleBook): Int {
@@ -64,7 +66,12 @@ fun Versification.getChapterCount(b: BibleBook): Int {
 }
 
 fun Book.getVersification(): Versification {
-    return Versifications.instance()!!.getVersification(
-            this.getBookMetaData()!!.getProperty(BookMetaData.KEY_VERSIFICATION) as String
-    ) as Versification
+    val v = Versifications.instance()!!.getVersification(
+            this.getBookMetaData()!!.getProperty(BookMetaData.KEY_VERSIFICATION).toString()
+    )
+    if (v == null) {
+        Log.e(getClass()!!.getSimpleName(), "Invalid book: " + this.getInitials())
+        throw InvalidBookException(this.getInitials())
+    } else
+        return v
 }

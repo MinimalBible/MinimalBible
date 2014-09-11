@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.bspeice.minimalbible.activity.navigation.ExpListNavAdapter;
 import org.bspeice.minimalbible.service.book.VerseLookupModules;
+import org.bspeice.minimalbible.service.manager.BookManager;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.versification.VersificationUtil;
 

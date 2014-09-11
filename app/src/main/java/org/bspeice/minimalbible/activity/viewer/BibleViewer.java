@@ -18,6 +18,7 @@ import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 import org.bspeice.minimalbible.activity.navigation.NavDrawerFragment;
+import org.bspeice.minimalbible.service.manager.BookManager;
 import org.crosswire.jsword.book.Book;
 
 import javax.inject.Inject;
