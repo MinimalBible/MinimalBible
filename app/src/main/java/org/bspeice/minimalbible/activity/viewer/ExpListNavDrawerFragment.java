@@ -10,9 +10,9 @@ import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.navigation.ExpListNavAdapter;
 import org.bspeice.minimalbible.activity.navigation.NavDrawerFragment;
-import org.bspeice.minimalbible.activity.viewer.bookutil.VersificationUtil;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.versification.BibleBook;
+import org.crosswire.jsword.versification.VersificationUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

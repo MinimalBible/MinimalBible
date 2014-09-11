@@ -3,9 +3,9 @@ package org.bspeice.minimalbible.activity.viewer;
 import android.util.Log;
 
 import org.bspeice.minimalbible.activity.navigation.ExpListNavAdapter;
-import org.bspeice.minimalbible.activity.viewer.bookutil.VersificationUtil;
 import org.bspeice.minimalbible.service.book.VerseLookupModules;
 import org.crosswire.jsword.book.Book;
+import org.crosswire.jsword.versification.VersificationUtil;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;

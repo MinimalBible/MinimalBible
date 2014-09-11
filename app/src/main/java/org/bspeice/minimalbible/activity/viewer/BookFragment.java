@@ -14,13 +14,11 @@ import android.webkit.WebViewClient;
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseFragment;
-import org.bspeice.minimalbible.activity.viewer.bookutil.VersificationUtil;
 import org.bspeice.minimalbible.service.book.VerseLookupService;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.passage.Verse;
 import org.crosswire.jsword.versification.BibleBook;
-
-import java.util.List;
+import org.crosswire.jsword.versification.VersificationUtil;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,8 +26,6 @@ import javax.inject.Named;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import dagger.Lazy;
-
-import static org.bspeice.minimalbible.util.StringUtil.joinString;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -159,10 +155,5 @@ public class BookFragment extends BaseFragment {
 
     private void invokeJavascript(String function, Object arg) {
         mainContent.loadUrl("javascript:" + function + "('" + arg.toString() + "')");
-    }
-
-    @SuppressWarnings("unused")
-    private void invokeJavascript(String function, List<Object> args) {
-        mainContent.loadUrl("javascript:" + function + "(" + joinString(",", args.toArray()) + ")");
     }
 }
