@@ -83,7 +83,7 @@ public class VerseLookupService implements Action1<Verse> {
             SAXEventProvider provider = bookData.getSAXEventProvider();
             OsisParser handler = new OsisParser(v);
             provider.provideSAXEvents(handler);
-            return handler.getContent().toJson();
+            return handler.getVerseContent().toJson();
         } catch (BookException e) {
             e.printStackTrace();
             return "Unable to locate " + v.toString() + "!";
