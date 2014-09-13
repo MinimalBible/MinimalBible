@@ -1,3 +1,6 @@
+/**
+ * Created by bspeice on 9/12/14.
+ */
 package org.bspeice.minimalbible;
 
 import android.app.Application;
@@ -11,11 +14,15 @@ import java.io.File;
 import dagger.ObjectGraph;
 
 /**
- * Created by Bradlee Speice on 7/5/2014.
+ * Created by bspeice on 9/12/14.
  */
 public class MinimalBible extends Application implements Injector {
     private String TAG = "MinimalBible";
     private ObjectGraph mObjectGraph;
+
+    public static MinimalBible get(Context ctx) {
+        return (MinimalBible) ctx.getApplicationContext();
+    }
 
     @Override
     public void onCreate() {
@@ -34,10 +41,6 @@ public class MinimalBible extends Application implements Injector {
 
     public ObjectGraph plus(Object... modules) {
         return mObjectGraph.plus(modules);
-    }
-
-    public static MinimalBible get(Context ctx) {
-        return (MinimalBible)ctx.getApplicationContext();
     }
 
     /**
