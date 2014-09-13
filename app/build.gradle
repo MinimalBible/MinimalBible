@@ -7,14 +7,12 @@ buildscript {
     dependencies {
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.jakewharton.hugo:hugo-plugin:+'
     }
 }
 
 apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'hugo'
 
 android {
     compileSdkVersion 20
@@ -44,24 +42,20 @@ android {
         exclude 'NOTICE'
         exclude 'asm-license.txt'
     }
-    // TODO: Remove Hugo and support SDK 8?
     productFlavors {
         testConfig {
-            minSdkVersion 9
+            minSdkVersion 8
             applicationId 'org.bspeice.minimalbible'
             targetSdkVersion 20
         }
         mainConfig {
-            minSdkVersion 9
+            minSdkVersion 8
             applicationId 'org.bspeice.minimalbible'
             targetSdkVersion 20
         }
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
-    }
-    lintOptions {
-        disable 'adviceDidNotMatch'
     }
 }
 
