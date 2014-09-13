@@ -7,15 +7,16 @@ import org.crosswire.jsword.book.Book
 import rx.functions.Action0
 
 /**
- * Created by bspeice on 9/10/14.
+ * 'Open' class and values for mockito to subclass
+ * http://confluence.jetbrains.com/display/Kotlin/Classes+and+Inheritance
  */
 
 //@Singleton
-class BookManager() {
+open class BookManager() {
     // Some extra books like to think they're installed, but trigger NPE all over the place...
     val ignore = array("ERen_no", "ot1nt2");
 
-    val installedBooks = Observable.from(Books.installed()!!.getBooks())
+    open val installedBooks = Observable.from(Books.installed()!!.getBooks())
             ?.filter { !ignore.contains(it!!.getInitials()) }
             ?.cache()
     var refreshComplete = false;

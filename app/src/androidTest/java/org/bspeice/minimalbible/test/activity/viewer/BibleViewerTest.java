@@ -4,7 +4,7 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import org.bspeice.minimalbible.Modules;
 import org.bspeice.minimalbible.activity.viewer.BibleViewer;
-import org.bspeice.minimalbible.activity.viewer.BookManager;
+import org.bspeice.minimalbible.service.manager.BookManager;
 import org.crosswire.jsword.book.Book;
 
 import java.util.ArrayList;

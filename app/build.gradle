@@ -86,5 +86,7 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:+'
 
     // Email debug reports if I crash...
-    testConfigCompile 'ch.acra:acra:+'
+    testConfigCompile('ch.acra:acra:+') {
+        exclude module: 'json'
+    }
 }
