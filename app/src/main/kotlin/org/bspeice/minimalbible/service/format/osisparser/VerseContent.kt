@@ -8,11 +8,11 @@ import org.crosswire.jsword.passage.Verse
 import java.util.ArrayList
 
 //TODO: JSON Streaming parsing? http://instagram-engineering.tumblr.com/post/97147584853/json-parsing
-class VerseContent(v: Verse?) {
-    var id = v?.getOrdinal() ?: 0
-    var bookName = v?.getName() ?: ""
-    var chapter = v?.getChapter() ?: 0
-    var verseNum = v?.getVerse() ?: 0
+class VerseContent(v: Verse) {
+    var id = v.getOrdinal()
+    var bookName = v.getName()
+    var chapter = v.getChapter()
+    var verseNum = v.getVerse()
     var content = ""
     var chapterTitle = ""
     var paraTitle = ""
