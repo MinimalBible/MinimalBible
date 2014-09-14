@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import org.crosswire.jsword.passage.Verse
 import java.util.ArrayList
 
+//TODO: JSON Streaming parsing? http://instagram-engineering.tumblr.com/post/97147584853/json-parsing
 class VerseContent(v: Verse?) {
     var id = v?.getOrdinal() ?: 0
     var bookName = v?.getName() ?: ""
