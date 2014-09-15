@@ -30,7 +30,6 @@ import rx.subjects.PublishSubject;
  */
 public class VerseLookupService implements Action1<Verse> {
 
-
     Book book;
 
     @Inject

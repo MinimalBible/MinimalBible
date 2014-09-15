@@ -9,9 +9,11 @@ app.controller 'BookCtrl', ['$scope', '$filter', ($scope, $filter) ->
 	$scope.order_verses = ->
 		$scope.verses = $filter('orderBy')($scope.verses, 'id', false)
 
-	$scope.appendVerse = (verse) ->
-		$scope.verses.push verse
+	$scope.appendVerse = (jsonVerseString) ->
+		$scope.verses.push angular.fromJson jsonVerseString
 		$scope.order_verses()
+
+	$scope.appendVerse Android.getVerse(5)
 ]
 
 # Due to page initialization, we can only store the controller string.
@@ -21,7 +23,7 @@ controller = "#bookController"
 
 window.appendVerse = (jsonVerseString) ->
 	scope = angular.element($("#bookController")).scope()
-	scope.appendVerse angular.fromJson jsonVerseString
+	scope.appendVerse jsonVerseString
 	# Since we're calling outside of angular, we need to manually apply
 	scope.$apply()
 

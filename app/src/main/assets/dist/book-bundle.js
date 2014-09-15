@@ -13,10 +13,11 @@ app.controller('BookCtrl', [
     $scope.order_verses = function() {
       return $scope.verses = $filter('orderBy')($scope.verses, 'id', false);
     };
-    return $scope.appendVerse = function(verse) {
-      $scope.verses.push(verse);
+    $scope.appendVerse = function(jsonVerseString) {
+      $scope.verses.push(angular.fromJson(jsonVerseString));
       return $scope.order_verses();
     };
+    return $scope.appendVerse(Android.getVerse(5));
   }
 ]);
 
@@ -25,7 +26,7 @@ controller = "#bookController";
 window.appendVerse = function(jsonVerseString) {
   var scope;
   scope = angular.element($("#bookController")).scope();
-  scope.appendVerse(angular.fromJson(jsonVerseString));
+  scope.appendVerse(jsonVerseString);
   return scope.$apply();
 };
 

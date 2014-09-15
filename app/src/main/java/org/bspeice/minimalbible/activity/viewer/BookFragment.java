@@ -7,9 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
@@ -17,8 +15,6 @@ import org.bspeice.minimalbible.activity.BaseFragment;
 import org.bspeice.minimalbible.service.book.VerseLookupService;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.passage.Verse;
-import org.crosswire.jsword.versification.BibleBook;
-import org.crosswire.jsword.versification.VersificationUtil;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,8 +32,7 @@ public class BookFragment extends BaseFragment {
     @Inject
     @Named("MainBook")
     Lazy<Book> mBook;
-    @Inject
-    VersificationUtil vUtil;
+
     // TODO: Factory?
     VerseLookupService lookupService;
     @InjectView(R.id.book_content)
@@ -103,33 +98,10 @@ public class BookFragment extends BaseFragment {
         Log.d("BookFragment", b.getName());
         ((BibleViewer)getActivity()).setActionBarTitle(b.getInitials());
         mainContent.loadUrl(getString(R.string.book_html));
-        mainContent.setWebViewClient(new WebViewClient(){
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                // TODO: Restore this verse from a SharedPref
-                Verse initial = new Verse(vUtil.getVersification(mBook.get()),
-                        BibleBook.GEN, 1, 1);
-                super.onPageFinished(view, url);
-                Log.e(getClass().getSimpleName(), lookupService.getJsonVerse(initial));
-                invokeJavascript("appendVerse", lookupService.getJsonVerse(initial));
-            }
 
-            @Override
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                super.onReceivedError(view, errorCode, description, failingUrl);
-                Log.e(this.getClass().getSimpleName(), "Code: " + errorCode + " " +
-                    description);
-            }
-        });
-
-        // We can receive and return only primitives and Strings. Still means we can use JSON :)
-        mainContent.addJavascriptInterface(new Object() {
-            @JavascriptInterface
-            @SuppressWarnings("unused")
-            public String testReturn(String echo) {
-                return echo;
-            }
-        }, "Android");
+        BibleViewClient client = new BibleViewClient(b, lookupService);
+        mainContent.setWebViewClient(client);
+        mainContent.addJavascriptInterface(client, "Android");
 
         // TODO: Remove remote debugging when ready - or should this be removed?
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -146,14 +118,5 @@ public class BookFragment extends BaseFragment {
     public void displayVerse(Verse v) {
         Book b = mBook.get();
         lookupService.getJsonVerse(v);
-    }
-
-    /*-----------------------------------------
-        Here be the methods you wish didn't have to exist.
-      -----------------------------------------
-     */
-
-    private void invokeJavascript(String function, Object arg) {
-        mainContent.loadUrl("javascript:" + function + "('" + arg.toString() + "')");
     }
 }
