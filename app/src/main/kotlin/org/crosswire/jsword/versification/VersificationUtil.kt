@@ -54,7 +54,7 @@ fun <T> Iterator<T>.iterable(): Iterable<T> {
 
 fun Versification.getBooks(): List<BibleBook> {
     return this.getBookIterator()!!.iterable()
-            .filter { VersificationUtil.INTROS.contains(it) }
+            .filter { !VersificationUtil.INTROS.contains(it) }
 }
 
 fun Versification.getBookNames(): List<String> {
