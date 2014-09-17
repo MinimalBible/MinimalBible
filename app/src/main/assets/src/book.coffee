@@ -1,10 +1,12 @@
-$ = require 'jquery' # For using selectors to access scope
 require 'angular'
 
-app = angular.module('bookApp', [])
+app = angular.module('bookApp', ['ui.scroll', 'ui.scroll.jqlite'])
 
 app.controller 'BookCtrl', ['$scope', '$filter', ($scope, $filter) ->
-	$scope.verses = []
+	$scope.verseSource = 
+		get: (index, count, success) ->
+			console.log "Calling me with " + index
+			success angular.fromJson Android.getVerses(index, count)
 
 	$scope.order_verses = ->
 		$scope.verses = $filter('orderBy')($scope.verses, 'id', false)
@@ -12,8 +14,6 @@ app.controller 'BookCtrl', ['$scope', '$filter', ($scope, $filter) ->
 	$scope.appendVerse = (jsonVerseString) ->
 		$scope.verses.push angular.fromJson jsonVerseString
 		$scope.order_verses()
-
-	$scope.appendVerse Android.getVerse(5)
 ]
 
 # Due to page initialization, we can only store the controller string.
@@ -21,11 +21,11 @@ app.controller 'BookCtrl', ['$scope', '$filter', ($scope, $filter) ->
 # etc. to grab the scope ahead of time and re-use it.
 controller = "#bookController"
 
-window.appendVerse = (jsonVerseString) ->
-	scope = angular.element($("#bookController")).scope()
-	scope.appendVerse jsonVerseString
-	# Since we're calling outside of angular, we need to manually apply
-	scope.$apply()
+#window.appendVerse = (jsonVerseString) ->
+#scope = angular.element($("#bookController")).scope()
+#scope.appendVerse jsonVerseString
+## Since we're calling outside of angular, we need to manually apply
+#scope.$apply()
 
 ###
 Future reference: Get the controller scope like so:
