@@ -26,9 +26,24 @@ class BibleViewClient(b: Book, lookup: VerseLookupService) : WebViewClient() {
     JavascriptInterface fun getVerses(first: Int, count: Int): String {
         Log.e("getVerses", "First: " + first + " count: " + count)
         val verses: MutableList<String> = ArrayList<String>()
-        for (i in first..first + count - 1) {
+        var trueCount: Int
+        var trueFirst: Int
+        when {
+            first < 0 - count -> return ""
+            first < 0 -> {
+                trueCount = count + first // Equivalent to count - abs(first)
+                trueFirst = 0
+            }
+            else -> {
+                trueCount = count
+                trueFirst = first
+            }
+        }
+
+        for (i in trueFirst..trueFirst + trueCount - 1) {
             verses.add(getVerse(i))
         }
+        Log.e("getVerses", "return verses size: " + verses.size.toString())
         return verses.toString()
     }
 }

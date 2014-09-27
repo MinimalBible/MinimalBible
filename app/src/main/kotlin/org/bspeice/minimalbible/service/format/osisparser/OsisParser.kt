@@ -17,13 +17,16 @@ class OsisParser(v: Verse) : DefaultHandler() {
 
     // Android Studio complains about compilation, but the method
     // has @NotNull annotations, so we program for those.
-    override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
-
-        if (localName.equals(OSISUtil.OSIS_ELEMENT_VERSE))
-            doWrite.push(true)
-        else
-            doWrite.push(false)
+    override fun startElement(uri: String, localName: String,
+                              qName: String, attributes: Attributes) {
+        when (localName) {
+            OSISUtil.OSIS_ELEMENT_VERSE -> doWrite.push(true)
+            else -> {
+                doWrite.push(false)
+            }
+        }
     }
+
     // Android Studio complains about compilation, but the method
     // has @NotNull annotations, so we program for those.
     override fun endElement(uri: String?, localName: String, qName: String) {
