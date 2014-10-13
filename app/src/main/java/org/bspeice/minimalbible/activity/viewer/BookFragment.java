@@ -14,7 +14,6 @@ import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseFragment;
 import org.bspeice.minimalbible.service.book.VerseLookupService;
 import org.crosswire.jsword.book.Book;
-import org.crosswire.jsword.passage.Verse;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,6 +21,9 @@ import javax.inject.Named;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import dagger.Lazy;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.subjects.PublishSubject;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -29,16 +31,20 @@ import dagger.Lazy;
 public class BookFragment extends BaseFragment {
 
     private static final String ARG_BOOK_NAME = "book_name";
+
+    Injector i;
     @Inject
     @Named("MainBook")
     Lazy<Book> mBook;
 
-    // TODO: Factory?
-    VerseLookupService lookupService;
     @InjectView(R.id.book_content)
     WebView mainContent;
 
+    PublishSubject<String> titleReceiver = PublishSubject.create();
+
     public BookFragment() {
+        // We can't initialize the lookupService here since the fragment hasn't been tied
+        // to the parent activity yet.
     }
 
     /**
@@ -63,10 +69,8 @@ public class BookFragment extends BaseFragment {
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_viewer_main, container,
                 false);
-        Injector i = (Injector) getActivity();
+        this.i = (Injector) getActivity();
         i.inject(this);
-        // TODO: Defer lookup until after webview created? When exactly is WebView created?
-        this.lookupService = new VerseLookupService(i, mBook.get());
         ButterKnife.inject(this, rootView);
         mainContent.getSettings().setJavaScriptEnabled(true);
 
@@ -99,7 +103,17 @@ public class BookFragment extends BaseFragment {
         ((BibleViewer)getActivity()).setActionBarTitle(b.getInitials());
         mainContent.loadUrl(getString(R.string.book_html));
 
-        BibleViewClient client = new BibleViewClient(b, lookupService);
+        VerseLookupService lookupService = new VerseLookupService(i, mBook.get());
+        BibleViewClient client = new BibleViewClient(b, lookupService, titleReceiver);
+        titleReceiver
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        ((BibleViewer) getActivity()).setActionBarTitle(s);
+                        Log.d("BibleViewClient", s);
+                    }
+                });
         mainContent.setWebViewClient(client);
         mainContent.addJavascriptInterface(client, "Android");
 
@@ -107,16 +121,5 @@ public class BookFragment extends BaseFragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true);
         }
-    }
-
-    /**
-     * Do the heavy lifting of getting the actual text for a verse
-     *
-     * @param v The verse to display
-     */
-    @SuppressWarnings("unused")
-    public void displayVerse(Verse v) {
-        Book b = mBook.get();
-        lookupService.getJsonVerse(v);
     }
 }

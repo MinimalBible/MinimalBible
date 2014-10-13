@@ -8,18 +8,20 @@ import org.crosswire.jsword.book.Book
 import org.crosswire.jsword.versification.getVersification
 import java.util.ArrayList
 import android.util.Log
+import rx.subjects.PublishSubject
 
 /**
  * Created by bspeice on 9/14/14.
  */
 
-class BibleViewClient(b: Book, lookup: VerseLookupService) : WebViewClient() {
-    val b = b
-    val lookup = lookup
+class BibleViewClient(val b: Book, val lookup: VerseLookupService,
+                      val subject: PublishSubject<String>?) : WebViewClient() {
 
     // We can receive and return only primitives and Strings. Still means we can use JSON :)
     JavascriptInterface fun getVerse(ordinal: Int): String {
         val v = Verse(b.getVersification(), ordinal)
+        // TODO: WebView should notify us what verse it's on
+        subject?.onNext(v.getBook().toString() + " " + v.getChapter() + ":" + v.getVerse())
         return lookup.getJsonVerse(v) as String
     }
 
