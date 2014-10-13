@@ -70,9 +70,9 @@ public class ExpListNavDrawerFragment extends NavDrawerFragment {
         // I really don't like how we build the chapters, but I'm not adding Guava just for Range.
         // RXJava does get ridiculous with the angle brackets, you have me there. But Intellij
         // folds nicely.
-        Map<String, List<Integer>> chapterMap = new HashMap<String, List<Integer>>();
+        Map<String, List<Integer>> chapterMap;
         if (mainBook != null) {
-            vUtil.getBooks(mainBook).map(new Func1<BibleBook, Map<String, List<Integer>>>() {
+            chapterMap = vUtil.getBooks(mainBook).map(new Func1<BibleBook, Map<String, List<Integer>>>() {
                 @Override
                 public Map<String, List<Integer>> call(BibleBook bibleBook) {
                     // These lines are important
@@ -103,12 +103,12 @@ public class ExpListNavDrawerFragment extends NavDrawerFragment {
                     })
                     .toBlocking()
                     .first();
+
+            ExpListNavAdapter<String, Integer> adapter =
+                    new ExpListNavAdapter<String, Integer>(bibleBooks, chapterMap);
+
+            mActualListView.setAdapter(adapter);
         }
-
-        ExpListNavAdapter<String, Integer> adapter =
-                new ExpListNavAdapter<String, Integer>(bibleBooks, chapterMap);
-
-        mActualListView.setAdapter(adapter);
 
         mActualListView.setItemChecked(mCurrentSelectedPosition, true);
         return mActualListView;
