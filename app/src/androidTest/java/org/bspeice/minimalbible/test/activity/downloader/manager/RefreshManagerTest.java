@@ -1,11 +1,15 @@
 package org.bspeice.minimalbible.test.activity.downloader.manager;
 
-import junit.framework.TestCase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import org.bspeice.minimalbible.Injector;
+import org.bspeice.minimalbible.MBTestCase;
+import org.bspeice.minimalbible.activity.downloader.DownloadPrefs;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.install.Installer;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -28,7 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class RefreshManagerTest extends TestCase implements Injector {
+public class RefreshManagerTest extends MBTestCase implements Injector {
 
     /**
      * The object graph that should be given to classes under test. Each test is responsible
@@ -137,9 +141,19 @@ public class RefreshManagerTest extends TestCase implements Injector {
     @SuppressWarnings("unused")
     class RMTModules {
         Collection<Installer> installers;
-
+        ConnectivityManager manager;
+        DownloadPrefs prefs;
         RMTModules(Collection<Installer> installers) {
             this.installers = installers;
+
+            // Set reasonable defaults for the manager and preferences, can over-ride if need-be
+            manager = mock(ConnectivityManager.class);
+            NetworkInfo mockNetworkInfo = Mockito.mock(NetworkInfo.class);
+
+            when(manager.getActiveNetworkInfo()).thenReturn(mockNetworkInfo);
+            when(mockNetworkInfo.getType()).thenReturn(ConnectivityManager.TYPE_WIFI);
+
+            prefs = mock(DownloadPrefs.class);
         }
 
         @Provides
@@ -148,10 +162,19 @@ public class RefreshManagerTest extends TestCase implements Injector {
             return this.installers;
         }
 
+        void setConnectivityManager(ConnectivityManager manager) {
+            this.manager = manager;
+        }
+
+        void setPrefs(DownloadPrefs prefs) {
+            this.prefs = prefs;
+        }
+
         @Provides
         @Singleton
         RefreshManager refreshManager(Collection<Installer> installers) {
-            return new RefreshManager(installers);
+            return new RefreshManager(installers,
+                    prefs, manager);
         }
     }
 }

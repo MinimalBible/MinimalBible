@@ -1,6 +1,7 @@
 package org.bspeice.minimalbible.activity.downloader;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBibleModules;
@@ -106,7 +107,9 @@ public class DownloadActivityModules {
     }
 
     @Provides @Singleton
-    RefreshManager provideRefreshManager(Collection<Installer> installers) {
-        return new RefreshManager(installers);
+    RefreshManager provideRefreshManager(Collection<Installer> installers, DownloadPrefs prefs,
+                                         @Named("DownloadActivityContext") Context context) {
+        return new RefreshManager(installers, prefs,
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
     }
 }

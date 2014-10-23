@@ -1,10 +1,12 @@
 package org.bspeice.minimalbible.test.activity.downloader.manager;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
-import junit.framework.TestCase;
-
 import org.bspeice.minimalbible.Injector;
+import org.bspeice.minimalbible.MBTestCase;
+import org.bspeice.minimalbible.activity.downloader.DownloadPrefs;
 import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadManager;
 import org.bspeice.minimalbible.activity.downloader.manager.InstalledManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
@@ -12,6 +14,7 @@ import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.Books;
 import org.crosswire.jsword.book.install.InstallManager;
 import org.crosswire.jsword.book.install.Installer;
+import org.mockito.Mockito;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,6 +30,9 @@ import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * Test the InstalledManager
  * Currently due to limitations with JSword (which I'm currently investigating) you can't delete
@@ -34,7 +40,7 @@ import rx.functions.Func1;
  * in between it being deleted. Unfortunately, that means that this TestCase really can't guarantee
  * much, since I can't install a book at runtime to be removed.
  */
-public class InstalledManagerTest extends TestCase implements Injector {
+public class InstalledManagerTest extends MBTestCase implements Injector {
     ObjectGraph mObjectGraph;
     @Inject
     InstalledManager iM;
@@ -46,7 +52,8 @@ public class InstalledManagerTest extends TestCase implements Injector {
         mObjectGraph.inject(o);
     }
 
-    public void setUp() throws Exception {
+    @Override
+    public void setUp() {
         super.setUp();
         mObjectGraph = ObjectGraph.create(new IMTestModules(this));
         mObjectGraph.inject(this);
@@ -99,9 +106,19 @@ public class InstalledManagerTest extends TestCase implements Injector {
     @SuppressWarnings("unused")
     static class IMTestModules {
         Injector i;
-
+        ConnectivityManager manager;
+        DownloadPrefs prefs;
         public IMTestModules(Injector i) {
             this.i = i;
+
+            // Set reasonable defaults for the manager and preferences, can over-ride if need-be
+            manager = mock(ConnectivityManager.class);
+            NetworkInfo mockNetworkInfo = Mockito.mock(NetworkInfo.class);
+
+            when(manager.getActiveNetworkInfo()).thenReturn(mockNetworkInfo);
+            when(mockNetworkInfo.getType()).thenReturn(ConnectivityManager.TYPE_WIFI);
+
+            prefs = mock(DownloadPrefs.class);
         }
 
         @Provides
@@ -127,10 +144,19 @@ public class InstalledManagerTest extends TestCase implements Injector {
             return new InstallManager().getInstallers().values();
         }
 
+        void setConnectivityManager(ConnectivityManager manager) {
+            this.manager = manager;
+        }
+
+        void setPrefs(DownloadPrefs prefs) {
+            this.prefs = prefs;
+        }
+
         @Provides
         @Singleton
         RefreshManager refreshManager(Collection<Installer> installers) {
-            return new RefreshManager(installers);
+            return new RefreshManager(installers,
+                    prefs, manager);
         }
     }
 }

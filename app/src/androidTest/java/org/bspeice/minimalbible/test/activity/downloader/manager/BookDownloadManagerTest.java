@@ -1,10 +1,12 @@
 package org.bspeice.minimalbible.test.activity.downloader.manager;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
-import junit.framework.TestCase;
-
 import org.bspeice.minimalbible.Injector;
+import org.bspeice.minimalbible.MBTestCase;
+import org.bspeice.minimalbible.activity.downloader.DownloadPrefs;
 import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadManager;
 import org.bspeice.minimalbible.activity.downloader.manager.DLProgressEvent;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
@@ -15,6 +17,7 @@ import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.Books;
 import org.crosswire.jsword.book.install.InstallManager;
 import org.crosswire.jsword.book.install.Installer;
+import org.mockito.Mockito;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -31,8 +34,10 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 import static com.jayway.awaitility.Awaitility.await;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class BookDownloadManagerTest extends TestCase implements Injector {
+public class BookDownloadManagerTest extends MBTestCase implements Injector {
 
     ObjectGraph mObjectGraph;
     @Inject BookDownloadManager bookDownloadManager;
@@ -114,9 +119,19 @@ public class BookDownloadManagerTest extends TestCase implements Injector {
     @SuppressWarnings("unused")
     public static class BookDownloadManagerTestModules {
         Injector i;
-
+        ConnectivityManager manager;
+        DownloadPrefs prefs;
         BookDownloadManagerTestModules(Injector i) {
             this.i = i;
+
+            // Set reasonable defaults for the manager and preferences, can over-ride if need-be
+            manager = mock(ConnectivityManager.class);
+            NetworkInfo mockNetworkInfo = Mockito.mock(NetworkInfo.class);
+
+            when(manager.getActiveNetworkInfo()).thenReturn(mockNetworkInfo);
+            when(mockNetworkInfo.getType()).thenReturn(ConnectivityManager.TYPE_WIFI);
+
+            prefs = mock(DownloadPrefs.class);
         }
 
         @Provides
@@ -137,10 +152,19 @@ public class BookDownloadManagerTest extends TestCase implements Injector {
             return new InstallManager().getInstallers().values();
         }
 
+        void setConnectivityManager(ConnectivityManager manager) {
+            this.manager = manager;
+        }
+
+        void setPrefs(DownloadPrefs prefs) {
+            this.prefs = prefs;
+        }
+
         @Provides
         @Singleton
         RefreshManager refreshManager(Collection<Installer> installers) {
-            return new RefreshManager(installers);
+            return new RefreshManager(installers,
+                    prefs, manager);
         }
     }
 }
