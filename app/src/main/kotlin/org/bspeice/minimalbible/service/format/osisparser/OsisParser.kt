@@ -33,7 +33,7 @@ class OsisParser(v: Verse) : DefaultHandler() {
         doWrite.pop()
     }
     override fun characters(ch: CharArray?, start: Int, length: Int) {
-        if (doWrite.peek() as Boolean)
+        if (doWrite.peek())
             verseContent.appendContent(String(ch as CharArray))
     }
 }

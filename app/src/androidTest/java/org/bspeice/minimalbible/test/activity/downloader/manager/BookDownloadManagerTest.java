@@ -35,37 +35,6 @@ import static com.jayway.awaitility.Awaitility.await;
 public class BookDownloadManagerTest extends TestCase implements Injector {
 
     ObjectGraph mObjectGraph;
-
-    /**
-     * Modules needed for this test case
-     */
-    @Module(injects = {BookDownloadManager.class,
-            RefreshManager.class,
-            BookDownloadManagerTest.class})
-    public static class BookDownloadManagerTestModules {
-        Injector i;
-
-        BookDownloadManagerTestModules(Injector i) {
-            this.i = i;
-        }
-
-        @Provides
-        @Singleton
-        Injector provideInjector() {
-            return i;
-        }
-
-        @Provides @Singleton
-        Books provideBooks() {
-            return Books.installed();
-        }
-
-        @Provides @Singleton
-        Collection<Installer> provideInstallers() {
-            return new InstallManager().getInstallers().values();
-        }
-    }
-
     @Inject BookDownloadManager bookDownloadManager;
     @Inject RefreshManager refreshManager;
     @Inject Books installedBooks;
@@ -82,7 +51,7 @@ public class BookDownloadManagerTest extends TestCase implements Injector {
     }
 
     Observable<Book> installableBooks() {
-        return refreshManager.getAvailableModulesFlattened()
+        return refreshManager.getAvailableModulesFlat()
                 .filter(new Func1<Book, Boolean>() {
                     @Override
                     public Boolean call(Book book) {
@@ -134,5 +103,44 @@ public class BookDownloadManagerTest extends TestCase implements Injector {
         bookDownloadManager.installBook(toInstall);
         await().atMost(1, TimeUnit.SECONDS)
                 .untilTrue(jobNameMatch);
+    }
+
+    /**
+     * Modules needed for this test case
+     */
+    @Module(injects = {BookDownloadManager.class,
+            RefreshManager.class,
+            BookDownloadManagerTest.class})
+    @SuppressWarnings("unused")
+    public static class BookDownloadManagerTestModules {
+        Injector i;
+
+        BookDownloadManagerTestModules(Injector i) {
+            this.i = i;
+        }
+
+        @Provides
+        @Singleton
+        Injector provideInjector() {
+            return i;
+        }
+
+        @Provides
+        @Singleton
+        Books provideBooks() {
+            return Books.installed();
+        }
+
+        @Provides
+        @Singleton
+        Collection<Installer> provideInstallers() {
+            return new InstallManager().getInstallers().values();
+        }
+
+        @Provides
+        @Singleton
+        RefreshManager refreshManager(Collection<Installer> installers) {
+            return new RefreshManager(installers);
+        }
     }
 }

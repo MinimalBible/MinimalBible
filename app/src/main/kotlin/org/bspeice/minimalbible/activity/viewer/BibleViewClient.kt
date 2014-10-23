@@ -22,7 +22,7 @@ class BibleViewClient(val b: Book, val lookup: VerseLookupService,
         val v = Verse(b.getVersification(), ordinal)
         // TODO: WebView should notify us what verse it's on
         subject?.onNext(v.getBook().toString() + " " + v.getChapter() + ":" + v.getVerse())
-        return lookup.getJsonVerse(v) as String
+        return lookup.getJsonVerse(v)
     }
 
     JavascriptInterface fun getVerses(first: Int, count: Int): String {

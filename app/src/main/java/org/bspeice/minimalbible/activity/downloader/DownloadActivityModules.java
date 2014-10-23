@@ -40,6 +40,7 @@ import de.devland.esperandro.Esperandro;
         addsTo = MinimalBibleModules.class,
         library = true
 )
+@SuppressWarnings("unused")
 public class DownloadActivityModules {
     DownloadActivity activity;
 
@@ -65,7 +66,7 @@ public class DownloadActivityModules {
     /**
      * Provide the context for the DownloadActivity. We name it so that we don't have to
      * \@Provides a specific class, but can keep track of what exactly we mean by "Context"
-     * @return
+     * @return The DownloadActivity Context
      */
     @Provides @Singleton @Named("DownloadActivityContext")
     Context provideActivityContext() {
@@ -105,7 +106,7 @@ public class DownloadActivityModules {
     }
 
     @Provides @Singleton
-    RefreshManager provideRefreshManager() {
-        return new RefreshManager(activity);
+    RefreshManager provideRefreshManager(Collection<Installer> installers) {
+        return new RefreshManager(installers);
     }
 }

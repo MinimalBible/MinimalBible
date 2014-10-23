@@ -32,20 +32,15 @@ import rx.subjects.PublishSubject;
 //TODO: Install indexes for Bibles
 @Singleton
 public class BookDownloadManager implements WorkListener, BooksListener {
-    private String TAG = "BookDownloadManager";
-
     /**
      * Mapping of Job ID to the EventBus we should trigger progress on
      */
     private final Map<String, Book> bookMappings;
-
     /**
      * Cached copy of downloads in progress so views displaying this info can get it quickly.
      */
     private final Map<Book, DLProgressEvent> inProgressDownloads;
-
     private final PublishSubject<DLProgressEvent> downloadEvents = PublishSubject.create();
-
     @Inject Books installedBooks;
     @Inject RefreshManager refreshManager;
 
@@ -56,6 +51,18 @@ public class BookDownloadManager implements WorkListener, BooksListener {
         JobManager.addWorkListener(this);
         injector.inject(this);
         installedBooks.addBooksListener(this);
+    }
+
+    /**
+     * Build what the installer creates the job name as.
+     * Likely prone to be brittle.
+     *
+     * @param b The book to predict the download job name of
+     * @return The name of the job that will/is download/ing this book
+     */
+
+    public static String getJobId(Book b) {
+        return "INSTALL_BOOK-" + b.getInitials();
     }
 
     public void installBook(Book b) {
@@ -74,32 +81,19 @@ public class BookDownloadManager implements WorkListener, BooksListener {
         // First, look up where the Book came from
         Observable.just(refreshManager.installerFromBook(b))
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Installer>() {
+                .subscribe(new Action1<Observable<Installer>>() {
                     @Override
-                    public void call(Installer installer) {
+                    public void call(Observable<Installer> installerObservable) {
                         try {
-                            installer.install(b);
+                            installerObservable.toBlocking().first().install(b);
                         } catch (InstallException e) {
-                            Log.d(TAG, e.getMessage());
+                            e.printStackTrace();
                         }
-
-                        getDownloadEvents()
-                            .onNext(new DLProgressEvent(DLProgressEvent.PROGRESS_BEGINNING, b));
                     }
                 });
-    }
 
-    /**
-     * Build what the installer creates the job name as.
-     * Likely prone to be brittle.
-     * TODO: Make sure to test that this is an accurate job name
-     *
-     * @param b The book to predict the download job name of
-     * @return The name of the job that will/is download/ing this book
-     */
-
-    public static String getJobId(Book b) {
-        return "INSTALL_BOOK-" + b.getInitials();
+        getDownloadEvents()
+                .onNext(new DLProgressEvent(DLProgressEvent.PROGRESS_BEGINNING, b));
     }
 
     @Override

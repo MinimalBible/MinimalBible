@@ -18,6 +18,7 @@ import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookCategory;
 import org.crosswire.jsword.book.BookComparators;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -41,15 +42,12 @@ public class BookListFragment extends BaseFragment {
      */
     protected static final String ARG_BOOK_CATEGORY = "book_category";
 
-    private final String TAG = "BookListFragment";
-
+    @Inject
+    protected DownloadPrefs downloadPrefs;
+    protected ProgressDialog refreshDialog;
     @InjectView(R.id.lst_download_available)
     ListView downloadsAvailable;
-
     @Inject RefreshManager refreshManager;
-    @Inject protected DownloadPrefs downloadPrefs;
-
-	protected ProgressDialog refreshDialog;
     private LayoutInflater inflater;
 
     /**
@@ -114,7 +112,7 @@ public class BookListFragment extends BaseFragment {
      */
 	private void refreshModules() {
         // Check if the downloadManager has already refreshed everything
-		if (!refreshManager.isRefreshComplete()) {
+        if (!refreshManager.getRefreshComplete().get()) {
             // downloadManager is in progress of refreshing
             refreshDialog = new ProgressDialog(getActivity());
             refreshDialog.setMessage("Refreshing available modules...");
@@ -123,7 +121,7 @@ public class BookListFragment extends BaseFragment {
         }
 
         // Listen for the books!
-        refreshManager.getAvailableModulesFlattened()
+        refreshManager.getAvailableModulesFlat()
                 .filter(new Func1<Book, Boolean>() {
                     @Override
                     public Boolean call(Book book) {
@@ -162,7 +160,7 @@ public class BookListFragment extends BaseFragment {
 	private class DownloadDialogListener implements
 			DialogInterface.OnClickListener {
 		@Override
-		public void onClick(DialogInterface dialog, int which) {
+        public void onClick(@NotNull DialogInterface dialog, int which) {
             downloadPrefs.hasShownDownloadDialog(true);
 
 			switch (which) {

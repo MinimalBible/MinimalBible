@@ -22,11 +22,11 @@ class VersificationUtil() {
     }
 
     fun getBookNames(b: Book): Observable<String> {
-        return Observable.from(b.getVersification().getBookNames()) as Observable
+        return Observable.from(b.getVersification().getBookNames())
     }
 
     fun getBooks(b: Book): Observable<BibleBook> {
-        return Observable.from(b.getVersification().getBooks()) as Observable
+        return Observable.from(b.getVersification().getBooks())
     }
 
     fun getChapterCount(b: Book, bibleBook: BibleBook): Int {
@@ -34,7 +34,7 @@ class VersificationUtil() {
     }
 
     fun getBookName(b: Book, bibleBook: BibleBook): String {
-        return b.getVersification().getLongName(bibleBook) as String
+        return b.getVersification().getLongName(bibleBook)
     }
 
     fun getVersification(b: Book): Versification {
@@ -58,7 +58,7 @@ fun Versification.getBooks(): List<BibleBook> {
 }
 
 fun Versification.getBookNames(): List<String> {
-    return this.getBooks().map { this.getLongName(it) as String }
+    return this.getBooks().map { this.getLongName(it) }
 }
 
 fun Versification.getChapterCount(b: BibleBook): Int {
@@ -70,7 +70,7 @@ fun Book.getVersification(): Versification {
             this.getBookMetaData()!!.getProperty(BookMetaData.KEY_VERSIFICATION).toString()
     )
     if (v == null) {
-        Log.e(getClass()!!.getSimpleName(), "Invalid book: " + this.getInitials())
+        Log.e(javaClass<Book>().getSimpleName(), "Invalid book: " + this.getInitials())
         throw InvalidBookException(this.getInitials())
     } else
         return v

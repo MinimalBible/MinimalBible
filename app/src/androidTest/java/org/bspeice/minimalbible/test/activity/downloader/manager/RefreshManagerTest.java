@@ -1,7 +1,5 @@
 package org.bspeice.minimalbible.test.activity.downloader.manager;
 
-import com.jayway.awaitility.Awaitility;
-
 import junit.framework.TestCase;
 
 import org.bspeice.minimalbible.Injector;
@@ -26,7 +24,9 @@ import dagger.Provides;
 import rx.functions.Action1;
 
 import static com.jayway.awaitility.Awaitility.await;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RefreshManagerTest extends TestCase implements Injector {
 
@@ -35,34 +35,14 @@ public class RefreshManagerTest extends TestCase implements Injector {
      * for setting their own ObjectGraph.
      */
     ObjectGraph mObjectGraph;
+    @Inject
+    RefreshManager rM;
 
     @Override
     public void inject(Object o) {
         mObjectGraph.inject(o);
     }
 
-    @Inject RefreshManager rM;
-
-    @Module (injects = {RefreshManagerTest.class, RefreshManager.class})
-    class RMTModules {
-        Injector i;
-        Collection<Installer> installers;
-
-        RMTModules(Injector i, Collection<Installer> installers) {
-            this.i = i;
-            this.installers = installers;
-        }
-
-        @Provides @Singleton
-        Injector provideInjector() {
-            return i;
-        }
-
-        @Provides @Singleton
-        Collection<Installer> provideInstallers() {
-            return this.installers;
-        }
-    }
     public void testGetAvailableModulesFlattened() throws Exception {
         // Environment setup
         final String mockBookName = "MockBook";
@@ -78,13 +58,13 @@ public class RefreshManagerTest extends TestCase implements Injector {
         Collection<Installer> mockInstallers = new ArrayList<Installer>();
         mockInstallers.add(mockInstaller);
 
-        RMTModules modules = new RMTModules(this, mockInstallers);
+        RMTModules modules = new RMTModules(mockInstallers);
         mObjectGraph = ObjectGraph.create(modules);
 
         // Now the actual test
         mObjectGraph.inject(this); // Get the RefreshManager
 
-        rM.getAvailableModulesFlattened()
+        rM.getAvailableModulesFlat()
                 .toBlocking()
                 .forEach(new Action1<Book>() {
                     @Override
@@ -109,12 +89,12 @@ public class RefreshManagerTest extends TestCase implements Injector {
         Collection<Installer> mockInstallers = new ArrayList<Installer>();
         mockInstallers.add(mockInstaller);
 
-        RMTModules modules = new RMTModules(this, mockInstallers);
+        RMTModules modules = new RMTModules(mockInstallers);
         mObjectGraph = ObjectGraph.create(modules);
 
         // And the actual test
         mObjectGraph.inject(this);
-        Installer i = rM.installerFromBook(mockBook);
+        Installer i = rM.installerFromBook(mockBook).toBlocking().first();
 
         assertSame(mockInstaller, i);
         verify(mockInstaller).getBooks();
@@ -127,7 +107,7 @@ public class RefreshManagerTest extends TestCase implements Injector {
             @Override
             public List<Book> answer(InvocationOnMock invocationOnMock) throws Throwable {
                 Thread.sleep(1000); // Just long enough to give us a gap between
-                                    // refresh start and complete
+                // refresh start and complete
                 return bookList;
             }
         });
@@ -135,21 +115,43 @@ public class RefreshManagerTest extends TestCase implements Injector {
         Collection<Installer> mockInstallers = new ArrayList<Installer>();
         mockInstallers.add(mockInstaller);
 
-        RMTModules modules = new RMTModules(this, mockInstallers);
+        RMTModules modules = new RMTModules(mockInstallers);
         mObjectGraph = ObjectGraph.create(modules);
 
         // And the actual test
         mObjectGraph.inject(this);
 
         // So the refresh should be kicked off at the constructor, meaning that it's not "complete"
-        assertFalse(rM.isRefreshComplete());
+        assertFalse(rM.getRefreshComplete().get());
 
         // But, if it's on another thread, it should finish up eventually, right?
         await().atMost(5, TimeUnit.SECONDS).until(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                return rM.isRefreshComplete();
+                return rM.getRefreshComplete().get();
             }
         });
+    }
+
+    @Module(injects = {RefreshManagerTest.class, RefreshManager.class})
+    @SuppressWarnings("unused")
+    class RMTModules {
+        Collection<Installer> installers;
+
+        RMTModules(Collection<Installer> installers) {
+            this.installers = installers;
+        }
+
+        @Provides
+        @Singleton
+        Collection<Installer> provideInstallers() {
+            return this.installers;
+        }
+
+        @Provides
+        @Singleton
+        RefreshManager refreshManager(Collection<Installer> installers) {
+            return new RefreshManager(installers);
+        }
     }
 }

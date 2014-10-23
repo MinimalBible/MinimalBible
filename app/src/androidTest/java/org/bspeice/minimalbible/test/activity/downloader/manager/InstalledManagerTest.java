@@ -36,40 +36,10 @@ import rx.functions.Func1;
  */
 public class InstalledManagerTest extends TestCase implements Injector {
     ObjectGraph mObjectGraph;
-
-    @Module(injects = {InstalledManager.class,
-            InstalledManagerTest.class,
-            RefreshManager.class,
-            BookDownloadManager.class})
-    static class IMTestModules {
-        Injector i;
-        public IMTestModules(Injector i) {
-            this.i = i;
-        }
-
-        @Provides @Singleton
-        Injector provideInjector() {
-            return this.i;
-        }
-
-        @Provides @Singleton
-        Books provideInstalledBooks() {
-            return Books.installed();
-        }
-
-        @Provides
-        List<Book> provideInstalledBooksList(Books b) {
-            return b.getBooks();
-        }
-
-        @Provides @Singleton
-        Collection<Installer> provideInstallers() {
-            return new InstallManager().getInstallers().values();
-        }
-    }
-
-    @Inject InstalledManager iM;
-    @Inject Books installedBooks;
+    @Inject
+    InstalledManager iM;
+    @Inject
+    Books installedBooks;
 
     @Override
     public void inject(Object o) {
@@ -120,5 +90,47 @@ public class InstalledManagerTest extends TestCase implements Injector {
                     }
                 });
         assertFalse(foundMismatch.get());
+    }
+
+    @Module(injects = {InstalledManager.class,
+            InstalledManagerTest.class,
+            RefreshManager.class,
+            BookDownloadManager.class})
+    @SuppressWarnings("unused")
+    static class IMTestModules {
+        Injector i;
+
+        public IMTestModules(Injector i) {
+            this.i = i;
+        }
+
+        @Provides
+        @Singleton
+        Injector provideInjector() {
+            return this.i;
+        }
+
+        @Provides
+        @Singleton
+        Books provideInstalledBooks() {
+            return Books.installed();
+        }
+
+        @Provides
+        List<Book> provideInstalledBooksList(Books b) {
+            return b.getBooks();
+        }
+
+        @Provides
+        @Singleton
+        Collection<Installer> provideInstallers() {
+            return new InstallManager().getInstallers().values();
+        }
+
+        @Provides
+        @Singleton
+        RefreshManager refreshManager(Collection<Installer> installers) {
+            return new RefreshManager(installers);
+        }
     }
 }

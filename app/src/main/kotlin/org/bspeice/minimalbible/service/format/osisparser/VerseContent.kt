@@ -21,7 +21,7 @@ class VerseContent(v: Verse) {
     public fun toJson(): String {
         // Lazy load Gson - not likely that we'll call this method multiple times, so
         // don't have to worry about a penalty there.
-        return Gson().toJson(this) as String
+        return Gson().toJson(this)
     }
 
     public fun appendContent(content: String) {
