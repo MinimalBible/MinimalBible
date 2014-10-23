@@ -14,6 +14,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.when;
 
 public class RefreshManagerTest extends MBTestCase implements Injector {
 
+    final String mockBookName = "MockBook";
     /**
      * The object graph that should be given to classes under test. Each test is responsible
      * for setting their own ObjectGraph.
@@ -41,20 +43,15 @@ public class RefreshManagerTest extends MBTestCase implements Injector {
     ObjectGraph mObjectGraph;
     @Inject
     RefreshManager rM;
+    Installer mockInstaller;
+    Book mockBook;
 
-    @Override
-    public void inject(Object o) {
-        mObjectGraph.inject(o);
-    }
-
-    public void testGetAvailableModulesFlattened() throws Exception {
+    public void setUp() {
         // Environment setup
-        final String mockBookName = "MockBook";
-
-        Book mockBook = mock(Book.class);
+        mockBook = mock(Book.class);
         when(mockBook.getName()).thenReturn(mockBookName);
 
-        Installer mockInstaller = mock(Installer.class);
+        mockInstaller = mock(Installer.class);
         List<Book> bookList = new ArrayList<Book>();
         bookList.add(mockBook);
         when(mockInstaller.getBooks()).thenReturn(bookList);
@@ -67,7 +64,14 @@ public class RefreshManagerTest extends MBTestCase implements Injector {
 
         // Now the actual test
         mObjectGraph.inject(this); // Get the RefreshManager
+    }
 
+    @Override
+    public void inject(Object o) {
+        mObjectGraph.inject(o);
+    }
+
+    public void testGetAvailableModulesFlattened() throws Exception {
         rM.getAvailableModulesFlat()
                 .toBlocking()
                 .forEach(new Action1<Book>() {
@@ -82,22 +86,6 @@ public class RefreshManagerTest extends MBTestCase implements Injector {
     }
 
     public void testInstallerFromBook() throws Exception {
-        // Environment setup
-        Book mockBook = mock(Book.class);
-
-        Installer mockInstaller = mock(Installer.class);
-        List<Book> bookList = new ArrayList<Book>();
-        bookList.add(mockBook);
-        when(mockInstaller.getBooks()).thenReturn(bookList);
-
-        Collection<Installer> mockInstallers = new ArrayList<Installer>();
-        mockInstallers.add(mockInstaller);
-
-        RMTModules modules = new RMTModules(mockInstallers);
-        mObjectGraph = ObjectGraph.create(modules);
-
-        // And the actual test
-        mObjectGraph.inject(this);
         Installer i = rM.installerFromBook(mockBook).toBlocking().first();
 
         assertSame(mockInstaller, i);
@@ -105,7 +93,7 @@ public class RefreshManagerTest extends MBTestCase implements Injector {
     }
 
     public void testRefreshSeparateThread() {
-        Installer mockInstaller = mock(Installer.class);
+        mockInstaller = mock(Installer.class);
         final List<Book> bookList = new ArrayList<Book>();
         when(mockInstaller.getBooks()).thenAnswer(new Answer<List<Book>>() {
             @Override
@@ -135,6 +123,26 @@ public class RefreshManagerTest extends MBTestCase implements Injector {
                 return rM.getRefreshComplete().get();
             }
         });
+    }
+
+    /**
+     * Test the conditions are right for downloading
+     * I'd like to point out that I can test all of this without requiring mocking of
+     * either the preferences or network state. Value Boundaries for the win.
+     */
+    public void testDoUpdate() {
+        long fourteenDaysAgo = Calendar.getInstance().getTime().getTime() - 1209600;
+        long sixteenDaysAgo = Calendar.getInstance().getTime().getTime() - 1382400;
+
+        assertFalse(rM.doReload(true, fourteenDaysAgo, false));
+        assertFalse(rM.doReload(true, fourteenDaysAgo, true));
+        assertFalse(rM.doReload(true, sixteenDaysAgo, false));
+        assertTrue(rM.doReload(true, sixteenDaysAgo, true));
+
+        assertFalse(rM.doReload(false, fourteenDaysAgo, true));
+        assertFalse(rM.doReload(false, fourteenDaysAgo, false));
+        assertFalse(rM.doReload(false, sixteenDaysAgo, true));
+        assertFalse(rM.doReload(false, sixteenDaysAgo, false));
     }
 
     @Module(injects = {RefreshManagerTest.class, RefreshManager.class})
