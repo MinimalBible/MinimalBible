@@ -2,11 +2,9 @@ package org.bspeice.minimalbible.activity.viewer;
 
 import android.util.Log;
 
-import org.bspeice.minimalbible.activity.navigation.ExpListNavAdapter;
 import org.bspeice.minimalbible.service.book.VerseLookupModules;
 import org.bspeice.minimalbible.service.manager.BookManager;
 import org.crosswire.jsword.book.Book;
-import org.crosswire.jsword.versification.VersificationUtil;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -21,17 +19,17 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
- * Created by bspeice on 6/18/14.
+ * Modules used for the BibleViewer activity
  */
 @Module(
         injects = {
                 BibleViewer.class,
                 BookFragment.class,
-                ExpListNavDrawerFragment.class,
-                ExpListNavAdapter.class
+                ExpListNavDrawerFragment.class
         },
         includes = VerseLookupModules.class
 )
+@SuppressWarnings("unused")
 public class BibleViewerModules {
     BibleViewer activity;
 
@@ -97,10 +95,5 @@ public class BibleViewerModules {
     @Singleton
     BookManager bookManager() {
         return new BookManager();
-    }
-
-    @Provides
-    VersificationUtil provideVersificationUtil() {
-        return new VersificationUtil();
     }
 }

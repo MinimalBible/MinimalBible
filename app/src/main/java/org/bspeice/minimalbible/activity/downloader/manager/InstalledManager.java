@@ -14,8 +14,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import rx.Observable;
-
 /**
  * Manager to keep track of which books have been installed
  */
@@ -23,6 +21,7 @@ import rx.Observable;
 public class InstalledManager implements BooksListener {
 
     @Inject Books installedBooks;
+    // TODO: Why is this injected if we initialize in the constructor?
     @Inject List<Book> installedBooksList;
 
     private String TAG = "InstalledManager";
@@ -36,12 +35,6 @@ public class InstalledManager implements BooksListener {
 
     public boolean isInstalled(Book b) {
         return installedBooksList.contains(b);
-    }
-
-    public Observable<Book> getInstalledBooks() {
-        // This method is needed to provide a fresher copy of what's installed
-        // than Books.getInstalled() does.
-        return Observable.from(installedBooksList);
     }
 
     @Override

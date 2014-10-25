@@ -5,10 +5,10 @@ import org.bspeice.minimalbible.service.book.VerseLookupService
 import android.webkit.WebViewClient
 import android.webkit.JavascriptInterface
 import org.crosswire.jsword.book.Book
-import org.crosswire.jsword.versification.getVersification
 import java.util.ArrayList
 import android.util.Log
 import rx.subjects.PublishSubject
+import org.crosswire.jsword.book.getVersification
 
 /**
  * Created by bspeice on 9/14/14.
