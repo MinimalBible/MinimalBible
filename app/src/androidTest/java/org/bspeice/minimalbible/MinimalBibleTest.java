@@ -1,6 +1,5 @@
 package org.bspeice.minimalbible;
 
-import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
@@ -20,12 +19,13 @@ import dagger.ObjectGraph;
         mailTo = "bspeice.nc@gmail.com",
         mode = ReportingInteractionMode.SILENT
 )
-public class MinimalBible extends Application implements Injector {
+@SuppressWarnings("unused")
+public class MinimalBibleTest extends MinimalBible implements Injector {
     private String TAG = "MinimalBible";
     private ObjectGraph mObjectGraph;
 
-    public static MinimalBible get(Context ctx) {
-        return (MinimalBible) ctx.getApplicationContext();
+    public static MinimalBibleTest get(Context ctx) {
+        return (MinimalBibleTest) ctx.getApplicationContext();
     }
 
     @Override
