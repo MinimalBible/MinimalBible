@@ -17,7 +17,6 @@ import android.widget.Toast;
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseFragment;
-import org.bspeice.minimalbible.activity.downloader.manager.LocaleManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookCategory;
@@ -30,6 +29,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnItemSelected;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -47,11 +47,13 @@ public class BookListFragment extends BaseFragment {
     protected ProgressDialog refreshDialog;
     @Inject RefreshManager refreshManager;
     @Inject
-    LocaleManager localeManager;
+    List<String> availableLanguages;
+
     @InjectView(R.id.lst_download_available)
     ListView downloadsAvailable;
     @InjectView(R.id.spn_available_languages)
-    Spinner availableLanguages;
+    Spinner languagesSpinner;
+
     private LayoutInflater inflater;
 
     /**
@@ -80,6 +82,7 @@ public class BookListFragment extends BaseFragment {
                 false);
         ButterKnife.inject(this, rootView);
         displayModules();
+
         return rootView;
     }
 
@@ -124,7 +127,32 @@ public class BookListFragment extends BaseFragment {
             refreshDialog.show();
         }
 
-        // Listen for the books!
+        languagesSpinner.setAdapter(getLocaleSpinner());
+        if (BookListFragment.this.getActivity() != null) {
+            // On a screen rotate, getActivity() will be null. But, the activity
+            // will already have been set up correctly, so we don't need to worry
+            // about it.
+            // If not null, we need to set it up now.
+            setInsetsSpinner(BookListFragment.this.getActivity(), languagesSpinner);
+        }
+        if (refreshDialog != null) {
+            refreshDialog.cancel();
+        }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+        // getAvailableLanguagesList() will not return null
+    SpinnerAdapter getLocaleSpinner() {
+        ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(this.getActivity(),
+                android.R.layout.simple_spinner_item,
+                availableLanguages.toArray());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
+    }
+
+    @SuppressWarnings("unused")
+    @OnItemSelected(R.id.spn_available_languages)
+    public void onClick(final int position) {
         refreshManager.getFlatModules()
                 .filter(new Func1<Book, Boolean>() {
                     @Override
@@ -132,6 +160,13 @@ public class BookListFragment extends BaseFragment {
                         return book.getBookCategory() ==
                                 BookCategory.fromString(BookListFragment.this.getArguments()
                                         .getString(ARG_BOOK_CATEGORY));
+                    }
+                })
+                .filter(new Func1<Book, Boolean>() {
+                    @Override
+                    public Boolean call(Book book) {
+                        return book.getLanguage().getName()
+                                .equals(availableLanguages.get(position));
                     }
                 })
                 // Repack all the books
@@ -146,30 +181,10 @@ public class BookListFragment extends BaseFragment {
                     @Override
                     public void call(List<Book> books) {
                         downloadsAvailable.setAdapter(
-                                new BookListAdapter(inflater, books, (DownloadActivity)getActivity()));
-                        availableLanguages.setAdapter(getLocaleSpinner());
-                        if (BookListFragment.this.getActivity() != null) {
-                            // On a screen rotate, getActivity() will be null. But, the activity
-                            // will already have been set up correctly, so we don't need to worry
-                            // about it.
-                            // If not null, we need to set it up now.
-                            setInsetsSpinner(BookListFragment.this.getActivity(), availableLanguages);
-                        }
-                        if (refreshDialog != null) {
-                            refreshDialog.cancel();
-                        }
+                                new BookListAdapter(inflater, books,
+                                        (DownloadActivity) getActivity()));
                     }
                 });
-	}
-
-    @SuppressWarnings("ConstantConditions")
-        // getAvailableLanguagesList() will not return null
-    SpinnerAdapter getLocaleSpinner() {
-        ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(this.getActivity(),
-                android.R.layout.simple_spinner_item,
-                localeManager.getAvailableLanguagesList().toArray());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        return adapter;
     }
 
     private class DownloadDialogListener implements

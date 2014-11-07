@@ -118,4 +118,10 @@ public class DownloadActivityModules {
     LocaleManager provideLocaleManager(RefreshManager refreshManager) {
         return new LocaleManager(refreshManager);
     }
+
+    @Provides
+    List<String> availableLanguages(LocaleManager localeManager) {
+        final List<String> languages = new ArrayList<String>();
+        return localeManager.getSortedLanguagesList();
+    }
 }
