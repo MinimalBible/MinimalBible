@@ -2,7 +2,6 @@ package org.bspeice.minimalbible.activity.viewer;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -18,21 +17,20 @@ import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 import org.bspeice.minimalbible.activity.navigation.NavDrawerFragment;
-import org.bspeice.minimalbible.service.manager.BookManager;
 import org.crosswire.jsword.book.Book;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import dagger.ObjectGraph;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
 
 public class BibleViewer extends BaseActivity implements
         NavDrawerFragment.NavigationDrawerCallbacks,
         Injector {
 
-    @Inject BookManager bookManager;
+    @Inject
+    @Named("MainBook")
+    Book mainBook;
 
     private ObjectGraph bvObjectGraph;
     /**
@@ -75,44 +73,35 @@ public class BibleViewer extends BaseActivity implements
      * @param savedInstanceState Android's savedInstanceState
      */
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         this.inject(this);
 
-        // If no books are installed, we need to download one first. However,
-        // RxJava will error if there's nothing installed.
-        bookManager.getInstalledBooks()
-                .first()
-                .onErrorReturn(new Func1<Throwable, Book>() {
-                    @Override
-                    public Book call(Throwable throwable) {
-                        // If there are no books installed...
-                        Log.e(getLocalClassName(), "No books are currently installed, starting DownloadManager");
-                        Intent i = new Intent(BibleViewer.this, DownloadActivity.class);
-                        startActivityForResult(i, 0);
-                        finish();
-                        return null;
-                    }
-                })
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Book>() {
-                    @Override
-                    public void call(Book book) {
-                        Log.e("BibleViewer", "Subscribed to display book: " + book.getName());
-                        displayMainBook(book);
-                    }
-                });
-        setContentView(R.layout.activity_bible_viewer);
+        // If no books are installed, we need to download one first.
+        if (mainBook == null) {
+            // If there are no books installed...
+            Log.e(getLocalClassName(), "No books are currently installed, starting DownloadManager");
+            Intent i = new Intent(BibleViewer.this, DownloadActivity.class);
+            startActivityForResult(i, 0);
+            finish();
+        } else {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            Fragment f = BookFragment.newInstance(mainBook.getName());
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, f)
+                    .commit();
+            setContentView(R.layout.activity_bible_viewer);
 
-        mNavigationDrawerFragment = (ExpListNavDrawerFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
+            mNavigationDrawerFragment = (ExpListNavDrawerFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.navigation_drawer);
+            mTitle = getTitle();
 
-		// Set up the drawer.
-		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
-	}
+            // Set up the drawer.
+            mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
+                    (DrawerLayout) findViewById(R.id.drawer_layout));
+        }
+    }
 
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
@@ -134,9 +123,10 @@ public class BibleViewer extends BaseActivity implements
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		if (!mNavigationDrawerFragment.isDrawerOpen()) {
-			// Only show items in the action bar relevant to this screen
-			// if the drawer is not showing. Otherwise, let the drawer
+        if (mNavigationDrawerFragment != null &&
+                !mNavigationDrawerFragment.isDrawerOpen()) {
+            // Only show items in the action bar relevant to this screen
+            // if the drawer is not showing. Otherwise, let the drawer
 			// decide what to show in the action bar.
 			getMenuInflater().inflate(R.menu.main, menu);
 			restoreActionBar();
@@ -158,15 +148,4 @@ public class BibleViewer extends BaseActivity implements
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-    private void displayMainBook(Book b) {
-        Log.d("BibleViewer", "Initializing main book: " + b.getName());
-        Log.d("MainThread?", Boolean.toString(Looper.myLooper() == Looper.getMainLooper()));
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment f = BookFragment.newInstance(b.getName());
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, f)
-                .commit();
-    }
-
 }
