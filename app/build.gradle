@@ -42,6 +42,18 @@ android {
         exclude 'NOTICE'
         exclude 'asm-license.txt'
     }
+    productFlavors {
+        testConfig {
+            minSdkVersion 8
+            applicationId 'org.bspeice.minimalbible'
+            targetSdkVersion 20
+        }
+        mainConfig {
+            minSdkVersion 8
+            applicationId 'org.bspeice.minimalbible'
+            targetSdkVersion 20
+        }
+    }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
@@ -71,7 +83,7 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:+'
 
     // Email debug reports if I crash...
-    debugCompile('ch.acra:acra:+') {
+    testConfigCompile('ch.acra:acra:+') {
         exclude module: 'json'
     }
 }

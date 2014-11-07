@@ -6,12 +6,14 @@ package org.bspeice.minimalbible;
  */
 public class Modules {
 
-    private Modules() {
-    }
+    public static TestModules testModules = new TestModules();
+
+    private Modules() {}
 
     public static Object[] list(MinimalBible app) {
-        return new Object[]{
+        return new Object[] {
                 new MinimalBibleModules(app),
+                testModules
         };
     }
 }
