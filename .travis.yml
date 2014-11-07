@@ -10,5 +10,3 @@ before_install:
 before_script:
   - bash ./wait_for_emulator
   - adb shell input keyevent 82 &
-
-script: "bash gradlew connectedAndroidTest"
