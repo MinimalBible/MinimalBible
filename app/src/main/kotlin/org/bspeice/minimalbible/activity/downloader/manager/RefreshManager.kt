@@ -8,6 +8,7 @@ import rx.schedulers.Schedulers
 import java.util.Calendar
 import org.bspeice.minimalbible.activity.downloader.DownloadPrefs
 import android.net.ConnectivityManager
+import org.crosswire.jsword.book.BookComparators
 
 /**
  * Created by bspeice on 10/22/14.
@@ -21,19 +22,23 @@ class RefreshManager(val installers: Collection<Installer>,
             Observable.from(installers)
                     .map {
                         if (doReload()) {
-                            it.reloadBookList()
+                            it.reloadBookList() // TODO: Handle InstallException
                         }
                         mapOf(Pair(it, it.getBooks()))
                     }
                     .subscribeOn(Schedulers.io())
                     .cache();
 
-    val availableModulesFlat: Observable<Book>
-        get() = availableModules
+    val flatModules: Observable<Book> =
+            availableModules
                 // Map -> Lists
                 .flatMap { Observable.from(it.values()) }
                 // Lists -> Single list
-                .flatMap { Observable.from(it) };
+                    .flatMap { Observable.from(it) }
+
+    val flatModulesSorted = flatModules.toSortedList {(book1, book2) ->
+        BookComparators.getInitialComparator().compare(book1, book2)
+    };
 
     // Constructor - Split from the value creation because `subscribe` returns
     // the subscriber object, not the underlying value
@@ -43,8 +48,9 @@ class RefreshManager(val installers: Collection<Installer>,
 
     val fifteenDaysAgo = Calendar.getInstance().getTime().getTime() - 1296000
 
-    fun doReload(enabledDownload: Boolean, lastUpdated: Long, onWifi: Boolean): Boolean =
-            if (!enabledDownload || !onWifi)
+    fun doReload(enabledDownload: Boolean, lastUpdated: Long,
+                 networkState: Int? = ConnectivityManager.TYPE_DUMMY): Boolean =
+            if (!enabledDownload || networkState == ConnectivityManager.TYPE_WIFI)
                 false
             else if (lastUpdated < fifteenDaysAgo)
                 true
@@ -53,12 +59,7 @@ class RefreshManager(val installers: Collection<Installer>,
 
     fun doReload(): Boolean = doReload(prefs.hasEnabledDownload(),
             prefs.downloadRefreshedOn(),
-            // TODO: Functional is awesome, but this might be a bit ridiculous
-            (if (connManager?.getActiveNetworkInfo() != null)
-                connManager!!.getActiveNetworkInfo().getType() == ConnectivityManager.TYPE_WIFI
-            else
-                false)
-    )
+            connManager?.getActiveNetworkInfo()?.getType())
 
     fun installerFromBook(b: Book): Observable<Installer> = Observable.just(
             availableModules.filter {

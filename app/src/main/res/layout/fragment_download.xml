@@ -4,12 +4,19 @@
     android:layout_height="match_parent"
     tools:context="org.bspeice.minimalbible.DownloadActivity$PlaceholderFragment" >
 
-    <ListView
+    <Spinner
+        android:id="@+id/spn_available_languages"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/lst_download_available"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:clipToPadding="false" />
+        android:layout_alignParentTop="true" />
+
+    <ListView
+        android:id="@+id/lst_download_available"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/spn_available_languages" />
+
 </RelativeLayout>

@@ -7,6 +7,7 @@ import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBibleModules;
 import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadManager;
 import org.bspeice.minimalbible.activity.downloader.manager.InstalledManager;
+import org.bspeice.minimalbible.activity.downloader.manager.LocaleManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookCategory;
@@ -111,5 +112,10 @@ public class DownloadActivityModules {
                                          @Named("DownloadActivityContext") Context context) {
         return new RefreshManager(installers, prefs,
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+    }
+
+    @Provides
+    LocaleManager provideLocaleManager(RefreshManager refreshManager) {
+        return new LocaleManager(refreshManager);
     }
 }

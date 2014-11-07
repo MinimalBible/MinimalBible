@@ -12,15 +12,29 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
  */
 public class BaseFragment extends Fragment {
 
+    protected static SystemBarTintManager.SystemBarConfig getConfig(Activity context) {
+        return new SystemBarTintManager(context).getConfig();
+    }
+
     /**
      * Calculate the offset we need to display properly if the System bar is translucent
      * @param context The {@link android.app.Activity} we are displaying in
      * @param view The {@link android.view.View} we need to calculate the offset for.
      */
+    @SuppressWarnings("unused")
     protected static void setInsets(Activity context, View view) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return;
-        SystemBarTintManager tintManager = new SystemBarTintManager(context);
-        SystemBarTintManager.SystemBarConfig config = tintManager.getConfig();
+        SystemBarTintManager.SystemBarConfig config = getConfig(context);
         view.setPadding(0, config.getPixelInsetTop(true), config.getPixelInsetRight(), config.getPixelInsetBottom());
     }
+
+    protected static void setInsetsSpinner(Activity context, View view) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return;
+        SystemBarTintManager.SystemBarConfig config = getConfig(context);
+        int marginTopBottom = config.getPixelInsetBottom() / 3;
+        view.setPadding(0, config.getPixelInsetTop(true) + marginTopBottom,
+                config.getPixelInsetRight(),
+                marginTopBottom);
+    }
+
 }

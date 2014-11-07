@@ -8,12 +8,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseFragment;
+import org.bspeice.minimalbible.activity.downloader.manager.LocaleManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookCategory;
@@ -36,18 +40,18 @@ import rx.functions.Func2;
  */
 
 public class BookListFragment extends BaseFragment {
-    /**
-     * The fragment argument representing the section number for this fragment.
-     * Not a candidate for Dart (yet) because I would have to write a Parcelable around it.
-     */
     protected static final String ARG_BOOK_CATEGORY = "book_category";
 
     @Inject
     protected DownloadPrefs downloadPrefs;
     protected ProgressDialog refreshDialog;
+    @Inject RefreshManager refreshManager;
+    @Inject
+    LocaleManager localeManager;
     @InjectView(R.id.lst_download_available)
     ListView downloadsAvailable;
-    @Inject RefreshManager refreshManager;
+    @InjectView(R.id.spn_available_languages)
+    Spinner availableLanguages;
     private LayoutInflater inflater;
 
     /**
@@ -121,7 +125,7 @@ public class BookListFragment extends BaseFragment {
         }
 
         // Listen for the books!
-        refreshManager.getAvailableModulesFlat()
+        refreshManager.getFlatModules()
                 .filter(new Func1<Book, Boolean>() {
                     @Override
                     public Boolean call(Book book) {
@@ -143,12 +147,13 @@ public class BookListFragment extends BaseFragment {
                     public void call(List<Book> books) {
                         downloadsAvailable.setAdapter(
                                 new BookListAdapter(inflater, books, (DownloadActivity)getActivity()));
+                        availableLanguages.setAdapter(getLocaleSpinner());
                         if (BookListFragment.this.getActivity() != null) {
                             // On a screen rotate, getActivity() will be null. But, the activity
                             // will already have been set up correctly, so we don't need to worry
                             // about it.
                             // If not null, we need to set it up now.
-                            setInsets(BookListFragment.this.getActivity(), downloadsAvailable);
+                            setInsetsSpinner(BookListFragment.this.getActivity(), availableLanguages);
                         }
                         if (refreshDialog != null) {
                             refreshDialog.cancel();
@@ -157,35 +162,45 @@ public class BookListFragment extends BaseFragment {
                 });
 	}
 
-	private class DownloadDialogListener implements
-			DialogInterface.OnClickListener {
-		@Override
+    @SuppressWarnings("ConstantConditions")
+        // getAvailableLanguagesList() will not return null
+    SpinnerAdapter getLocaleSpinner() {
+        ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(this.getActivity(),
+                android.R.layout.simple_spinner_item,
+                localeManager.getAvailableLanguagesList().toArray());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
+    }
+
+    private class DownloadDialogListener implements
+            DialogInterface.OnClickListener {
+        @Override
         public void onClick(@NotNull DialogInterface dialog, int which) {
             downloadPrefs.hasShownDownloadDialog(true);
 
-			switch (which) {
-			case DialogInterface.BUTTON_POSITIVE:
-				// Clicked ready to continue - allow downloading in the future
-                downloadPrefs.hasEnabledDownload(true);
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    // Clicked ready to continue - allow downloading in the future
+                    downloadPrefs.hasEnabledDownload(true);
 
-				// And warn them that it has been enabled in the future.
-				Toast.makeText(getActivity(),
-                        "Downloading now enabled. Disable in settings.",
-                        Toast.LENGTH_SHORT).show();
-				refreshModules();
-				break;
+                    // And warn them that it has been enabled in the future.
+                    Toast.makeText(getActivity(),
+                            "Downloading now enabled. Disable in settings.",
+                            Toast.LENGTH_SHORT).show();
+                    refreshModules();
+                    break;
 
-			// case DialogInterface.BUTTON_NEGATIVE:
-            default:
-				// Clicked to not download - Permanently disable downloading
-				downloadPrefs.hasEnabledDownload(false);
-				Toast.makeText(getActivity(),
-                        "Disabling downloading. Re-enable it in settings.",
-                        Toast.LENGTH_SHORT).show();
-				refreshModules();
-				break;
-			}
-		}
-	}
+                // case DialogInterface.BUTTON_NEGATIVE:
+                default:
+                    // Clicked to not download - Permanently disable downloading
+                    downloadPrefs.hasEnabledDownload(false);
+                    Toast.makeText(getActivity(),
+                            "Disabling downloading. Re-enable it in settings.",
+                            Toast.LENGTH_SHORT).show();
+                    refreshModules();
+                    break;
+            }
+        }
+    }
 
 }

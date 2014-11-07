@@ -72,7 +72,7 @@ public class RefreshManagerTest extends MBTestCase implements Injector {
     }
 
     public void testGetAvailableModulesFlattened() throws Exception {
-        rM.getAvailableModulesFlat()
+        rM.getFlatModules()
                 .toBlocking()
                 .forEach(new Action1<Book>() {
                     @Override
@@ -134,15 +134,15 @@ public class RefreshManagerTest extends MBTestCase implements Injector {
         long fourteenDaysAgo = Calendar.getInstance().getTime().getTime() - 1209600;
         long sixteenDaysAgo = Calendar.getInstance().getTime().getTime() - 1382400;
 
-        assertFalse(rM.doReload(true, fourteenDaysAgo, false));
-        assertFalse(rM.doReload(true, fourteenDaysAgo, true));
-        assertFalse(rM.doReload(true, sixteenDaysAgo, false));
-        assertTrue(rM.doReload(true, sixteenDaysAgo, true));
+        assertFalse(rM.doReload(true, fourteenDaysAgo, ConnectivityManager.TYPE_DUMMY));
+        assertFalse(rM.doReload(true, fourteenDaysAgo, ConnectivityManager.TYPE_WIFI));
+        assertFalse(rM.doReload(true, sixteenDaysAgo, ConnectivityManager.TYPE_DUMMY));
+        assertTrue(rM.doReload(true, sixteenDaysAgo, ConnectivityManager.TYPE_WIFI));
 
-        assertFalse(rM.doReload(false, fourteenDaysAgo, true));
-        assertFalse(rM.doReload(false, fourteenDaysAgo, false));
-        assertFalse(rM.doReload(false, sixteenDaysAgo, true));
-        assertFalse(rM.doReload(false, sixteenDaysAgo, false));
+        assertFalse(rM.doReload(false, fourteenDaysAgo, ConnectivityManager.TYPE_WIFI));
+        assertFalse(rM.doReload(false, fourteenDaysAgo, ConnectivityManager.TYPE_DUMMY));
+        assertFalse(rM.doReload(false, sixteenDaysAgo, ConnectivityManager.TYPE_WIFI));
+        assertFalse(rM.doReload(false, sixteenDaysAgo, ConnectivityManager.TYPE_DUMMY));
     }
 
     @Module(injects = {RefreshManagerTest.class, RefreshManager.class})
@@ -151,6 +151,7 @@ public class RefreshManagerTest extends MBTestCase implements Injector {
         Collection<Installer> installers;
         ConnectivityManager manager;
         DownloadPrefs prefs;
+
         RMTModules(Collection<Installer> installers) {
             this.installers = installers;
 

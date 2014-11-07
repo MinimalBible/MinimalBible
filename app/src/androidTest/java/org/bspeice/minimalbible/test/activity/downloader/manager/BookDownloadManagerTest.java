@@ -40,9 +40,12 @@ import static org.mockito.Mockito.when;
 public class BookDownloadManagerTest extends MBTestCase implements Injector {
 
     ObjectGraph mObjectGraph;
-    @Inject BookDownloadManager bookDownloadManager;
-    @Inject RefreshManager refreshManager;
-    @Inject Books installedBooks;
+    @Inject
+    BookDownloadManager bookDownloadManager;
+    @Inject
+    RefreshManager refreshManager;
+    @Inject
+    Books installedBooks;
 
     @Override
     public void inject(Object o) {
@@ -56,7 +59,7 @@ public class BookDownloadManagerTest extends MBTestCase implements Injector {
     }
 
     Observable<Book> installableBooks() {
-        return refreshManager.getAvailableModulesFlat()
+        return refreshManager.getFlatModules()
                 .filter(new Func1<Book, Boolean>() {
                     @Override
                     public Boolean call(Book book) {
@@ -121,6 +124,7 @@ public class BookDownloadManagerTest extends MBTestCase implements Injector {
         Injector i;
         ConnectivityManager manager;
         DownloadPrefs prefs;
+
         BookDownloadManagerTestModules(Injector i) {
             this.i = i;
 
