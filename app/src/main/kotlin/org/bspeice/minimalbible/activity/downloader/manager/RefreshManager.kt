@@ -50,7 +50,7 @@ class RefreshManager(val installers: Collection<Installer>,
 
     fun doReload(enabledDownload: Boolean, lastUpdated: Long,
                  networkState: Int? = ConnectivityManager.TYPE_DUMMY): Boolean =
-            if (!enabledDownload || networkState == ConnectivityManager.TYPE_WIFI)
+            if (!enabledDownload || networkState != ConnectivityManager.TYPE_WIFI)
                 false
             else if (lastUpdated < fifteenDaysAgo)
                 true
