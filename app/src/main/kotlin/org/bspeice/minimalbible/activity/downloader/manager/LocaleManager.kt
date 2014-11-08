@@ -23,9 +23,10 @@ class LocaleManager(val rM: RefreshManager) {
                 else
                     left.getName().compareTo(right.getName())
             }.toBlocking().first()
-}
 
-class FixedLanguage(language: Language?) :
-        Language(language?.getCode() ?: Language.UNKNOWN_LANG_CODE) {
-    override fun hashCode() = this.getName().hashCode()
+    // TODO: Fix the actual Language implementation - Pull Request?
+    private class FixedLanguage(language: Language?) :
+            Language(language?.getCode() ?: Language.UNKNOWN_LANG_CODE) {
+        override fun hashCode() = this.getName().hashCode()
+    }
 }
