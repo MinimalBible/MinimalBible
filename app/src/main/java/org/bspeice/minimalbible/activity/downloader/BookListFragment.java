@@ -18,6 +18,7 @@ import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseFragment;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
+import org.crosswire.common.util.Language;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookCategory;
 import org.crosswire.jsword.book.BookComparators;
@@ -30,6 +31,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnItemSelected;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -47,7 +49,7 @@ public class BookListFragment extends BaseFragment {
     protected ProgressDialog refreshDialog;
     @Inject RefreshManager refreshManager;
     @Inject
-    List<String> availableLanguages;
+    List<Language> availableLanguages;
 
     @InjectView(R.id.lst_download_available)
     ListView downloadsAvailable;
@@ -153,22 +155,9 @@ public class BookListFragment extends BaseFragment {
     @SuppressWarnings("unused")
     @OnItemSelected(R.id.spn_available_languages)
     public void onClick(final int position) {
-        refreshManager.getFlatModules()
-                .filter(new Func1<Book, Boolean>() {
-                    @Override
-                    public Boolean call(Book book) {
-                        return book.getBookCategory() ==
-                                BookCategory.fromString(BookListFragment.this.getArguments()
-                                        .getString(ARG_BOOK_CATEGORY));
-                    }
-                })
-                .filter(new Func1<Book, Boolean>() {
-                    @Override
-                    public Boolean call(Book book) {
-                        return book.getLanguage().getName()
-                                .equals(availableLanguages.get(position));
-                    }
-                })
+        booksByLanguage(refreshManager.getFlatModules(),
+                availableLanguages.get(position),
+                BookCategory.fromString(getArguments().getString(ARG_BOOK_CATEGORY)))
                 // Repack all the books
                 .toSortedList(new Func2<Book, Book, Integer>() {
                     @Override
@@ -183,6 +172,25 @@ public class BookListFragment extends BaseFragment {
                         downloadsAvailable.setAdapter(
                                 new BookListAdapter(inflater, books,
                                         (DownloadActivity) getActivity()));
+                    }
+                });
+    }
+
+    protected Observable<Book> booksByLanguage(Observable<Book> books, final Language language,
+                                               final BookCategory category) {
+        return books
+                .filter(new Func1<Book, Boolean>() {
+                    @Override
+                    public Boolean call(Book book) {
+                        return book.getBookCategory() == category;
+                    }
+                })
+                .filter(new Func1<Book, Boolean>() {
+                    @Override
+                    public Boolean call(Book book) {
+                        // Language doesn't properly implement .equals(), so use Strings
+                        return book.getLanguage().getCode()
+                                .equals(language.getCode());
                     }
                 });
     }

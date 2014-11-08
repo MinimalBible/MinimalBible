@@ -9,6 +9,7 @@ import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadManager;
 import org.bspeice.minimalbible.activity.downloader.manager.InstalledManager;
 import org.bspeice.minimalbible.activity.downloader.manager.LocaleManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
+import org.crosswire.common.util.Language;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookCategory;
 import org.crosswire.jsword.book.Books;
@@ -120,8 +121,7 @@ public class DownloadActivityModules {
     }
 
     @Provides
-    List<String> availableLanguages(LocaleManager localeManager) {
-        final List<String> languages = new ArrayList<String>();
+    List<Language> availableLanguages(LocaleManager localeManager) {
         return localeManager.getSortedLanguagesList();
     }
 }
