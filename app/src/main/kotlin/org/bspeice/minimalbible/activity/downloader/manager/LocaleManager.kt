@@ -2,14 +2,18 @@ package org.bspeice.minimalbible.activity.downloader.manager
 
 import org.crosswire.common.util.Language
 import rx.Observable
+import rx.observables.GroupedObservable
 
 class LocaleManager(val rM: RefreshManager) {
 
     val currentLanguage = Language.DEFAULT_LANG
 
-    val languageModuleMap = rM.flatModules
+    private val languageModuleMap = rM.flatModules
             // Language doesn't have hashCode(), so we actually group by its String
             .groupBy { FixedLanguage(it.getLanguage()) }
+
+    val modulesByLanguage = languageModuleMap
+            .map { GroupedObservable.from(it.getKey(): Language, it) }
 
     // Cast back to the original Language implementation
     val availableLanguages: Observable<Language> = languageModuleMap.map { it.getKey() }
