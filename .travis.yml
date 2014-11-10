@@ -21,4 +21,7 @@ before_script:
   - bash ./wait_for_emulator
   - adb shell input keyevent 82 &
 
-script: "bash gradlew connectedAndroidTestTestConfigDebug"
+# Need to specify the bash command twice, for whatever reason, the first time fails
+script:
+  - bash gradlew connectedAndroidTestTestConfigDebug
+  - bash gradlew connectedAndroidTestTestConfigDebug
