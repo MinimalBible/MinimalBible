@@ -15,12 +15,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.0.2'
+    compileSdkVersion 20
+    buildToolsVersion '20.0.0'
     defaultConfig {
         applicationId 'org.bspeice.minimalbible'
         minSdkVersion 8
-        targetSdkVersion 21
+        targetSdkVersion 20
         versionCode 1
         versionName '1.0'
     }
@@ -46,12 +46,12 @@ android {
         testConfig {
             minSdkVersion 8
             applicationId 'org.bspeice.minimalbible'
-            targetSdkVersion 21
+            targetSdkVersion 20
         }
         mainConfig {
             minSdkVersion 8
             applicationId 'org.bspeice.minimalbible'
-            targetSdkVersion 21
+            targetSdkVersion 20
         }
     }
     sourceSets {
@@ -65,13 +65,14 @@ dependencies {
     compile 'com.squareup.dagger:dagger:+'
     provided 'com.squareup.dagger:dagger-compiler:+'
 
-    compile 'de.devland.esperandro:esperandro-api:+'
-    provided 'de.devland.esperandro:esperandro:+'
+    // TODO: Figure out why I need to force 2.1.0 and can't just use +
+    compile 'de.devland.esperandro:esperandro-api:2.1.0'
+    provided 'de.devland.esperandro:esperandro:2.1.0'
 
     compile 'com.jakewharton:butterknife:+'
     compile 'com.readystatesoftware.systembartint:systembartint:+'
     compile 'com.netflix.rxjava:rxjava-android:+'
-    compile 'com.android.support:appcompat-v7:21.+'
+    compile 'com.android.support:appcompat-v7:20.+'
     compile 'org.apache.commons:commons-lang3:+'
     compile 'com.google.code.gson:gson:+'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
