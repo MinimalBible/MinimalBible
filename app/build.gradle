@@ -5,12 +5,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
-apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
