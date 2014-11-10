@@ -10,7 +10,7 @@ android:
 
 env:
   matrix:
-    - ANDROID_SDKS=android-21,sysimg-21 ANDROID_TARGET=android-21 ANDROID_ABI=x86
+    - ANDROID_SDKS=android-21,sysimg-21 ANDROID_TARGET=android-21 ANDROID_ABI=x86_64
 
 before_script:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
