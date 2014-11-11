@@ -1,19 +1,19 @@
 package org.bspeice.minimalbible.test;
 
-import org.bspeice.minimalbible.FinalDelegate;
 import org.bspeice.minimalbible.MBTestCase;
+import org.bspeice.minimalbible.SafeValDelegate;
 
 import kotlin.PropertyMetadataImpl;
 
 /**
  * Test that the FinalDelegate actually obeys its contract
  */
-public class FinalDelegateTest extends MBTestCase {
+public class SafeValDelegateTest extends MBTestCase {
 
-    FinalDelegate<String> delegate;
+    SafeValDelegate<String> delegate;
 
     public void setUp() {
-        delegate = new FinalDelegate<String>();
+        delegate = new SafeValDelegate<String>();
     }
 
     public void testDelegateNullSafety() {
