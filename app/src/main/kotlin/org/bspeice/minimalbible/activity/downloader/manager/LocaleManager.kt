@@ -12,12 +12,18 @@ class LocaleManager(val rM: RefreshManager) {
             // Language doesn't have hashCode(), so we actually group by its String
             .groupBy { FixedLanguage(it.getLanguage()) }
 
+    // I would suppress the warning here if I could figure out how...
     val modulesByLanguage = languageModuleMap
             .map { GroupedObservable.from(it.getKey(): Language, it) }
 
     // Cast back to the original Language implementation
     val availableLanguages: Observable<Language> = languageModuleMap.map { it.getKey() }
     val sortedLanguagesList =
+            Core.sortedLanguagesList(availableLanguages, currentLanguage).toBlocking().first()
+
+    object Core {
+        fun sortedLanguagesList(availableLanguages: Observable<Language>,
+                                currentLanguage: Language) =
             availableLanguages.toSortedList {(left, right) ->
                 // Prioritize our current language first
                 if (left.getName() == currentLanguage.getName())
@@ -25,8 +31,9 @@ class LocaleManager(val rM: RefreshManager) {
                 else if (right.getName() == currentLanguage.getName())
                     1
                 else
-                    left.getName().compareTo(right.getName())
-            }.toBlocking().first()
+                    left.getName() compareTo right.getName()
+            }
+    }
 
     // TODO: Fix the actual Language implementation - Pull Request?
     private class FixedLanguage(language: Language?) :
