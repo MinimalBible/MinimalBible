@@ -17,7 +17,7 @@ public class OsisParserTest extends MBTestCase {
     OsisParser parser;
 
     public void setUp() {
-        parser = new OsisParser(null);
+        parser = new OsisParser();
     }
 
     @SuppressLint("NewApi")

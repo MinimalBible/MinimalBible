@@ -9,14 +9,17 @@ import java.util.ArrayList
 
 //TODO: JSON Streaming parsing? http://instagram-engineering.tumblr.com/post/97147584853/json-parsing
 class VerseContent(v: Verse) {
-    var id = v.getOrdinal()
-    var bookName = v.getName()
-    var chapter = v.getChapter()
-    var verseNum = v.getVerse()
+    val id = v.getOrdinal()
+    val bookName = v.getName()
+    val chapter = v.getChapter()
+    val verseNum = v.getVerse()
+    val chapterTitle = ""
+    val paraTitle = ""
+    val references: MutableList<VerseReference> = ArrayList()
     var content = ""
-    var chapterTitle = ""
-    var paraTitle = ""
-    var references: MutableList<VerseReference> = ArrayList()
+
+    public val json: String
+        get() = Gson().toJson(this)
 
     public fun toJson(): String {
         // Lazy load Gson - not likely that we'll call this method multiple times, so

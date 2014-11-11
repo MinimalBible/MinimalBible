@@ -80,7 +80,8 @@ public class VerseLookupService implements Action1<Verse> {
         BookData bookData = new BookData(book, v);
         try {
             SAXEventProvider provider = bookData.getSAXEventProvider();
-            OsisParser handler = new OsisParser(v);
+            OsisParser handler = new OsisParser();
+            handler.setVerse(v);
             provider.provideSAXEvents(handler);
             return handler.getVerseContent().toJson();
         } catch (BookException e) {

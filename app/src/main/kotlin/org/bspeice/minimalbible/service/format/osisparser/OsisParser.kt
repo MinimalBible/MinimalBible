@@ -5,17 +5,20 @@ import org.crosswire.jsword.passage.Verse
 import java.util.ArrayDeque
 import org.xml.sax.Attributes
 import org.crosswire.jsword.book.OSISUtil
+import org.bspeice.minimalbible.FinalDelegate
 
 /**
  * Created by bspeice on 9/10/14.
  */
 
-class OsisParser(v: Verse?) : DefaultHandler() {
+class OsisParser() : DefaultHandler() {
 
-    val verseContent: VerseContent? = when (v) {
-        is Verse -> VerseContent(v) // not null
-        else -> null
-    }
+    // Don't pass a verse as part of the constructor, but still guarantee
+    // that it will exist
+    public var verse: Verse by FinalDelegate()
+    val verseContent: VerseContent
+        get() = VerseContent(verse)
+
     // TODO: Implement a stack to keep min API 8
     val doWrite = ArrayDeque<Boolean>()
 
@@ -33,6 +36,6 @@ class OsisParser(v: Verse?) : DefaultHandler() {
 
     override fun characters(ch: CharArray, start: Int, length: Int) {
         if (doWrite.peek())
-            verseContent?.appendContent(String(ch))
+            verseContent.appendContent(String(ch))
     }
 }
