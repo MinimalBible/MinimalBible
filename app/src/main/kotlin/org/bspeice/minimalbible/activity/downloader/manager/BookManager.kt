@@ -14,6 +14,7 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import org.crosswire.jsword.book.BookException
+import org.crosswire.jsword.book.BookDriver
 
 /**
  * Single point of authority for what is being downloaded and its progress
@@ -71,18 +72,24 @@ class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
     }
 
     /**
+     * For whatever reason, not just any old "book" reference will do. We need to actually
+     * get a reference corresponding to a physically installed book to get the proper driver.
+     * Plus, it makes the removeBook method easier to test.
+     * @param b The book to find the actual driver for
+     * @return The driver corresponding to the physical book
+     */
+    fun getRealDriver(b: Book): BookDriver = (installedBooks getBook b.getInitials()).getDriver()
+
+    /**
      * Remove a book from being installed.
      * Currently only supports books that have been installed outside the current application run.
      * Not quite sure why this is, but And-Bible exhibits the same behavior.
-     * Also, make sure to manually test if you change this implementation. The `drivers` are
-     * a bit persnickety.
      * @param b The book to remove
      * @return Whether the book was removed.
      */
-    fun removeBook(b: Book): Boolean {
+    fun removeBook(b: Book, driver: BookDriver): Boolean {
         try {
-            val realBook = installedBooks getBook b.getInitials()
-            realBook.getDriver().delete(b)
+            driver delete b
             return installedBooksList remove b
         } catch (e: BookException) {
             Log.e("InstalledManager",

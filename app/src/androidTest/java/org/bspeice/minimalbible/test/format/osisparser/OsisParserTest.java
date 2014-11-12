@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import org.bspeice.minimalbible.MBTestCase;
 import org.bspeice.minimalbible.service.format.osisparser.OsisParser;
 import org.crosswire.jsword.book.OSISUtil;
+import org.crosswire.jsword.passage.Verse;
 import org.xml.sax.Attributes;
 
 import static org.mockito.Mockito.mock;
@@ -47,5 +48,27 @@ public class OsisParserTest extends MBTestCase {
         parser.getDoWrite().add(true);
         parser.endElement("", "", "");
         assertTrue(parser.getDoWrite().isEmpty());
+    }
+
+    // During initial development, I accidentally set up the verseContent
+    // as a value computed every time - so you'd get a new "content" every time
+    // you tried to update it. Thus, if you updated the content only once, you're fine.
+    // Try and update multiple times, and things would start going crazy.
+    @SuppressLint("NewApi")
+    @SuppressWarnings("unused")
+    public void ignoreTestVerseContentConsistent() {
+        String string1 = "1";
+        String string2 = "2";
+
+        // Yes, I need intimate knowledge of the state machine to run this test
+        // Also, Verse is final, so I can't mock that, which is why this test is ignored.
+        Verse mockVerse = mock(Verse.class);
+        parser.setVerse(mockVerse);
+        parser.getDoWrite().push(true);
+        parser.characters(string1.toCharArray(), 0, string1.length());
+        assertEquals(parser.getVerseContent().getContent(), string1);
+
+        parser.characters(string2.toCharArray(), 0, string2.length());
+        assertEquals(parser.getVerseContent().getContent(), string1 + string2);
     }
 }

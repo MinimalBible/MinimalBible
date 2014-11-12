@@ -90,7 +90,7 @@ public class BookItemHolder {
     public void onDownloadItem(View v) {
         if (bookManager.isInstalled(b)) {
             // Remove the book
-            boolean didRemove = bookManager.removeBook(b);
+            boolean didRemove = bookManager.removeBook(b, bookManager.getRealDriver(b));
             if (didRemove) {
                 isDownloaded.setImageResource(R.drawable.ic_action_download);
             } else {

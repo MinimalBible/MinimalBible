@@ -142,7 +142,7 @@ public class BookManagerTest extends MBTestCase implements Injector {
 
         bookManager.getInstalledBooksList().add(mockBook);
         assertTrue(bookManager.getInstalledBooksList().contains(mockBook));
-        bookManager.removeBook(mockBook);
+        bookManager.removeBook(mockBook, driver);
         assertFalse(bookManager.getInstalledBooksList().contains(mockBook));
         verify(driver, times(1)).delete(mockBook);
     }
