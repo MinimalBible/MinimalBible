@@ -14,7 +14,6 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import org.crosswire.jsword.book.BookException
-import org.crosswire.jsword.book.BookDriver
 
 /**
  * Single point of authority for what is being downloaded and its progress
@@ -73,28 +72,33 @@ class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
 
     /**
      * For whatever reason, not just any old "book" reference will do. We need to actually
-     * get a reference corresponding to a physically installed book to get the proper driver.
+     * get a reference corresponding to a physically installed book for the driver to remove.
      * Plus, it makes the removeBook method easier to test.
      * @param b The book to find the actual driver for
      * @return The driver corresponding to the physical book
      */
-    fun getRealDriver(b: Book): BookDriver = (installedBooks getBook b.getInitials()).getDriver()
+    fun getRealBook(b: Book): Book = installedBooks getBook b.getInitials()
 
     /**
      * Remove a book from being installed.
      * Currently only supports books that have been installed outside the current application run.
      * Not quite sure why this is, but And-Bible exhibits the same behavior.
+     * Also, I'll document it for the future: It seems like a book is only remove if you return
+     * true from this method. Which is incredibly strange, because this method should have no
+     * effect on the actual process of deleting a book. Even so, things work when
+     * I return true here.
      * @param b The book to remove
      * @return Whether the book was removed.
      */
-    fun removeBook(b: Book, driver: BookDriver): Boolean {
+    fun removeBook(b: Book, realBook: Book = getRealBook(b)): Boolean {
         try {
-            driver delete b
-            return installedBooksList remove b
+            b.getDriver() delete realBook
+            installedBooksList remove b
+            return true
         } catch (e: BookException) {
             Log.e("InstalledManager",
-                    "Unable to remove book (already uninstalled?): ${e.getDetailedMessage()}");
-            return false;
+                    "Unable to remove book (already uninstalled?): ${e.getDetailedMessage()}")
+            return false
         }
     }
     /**

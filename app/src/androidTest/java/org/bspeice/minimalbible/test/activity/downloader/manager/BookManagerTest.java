@@ -135,6 +135,7 @@ public class BookManagerTest extends MBTestCase implements Injector {
         BookDriver driver = mock(BookDriver.class);
 
         Book mockBook = mock(Book.class);
+        Book secondMockBook = mock(Book.class);
         when(mockBook.getDriver()).thenReturn(driver);
 
         BooksEvent event = mock(BooksEvent.class);
@@ -142,9 +143,9 @@ public class BookManagerTest extends MBTestCase implements Injector {
 
         bookManager.getInstalledBooksList().add(mockBook);
         assertTrue(bookManager.getInstalledBooksList().contains(mockBook));
-        bookManager.removeBook(mockBook, driver);
+        bookManager.removeBook(mockBook, secondMockBook);
         assertFalse(bookManager.getInstalledBooksList().contains(mockBook));
-        verify(driver, times(1)).delete(mockBook);
+        verify(driver, times(1)).delete(secondMockBook);
     }
 
     /**
