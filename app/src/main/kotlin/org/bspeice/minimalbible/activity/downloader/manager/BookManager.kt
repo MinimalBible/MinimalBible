@@ -14,7 +14,6 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import org.crosswire.jsword.book.BookException
-import org.crosswire.jsword.book.remove
 
 /**
  * Single point of authority for what is being downloaded and its progress
@@ -75,12 +74,15 @@ class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
      * Remove a book from being installed.
      * Currently only supports books that have been installed outside the current application run.
      * Not quite sure why this is, but And-Bible exhibits the same behavior.
+     * Also, make sure to manually test if you change this implementation. The `drivers` are
+     * a bit persnickety.
      * @param b The book to remove
      * @return Whether the book was removed.
      */
     fun removeBook(b: Book): Boolean {
         try {
-            b.remove()
+            val realBook = installedBooks getBook b.getInitials()
+            realBook.getDriver().delete(b)
             return installedBooksList remove b
         } catch (e: BookException) {
             Log.e("InstalledManager",
