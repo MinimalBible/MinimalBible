@@ -91,7 +91,7 @@ public class BookDownloadManagerTest extends MBTestCase implements Injector {
 
     public void testJobIdMatch() {
         final Book toInstall = installableBooks().toBlocking().first();
-        final String jobName = BookDownloadManager.getJobId(toInstall);
+        final String jobName = bookDownloadManager.getJobId(toInstall);
         final AtomicBoolean jobNameMatch = new AtomicBoolean(false);
 
         JobManager.addWorkListener(new WorkListener() {
@@ -140,12 +140,6 @@ public class BookDownloadManagerTest extends MBTestCase implements Injector {
 
         @Provides
         @Singleton
-        Injector provideInjector() {
-            return i;
-        }
-
-        @Provides
-        @Singleton
         Books provideBooks() {
             return Books.installed();
         }
@@ -169,6 +163,12 @@ public class BookDownloadManagerTest extends MBTestCase implements Injector {
         RefreshManager refreshManager(Collection<Installer> installers) {
             return new RefreshManager(installers,
                     prefs, manager);
+        }
+
+        @Provides
+        @Singleton
+        BookDownloadManager bookDownloadManager(Books installed, RefreshManager rm) {
+            return new BookDownloadManager(installed, rm);
         }
     }
 }

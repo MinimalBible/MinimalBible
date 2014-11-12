@@ -77,8 +77,8 @@ public class DownloadActivityModules {
     }
 
     @Provides @Singleton
-    BookDownloadManager provideBookDownloadManager() {
-        return new BookDownloadManager(activity);
+    BookDownloadManager provideBookDownloadManager(Books installedBooks, RefreshManager rm) {
+        return new BookDownloadManager(installedBooks, rm);
     }
 
     @Provides @Singleton
@@ -94,7 +94,7 @@ public class DownloadActivityModules {
 
     //TODO: Move this to a true async
     @Provides @Singleton
-    Books provideInstalledBooksManager() {
+    Books provideInstalledBooks() {
         return Books.installed();
     }
 

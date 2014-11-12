@@ -35,6 +35,7 @@ public class BookItemHolder {
     // TODO: The holder should register and unregister itself for DownloadProgress events
     // so that we can display live updates.
 
+    private final Book b;
     @InjectView(R.id.download_txt_item_acronym)
     TextView acronym;
     @InjectView(R.id.txt_download_item_name)
@@ -43,15 +44,12 @@ public class BookItemHolder {
     ImageButton isDownloaded;
     @InjectView(R.id.download_prg_download)
     ProgressWheel downloadProgress;
-
     @Inject
     BookDownloadManager bookDownloadManager;
     @Inject
     InstalledManager installedManager;
     @Inject @Named("DownloadActivityContext")
     Context ctx;
-
-    private final Book b;
     private Subscription subscription;
 
     // TODO: Factory style?
@@ -64,7 +62,7 @@ public class BookItemHolder {
     public void bindHolder() {
         acronym.setText(b.getInitials());
         itemName.setText(b.getName());
-        DLProgressEvent dlProgressEvent = bookDownloadManager.getInProgressDownloadProgress(b);
+        DLProgressEvent dlProgressEvent = bookDownloadManager.getDownloadProgress(b);
         if (dlProgressEvent != null) {
             displayProgress((int) dlProgressEvent.toCircular());
         } else if (installedManager.isInstalled(b)) {
