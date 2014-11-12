@@ -110,8 +110,9 @@ public class BookDownloadManager implements WorkListener, BooksListener {
                 downloadEvents.onNext(new DLProgressEvent(DLProgressEvent.PROGRESS_COMPLETE, b));
             } else {
                 // Track the ongoing download
-                DLProgressEvent event = new DLProgressEvent(job.getWorkDone(),
-                        job.getTotalWork(), b);
+                DLProgressEvent event = new DLProgressEvent(
+                        (job.getWorkDone() / job.getTotalWork()) * 100,
+                        b);
                 inProgressDownloads.put(b, event);
                 downloadEvents.onNext(event);
             }
