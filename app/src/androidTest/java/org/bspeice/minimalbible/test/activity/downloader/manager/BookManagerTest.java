@@ -7,14 +7,17 @@ import android.util.Log;
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MBTestCase;
 import org.bspeice.minimalbible.activity.downloader.DownloadPrefs;
-import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadManager;
+import org.bspeice.minimalbible.activity.downloader.manager.BookManager;
 import org.bspeice.minimalbible.activity.downloader.manager.DLProgressEvent;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.common.progress.JobManager;
 import org.crosswire.common.progress.WorkEvent;
 import org.crosswire.common.progress.WorkListener;
 import org.crosswire.jsword.book.Book;
+import org.crosswire.jsword.book.BookDriver;
+import org.crosswire.jsword.book.BookException;
 import org.crosswire.jsword.book.Books;
+import org.crosswire.jsword.book.BooksEvent;
 import org.crosswire.jsword.book.install.InstallManager;
 import org.crosswire.jsword.book.install.Installer;
 import org.mockito.Mockito;
@@ -35,13 +38,15 @@ import rx.functions.Func1;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-public class BookDownloadManagerTest extends MBTestCase implements Injector {
+public class BookManagerTest extends MBTestCase implements Injector {
 
     ObjectGraph mObjectGraph;
     @Inject
-    BookDownloadManager bookDownloadManager;
+    BookManager bookManager;
     @Inject
     RefreshManager refreshManager;
     @Inject
@@ -71,10 +76,10 @@ public class BookDownloadManagerTest extends MBTestCase implements Injector {
     public void testInstallBook() throws Exception {
         final Book toInstall = installableBooks().toBlocking().first();
 
-        bookDownloadManager.installBook(toInstall);
+        bookManager.installBook(toInstall);
 
         final AtomicBoolean signal = new AtomicBoolean(false);
-        bookDownloadManager.getDownloadEvents()
+        bookManager.getDownloadEvents()
                 .subscribe(new Action1<DLProgressEvent>() {
                     @Override
                     public void call(DLProgressEvent dlProgressEvent) {
@@ -91,7 +96,7 @@ public class BookDownloadManagerTest extends MBTestCase implements Injector {
 
     public void testJobIdMatch() {
         final Book toInstall = installableBooks().toBlocking().first();
-        final String jobName = bookDownloadManager.getJobId(toInstall);
+        final String jobName = bookManager.getJobId(toInstall);
         final AtomicBoolean jobNameMatch = new AtomicBoolean(false);
 
         JobManager.addWorkListener(new WorkListener() {
@@ -108,17 +113,46 @@ public class BookDownloadManagerTest extends MBTestCase implements Injector {
             }
         });
 
-        bookDownloadManager.installBook(toInstall);
+        bookManager.installBook(toInstall);
         await().atMost(1, TimeUnit.SECONDS)
                 .untilTrue(jobNameMatch);
+    }
+
+    public void testLocalListUpdatedAfterAdd() {
+        Book mockBook = mock(Book.class);
+        BooksEvent event = mock(BooksEvent.class);
+        when(event.getBook()).thenReturn(mockBook);
+
+        bookManager.bookAdded(event);
+        assertTrue(bookManager.getInstalledBooksList().contains(mockBook));
+    }
+
+    /**
+     * This test requires deep knowledge of how to remove a book in order to test,
+     * but the Kotlin interface is nice!
+     */
+    public void testLocalListUpdatedAfterRemove() throws BookException {
+        BookDriver driver = mock(BookDriver.class);
+
+        Book mockBook = mock(Book.class);
+        when(mockBook.getDriver()).thenReturn(driver);
+
+        BooksEvent event = mock(BooksEvent.class);
+        when(event.getBook()).thenReturn(mockBook);
+
+        bookManager.getInstalledBooksList().add(mockBook);
+        assertTrue(bookManager.getInstalledBooksList().contains(mockBook));
+        bookManager.removeBook(mockBook);
+        assertFalse(bookManager.getInstalledBooksList().contains(mockBook));
+        verify(driver, times(1)).delete(mockBook);
     }
 
     /**
      * Modules needed for this test case
      */
-    @Module(injects = {BookDownloadManager.class,
+    @Module(injects = {BookManager.class,
             RefreshManager.class,
-            BookDownloadManagerTest.class})
+            BookManagerTest.class})
     @SuppressWarnings("unused")
     public static class BookDownloadManagerTestModules {
         Injector i;
@@ -167,8 +201,8 @@ public class BookDownloadManagerTest extends MBTestCase implements Injector {
 
         @Provides
         @Singleton
-        BookDownloadManager bookDownloadManager(Books installed, RefreshManager rm) {
-            return new BookDownloadManager(installed, rm);
+        BookManager bookDownloadManager(Books installed, RefreshManager rm) {
+            return new BookManager(installed, rm);
         }
     }
 }

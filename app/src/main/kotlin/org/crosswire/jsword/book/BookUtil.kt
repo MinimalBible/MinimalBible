@@ -26,3 +26,5 @@ fun Book.bookNames(): List<String> = this.getVersification().getBookNames()
 
 fun Book.bookName(bBook: BibleBook): String =
         this.getVersification().getBookName(bBook).getLongName()
+
+fun Book.remove() = this.getDriver().delete(this)

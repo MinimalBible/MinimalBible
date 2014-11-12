@@ -5,8 +5,7 @@ import android.net.ConnectivityManager;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBibleModules;
-import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadManager;
-import org.bspeice.minimalbible.activity.downloader.manager.InstalledManager;
+import org.bspeice.minimalbible.activity.downloader.manager.BookManager;
 import org.bspeice.minimalbible.activity.downloader.manager.LocaleManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.common.util.Language;
@@ -34,11 +33,10 @@ import de.devland.esperandro.Esperandro;
         injects = {
                 BookListFragment.class,
                 BookItemHolder.class,
-                BookDownloadManager.class,
+                BookManager.class,
                 RefreshManager.class,
                 DownloadNavDrawerFragment.class,
-                DownloadActivity.class,
-                InstalledManager.class
+                DownloadActivity.class
         },
         addsTo = MinimalBibleModules.class,
         library = true
@@ -77,8 +75,8 @@ public class DownloadActivityModules {
     }
 
     @Provides @Singleton
-    BookDownloadManager provideBookDownloadManager(Books installedBooks, RefreshManager rm) {
-        return new BookDownloadManager(installedBooks, rm);
+    BookManager provideBookDownloadManager(Books installedBooks, RefreshManager rm) {
+        return new BookManager(installedBooks, rm);
     }
 
     @Provides @Singleton

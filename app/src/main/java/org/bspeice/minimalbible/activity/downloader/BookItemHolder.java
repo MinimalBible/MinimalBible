@@ -11,9 +11,8 @@ import com.todddavies.components.progressbar.ProgressWheel;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
-import org.bspeice.minimalbible.activity.downloader.manager.BookDownloadManager;
+import org.bspeice.minimalbible.activity.downloader.manager.BookManager;
 import org.bspeice.minimalbible.activity.downloader.manager.DLProgressEvent;
-import org.bspeice.minimalbible.activity.downloader.manager.InstalledManager;
 import org.crosswire.jsword.book.Book;
 
 import javax.inject.Inject;
@@ -45,9 +44,7 @@ public class BookItemHolder {
     @InjectView(R.id.download_prg_download)
     ProgressWheel downloadProgress;
     @Inject
-    BookDownloadManager bookDownloadManager;
-    @Inject
-    InstalledManager installedManager;
+    BookManager bookManager;
     @Inject @Named("DownloadActivityContext")
     Context ctx;
     private Subscription subscription;
@@ -62,14 +59,14 @@ public class BookItemHolder {
     public void bindHolder() {
         acronym.setText(b.getInitials());
         itemName.setText(b.getName());
-        DLProgressEvent dlProgressEvent = bookDownloadManager.getDownloadProgress(b);
+        DLProgressEvent dlProgressEvent = bookManager.getDownloadProgress(b);
         if (dlProgressEvent != null) {
             displayProgress((int) dlProgressEvent.toCircular());
-        } else if (installedManager.isInstalled(b)) {
+        } else if (bookManager.isInstalled(b)) {
             displayInstalled();
         }
         //TODO: Refactor
-        subscription = bookDownloadManager.getDownloadEvents()
+        subscription = bookManager.getDownloadEvents()
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter(new Func1<DLProgressEvent, Boolean>() {
                     @Override
@@ -91,9 +88,9 @@ public class BookItemHolder {
 
     @OnClick(R.id.download_ibtn_download)
     public void onDownloadItem(View v) {
-        if (installedManager.isInstalled(b)) {
+        if (bookManager.isInstalled(b)) {
             // Remove the book
-            boolean didRemove = installedManager.removeBook(b);
+            boolean didRemove = bookManager.removeBook(b);
             if (didRemove) {
                 isDownloaded.setImageResource(R.drawable.ic_action_download);
             } else {
@@ -101,7 +98,7 @@ public class BookItemHolder {
                         , Toast.LENGTH_SHORT).show();
             }
         } else {
-            bookDownloadManager.installBook(this.b);
+            bookManager.installBook(this.b);
         }
     }
 
