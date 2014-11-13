@@ -106,7 +106,7 @@ class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
      * @param b The book to get the current progress of
      * @return The most recent DownloadProgressEvent for the book, or null if not downloading
      */
-    fun getDownloadProgress(b: Book) = inProgressDownloads get b
+    fun getDownloadProgress(b: Book) = inProgressDownloads[b]
 
     fun isInstalled(b: Book) = installedBooksList contains b
 
@@ -120,7 +120,7 @@ class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
                     downloadEvents onNext event
 
                     if (job.getWorkDone() == job.getTotalWork()) {
-                        inProgressDownloads remove bookMappings.get(job.getJobID())
+                        inProgressDownloads remove bookMappings[job.getJobID()]
                         bookMappings remove job.getJobID()
                     } else
                         inProgressDownloads.put(it.getValue(), event)
