@@ -8,26 +8,20 @@ import org.crosswire.jsword.passage.Verse
 import java.util.ArrayList
 
 //TODO: JSON Streaming parsing? http://instagram-engineering.tumblr.com/post/97147584853/json-parsing
-class VerseContent(v: Verse) {
-    val id = v.getOrdinal()
-    val bookName = v.getName()
-    val chapter = v.getChapter()
-    val verseNum = v.getVerse()
-    val chapterTitle = ""
-    val paraTitle = ""
-    val references: MutableList<VerseReference> = ArrayList()
-    var content = ""
+data class VerseContent(val v: Verse,
+                        val id: Int = v.getOrdinal(),
+                        val bookName: String = v.getName(),
+                        val chapter: Int = v.getChapter(),
+                        val verseNum: Int = v.getVerse(),
+                        val chapterTitle: String = "",
+                        val paraTitle: String = "",
+                        val references: MutableList<VerseReference> = ArrayList(),
+                        val content: String = "") {
 
+    // Gson is used mostly for serializing the verses
     public val json: String
         get() = Gson().toJson(this)
 
-    public fun toJson(): String {
-        // Lazy load Gson - not likely that we'll call this method multiple times, so
-        // don't have to worry about a penalty there.
-        return Gson().toJson(this)
-    }
-
-    public fun appendContent(content: String) {
-        this.content += content
-    }
+    public fun appendContent(content: String): VerseContent =
+            this.copy(this.v, content = this.content + content)
 }
