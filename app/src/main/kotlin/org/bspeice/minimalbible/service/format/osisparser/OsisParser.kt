@@ -22,6 +22,8 @@ class OsisParser() : DefaultHandler() {
     // TODO: Implement a stack to keep min API 8
     val doWrite = ArrayDeque<Boolean>()
 
+    fun getJson() = verseContent.toJson()
+
     override fun startElement(uri: String, localName: String,
                               qName: String, attributes: Attributes) {
         when (localName) {

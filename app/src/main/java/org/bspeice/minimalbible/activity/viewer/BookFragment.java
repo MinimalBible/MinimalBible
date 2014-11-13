@@ -12,7 +12,7 @@ import android.webkit.WebView;
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseFragment;
-import org.bspeice.minimalbible.service.book.VerseLookupService;
+import org.bspeice.minimalbible.service.lookup.VerseLookup;
 import org.crosswire.jsword.book.Book;
 
 import javax.inject.Inject;
@@ -20,7 +20,6 @@ import javax.inject.Named;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import dagger.Lazy;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.subjects.PublishSubject;
@@ -35,17 +34,14 @@ public class BookFragment extends BaseFragment {
     Injector i;
     @Inject
     @Named("MainBook")
-    Lazy<Book> mBook;
+    Book mBook;
+    @Inject
+    VerseLookup verseLookup;
 
     @InjectView(R.id.book_content)
     WebView mainContent;
 
     PublishSubject<String> titleReceiver = PublishSubject.create();
-
-    public BookFragment() {
-        // We can't initialize the lookupService here since the fragment hasn't been tied
-        // to the parent activity yet.
-    }
 
     /**
      * Returns a new instance of this fragment for the given book.
@@ -76,7 +72,7 @@ public class BookFragment extends BaseFragment {
 
         // TODO: Load initial text from SharedPreferences, rather than getting the actual book.
 
-        displayBook(mBook.get());
+        displayBook(mBook);
 
         return rootView;
     }
@@ -103,8 +99,7 @@ public class BookFragment extends BaseFragment {
         ((BibleViewer)getActivity()).setActionBarTitle(b.getInitials());
         mainContent.loadUrl(getString(R.string.book_html));
 
-        VerseLookupService lookupService = new VerseLookupService(i, mBook.get());
-        BibleViewClient client = new BibleViewClient(b, lookupService, titleReceiver);
+        BibleViewClient client = new BibleViewClient(b, verseLookup, titleReceiver);
         titleReceiver
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<String>() {
