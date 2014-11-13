@@ -25,7 +25,7 @@ import rx.functions.Func1;
         injects = {
                 BibleViewer.class,
                 BookFragment.class,
-                ExpListNavDrawerFragment.class
+                BookChapterNavFragment.class
         },
         includes = VerseLookupModules.class
 )

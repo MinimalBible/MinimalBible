@@ -37,7 +37,7 @@ public class BibleViewer extends BaseActivity implements
      * Fragment managing the behaviors, interactions and presentation of the
      * navigation drawer.
      */
-    private ExpListNavDrawerFragment mNavigationDrawerFragment;
+    private BookChapterNavFragment mNavigationDrawerFragment;
     /**
      * Used to store the last screen title. For use in
      * {@link #restoreActionBar()}.
@@ -93,7 +93,7 @@ public class BibleViewer extends BaseActivity implements
                     .commit();
             setContentView(R.layout.activity_bible_viewer);
 
-            mNavigationDrawerFragment = (ExpListNavDrawerFragment) getSupportFragmentManager()
+            mNavigationDrawerFragment = (BookChapterNavFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.navigation_drawer);
             mTitle = getTitle();
 

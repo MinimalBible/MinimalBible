@@ -22,7 +22,7 @@ import javax.inject.Named;
  * and trying to getActivity() as BibleViewer yielded TypeCastException
  * TODO: Extend BaseExpNavigationDrawerFragment?
  */
-public class ExpListNavDrawerFragment extends NavDrawerFragment {
+public class BookChapterNavFragment extends NavDrawerFragment {
 
     @Inject @Named("MainBook")
     Book mainBook;
