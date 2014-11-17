@@ -12,3 +12,4 @@ If you are on Windows and wish to work on Javascript, you must install the Node 
 all dependencies listed in `package.json` found at /app/src/main/assets.
 
 ![Travis Build Status](https://travis-ci.org/MinimalBible/MinimalBible.svg?branch=master)
+[![Coverage Status](https://img.shields.io/coveralls/MinimalBible/MinimalBible.svg)](https://coveralls.io/r/MinimalBible/MinimalBible)
