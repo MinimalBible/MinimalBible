@@ -1,3 +1,4 @@
-language: java
+# We still need android to get the build tools/support libraries
+language: android
 
 script: "bash gradlew jacocoTestReport"
