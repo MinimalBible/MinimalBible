@@ -27,7 +27,6 @@ dependencies {
     testCompile 'org.robolectric:robolectric:+'
 }
 
-
 jacocoTestReport {
     /*
     Alright, setting up Jacoco the right way is massively confusing.
@@ -55,4 +54,8 @@ jacocoTestReport {
         csv.enabled false
         html.destination "${buildDir}/jacocoHtml"
     }
+}
+
+coveralls {
+    sourceDirs = files(androidModule.android.sourceSets.main.java.srcDirs).files.absolutePath
 }
