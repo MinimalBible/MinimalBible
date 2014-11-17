@@ -1,4 +1,8 @@
 # We still need android to get the build tools/support libraries
 language: android
 
-script: "bash gradlew jacocoTestReport"
+script:
+  - ./gradlew test
+
+after_success:
+  - ./gradlew jacocoTestReport coveralls
