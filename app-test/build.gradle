@@ -16,10 +16,22 @@ dependencies {
     testCompile 'org.robolectric:robolectric:+'
 }
 
+
 jacocoTestReport {
     // Add Android sources/classes for coverage
-    additionalSourceDirs files(androidModule.android.sourceSets.main.java.srcDirs)
-    additionalClassDirs firstVariant.javaCompile.outputs.files
+    // We can't use additionalClassDirs because of this:
+    // http://stackoverflow.com/a/17411305/1454178
+    // Additionally, for whatever reason, the exclude() call doesn't work
+    // inside doFirst {}, please don't move this.
+    def jacocoExcludes = [
+            "android/**/*"
+    ]
+    firstVariant.javaCompile.exclude(jacocoExcludes).outputs.files
+
+    doFirst {
+        sourceDirectories = files(androidModule.android.sourceSets.main.java.srcDirs)
+        classDirectories = firstVariant.javaCompile.outputs.files
+    }
 
     reports {
         xml.enabled true
