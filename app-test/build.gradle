@@ -9,7 +9,8 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:+'
+        // Version lock for https://github.com/kt3k/coveralls-gradle-plugin/issues/27
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1x'
     }
 }
 
