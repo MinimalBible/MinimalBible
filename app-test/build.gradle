@@ -15,16 +15,19 @@ buildscript {
 }
 
 def androidModule = project(':app')
-def firstVariant = androidModule.android.applicationVariants.toList().first()
+def firstAppVariant = androidModule.android.applicationVariants.toList().first()
+//def firstTestVariant = androidModule.android.testVariants.toList().first()
 
 dependencies {
     compile androidModule
 
-    testCompile firstVariant.javaCompile.classpath
-    testCompile firstVariant.javaCompile.outputs.files
+    testCompile firstAppVariant.javaCompile.classpath
+    testCompile firstAppVariant.javaCompile.outputs.files
+    //testCompile firstTestVariant.javaCompile.outputs.files
     testCompile files(androidModule.plugins.findPlugin("com.android.application").getBootClasspath())
 
     testCompile 'junit:junit:4.+'
+    testCompile 'org.mockito:mockito-all:+'
     testCompile 'org.robolectric:robolectric:+'
 }
 
@@ -42,11 +45,11 @@ jacocoTestReport {
     def jacocoExcludes = [
             "android/**/*"
     ]
-    firstVariant.javaCompile.exclude(jacocoExcludes).outputs.files
+    firstAppVariant.javaCompile.exclude(jacocoExcludes).outputs.files
 
     doFirst {
         sourceDirectories = files(androidModule.android.sourceSets.main.java.srcDirs)
-        classDirectories = firstVariant.javaCompile.outputs.files
+        classDirectories = firstAppVariant.javaCompile.outputs.files
     }
 
     // Back to your regularly scheduled Jacoco
