@@ -1,18 +1,21 @@
 package org.bspeice.minimalbible.test.activity.downloader.manager;
 
-import org.bspeice.minimalbible.MBTestCase;
 import org.bspeice.minimalbible.activity.downloader.manager.LocaleManager;
 import org.crosswire.common.util.Language;
+import org.junit.Test;
 
 import java.util.List;
 
 import rx.Observable;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * Test cases for the Locale Manager
  */
-public class LocaleManagerTest extends MBTestCase {
+public class LocaleManagerTest {
 
+    @Test
     public void testSortedLanguagesList() {
         Language english = new Language("en");
         Language russian = new Language("ru");

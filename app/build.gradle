@@ -76,8 +76,6 @@ dependencies {
 
     androidTestCompile 'com.jayway.awaitility:awaitility:+'
     androidTestCompile 'org.mockito:mockito-core:+'
-    androidTestCompile 'com.google.dexmaker:dexmaker:+'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:+'
 
     // Email debug reports if I crash...
     testConfigCompile('ch.acra:acra:+') {

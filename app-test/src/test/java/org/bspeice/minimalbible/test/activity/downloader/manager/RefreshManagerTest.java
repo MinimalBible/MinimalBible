@@ -4,11 +4,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import org.bspeice.minimalbible.Injector;
-import org.bspeice.minimalbible.MBTestCase;
 import org.bspeice.minimalbible.activity.downloader.DownloadPrefs;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.install.Installer;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -29,11 +30,15 @@ import dagger.Provides;
 import rx.functions.Action1;
 
 import static com.jayway.awaitility.Awaitility.await;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class RefreshManagerTest extends MBTestCase implements Injector {
+public class RefreshManagerTest implements Injector {
 
     final String mockBookName = "MockBook";
     /**
@@ -46,6 +51,7 @@ public class RefreshManagerTest extends MBTestCase implements Injector {
     Installer mockInstaller;
     Book mockBook;
 
+    @Before
     public void setUp() {
         // Environment setup
         mockBook = mock(Book.class);
@@ -71,6 +77,7 @@ public class RefreshManagerTest extends MBTestCase implements Injector {
         mObjectGraph.inject(o);
     }
 
+    @Test
     public void testGetAvailableModulesFlattened() throws Exception {
         rM.getFlatModules()
                 .toBlocking()
@@ -85,6 +92,7 @@ public class RefreshManagerTest extends MBTestCase implements Injector {
         verify(mockBook).getName();
     }
 
+    @Test
     public void testInstallerFromBook() throws Exception {
         Installer i = rM.installerFromBook(mockBook).toBlocking().first();
 
@@ -92,6 +100,7 @@ public class RefreshManagerTest extends MBTestCase implements Injector {
         verify(mockInstaller).getBooks();
     }
 
+    @Test
     public void testRefreshSeparateThread() {
         mockInstaller = mock(Installer.class);
         final List<Book> bookList = new ArrayList<Book>();
@@ -130,6 +139,7 @@ public class RefreshManagerTest extends MBTestCase implements Injector {
      * I'd like to point out that I can test all of this without requiring mocking of
      * either the preferences or network state. Value Boundaries for the win.
      */
+    @Test
     public void testDoUpdate() {
         long fourteenDaysAgo = Calendar.getInstance().getTime().getTime() - 1209600;
         long sixteenDaysAgo = Calendar.getInstance().getTime().getTime() - 1382400;

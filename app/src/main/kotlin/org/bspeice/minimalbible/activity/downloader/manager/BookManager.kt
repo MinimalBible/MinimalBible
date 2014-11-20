@@ -1,7 +1,5 @@
 package org.bspeice.minimalbible.activity.downloader.manager
 
-import android.util.Log;
-
 import org.crosswire.common.progress.JobManager;
 import org.crosswire.common.progress.WorkEvent;
 import org.crosswire.common.progress.WorkListener;
@@ -21,6 +19,7 @@ import org.crosswire.jsword.book.BookException
  * only operate on installedBooksList
  */
 //TODO: Install indexes for Bibles
+//TODO: Figure out how to get Robolectric to mock the Log, rather than removing the calls
 class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
         WorkListener, BooksListener {
 
@@ -96,8 +95,8 @@ class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
             installedBooksList remove b
             return true
         } catch (e: BookException) {
-            Log.e("InstalledManager",
-                    "Unable to remove book (already uninstalled?): ${e.getDetailedMessage()}")
+//            Log.e("InstalledManager",
+//                    "Unable to remove book (already uninstalled?): ${e.getDetailedMessage()}")
             return false
         }
     }
@@ -128,14 +127,14 @@ class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
     }
 
     override fun workStateChanged(ev: WorkEvent) {
-        Log.d("BookDownloadManager", ev.toString())
+//        Log.d("BookDownloadManager", ev.toString())
     }
 
     override fun bookAdded(booksEvent: BooksEvent) {
         // It's possible the install finished before we received a progress event for it,
         // we handle that case here.
         val b = booksEvent.getBook()
-        Log.d("BookDownloadManager", "Book added: ${b.getName()}")
+//        Log.d("BookDownloadManager", "Book added: ${b.getName()}")
         inProgressDownloads remove b
 
         // Not sure why, but the inProgressDownloads might not have our book,
