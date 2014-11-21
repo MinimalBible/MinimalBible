@@ -10,6 +10,7 @@ import org.bspeice.minimalbible.activity.downloader.manager.BookManager;
 import org.bspeice.minimalbible.activity.downloader.manager.DLProgressEvent;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.common.progress.JobManager;
+import org.crosswire.common.progress.Progress;
 import org.crosswire.common.progress.WorkEvent;
 import org.crosswire.common.progress.WorkListener;
 import org.crosswire.jsword.book.Book;
@@ -156,6 +157,45 @@ public class BookManagerTest implements Injector {
         bookManager.removeBook(mockBook, secondMockBook);
         assertFalse(bookManager.getInstalledBooksList().contains(mockBook));
         verify(driver, times(1)).delete(secondMockBook);
+    }
+
+    /**
+     * Make sure that when workProgressed is fired, the correct progress event gets triggered
+     * Previously, integer roundoff errors led to some strange results
+     */
+    @Test
+    public void testWorkProgressedCorrectProgress() {
+        Book mockBook = mock(Book.class);
+        when(mockBook.getInitials()).thenReturn("mockBook");
+        String bookJobName = bookManager.getJobId(mockBook);
+        bookManager.getBookMappings().put(bookJobName, mockBook);
+
+        // Percent to degrees
+        int workProgress = 1;
+        int totalWork = 2;
+        final int circularProgress = 180;
+        WorkEvent ev = mock(WorkEvent.class);
+        Progress p = mock(Progress.class);
+
+        when(p.getJobID()).thenReturn(bookJobName);
+        when(p.getWorkDone()).thenReturn(workProgress);
+        when(p.getTotalWork()).thenReturn(totalWork);
+
+        when(ev.getJob()).thenReturn(p);
+
+        final AtomicBoolean progressCorrect = new AtomicBoolean(false);
+        bookManager.getDownloadEvents()
+                .subscribe(new Action1<DLProgressEvent>() {
+                    @Override
+                    public void call(DLProgressEvent dlProgressEvent) {
+                        progressCorrect.set(circularProgress == dlProgressEvent.toCircular());
+                    }
+                });
+
+        bookManager.workProgressed(ev);
+
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilTrue(progressCorrect);
     }
 
     /**
