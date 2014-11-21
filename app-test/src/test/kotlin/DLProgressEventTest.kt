@@ -2,19 +2,25 @@
  * Created by bspeice on 11/20/14.
  */
 
-import org.junit.Test
 import org.bspeice.minimalbible.activity.downloader.manager.DLProgressEvent
 import org.crosswire.jsword.book.Book
-import org.mockito.Mockito
-import org.junit.Assert
+import org.mockito.Mockito.mock
+import org.jetbrains.spek.api.Spek
+import kotlin.test.assertEquals
 
-class DLProgressEventTest {
+class DLProgressEventSpecs : Spek() {{
 
-    val b = Mockito.mock(javaClass<Book>())
+    given("a DLProgressEvent created with 50% progress and a mock book") {
+        val mockBook = mock(javaClass<Book>())
+        val dlEvent = DLProgressEvent(50, mockBook)
 
-    Test fun fiftyPercentIsOneEighty() {
+        on("getting the progress in degrees") {
+            val progressDegrees = dlEvent.toCircular()
 
-        val e = DLProgressEvent(50, b)
-        Assert.assertEquals(180, e.toCircular())
+            it("should be 180 degrees") {
+                assertEquals(180, progressDegrees)
+            }
+        }
     }
+}
 }
