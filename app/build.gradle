@@ -2,12 +2,8 @@ buildscript {
     repositories {
         mavenCentral()
     }
-    dependencies {
-        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
-    }
 }
 
-apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
@@ -39,18 +35,6 @@ android {
         exclude 'NOTICE'
         exclude 'asm-license.txt'
     }
-    productFlavors {
-        testConfig {
-            minSdkVersion 8
-            applicationId 'org.bspeice.minimalbible'
-            targetSdkVersion 20
-        }
-        mainConfig {
-            minSdkVersion 8
-            applicationId 'org.bspeice.minimalbible'
-            targetSdkVersion 20
-        }
-    }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
@@ -78,7 +62,7 @@ dependencies {
     androidTestCompile 'org.mockito:mockito-core:+'
 
     // Email debug reports if I crash...
-    testConfigCompile('ch.acra:acra:+') {
+    debugCompile('ch.acra:acra:+') {
         exclude module: 'json'
     }
 }
