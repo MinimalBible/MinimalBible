@@ -114,8 +114,10 @@ class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
         val job = ev.getJob()
         bookMappings.filter { it.getKey() == job.getJobID() }
                 .map {
-                    val event = DLProgressEvent(job.getWorkDone() / job.getTotalWork() * 100,
-                            it.getValue())
+                    // We multiply by 100 first to avoid integer truncation
+                    // Also avoids roundoff error. Neat trick, but I'm spending just as much time
+                    // documenting it as implementing the floating point would take
+                    val event = DLProgressEvent(job.getWorkDone() * 100 / job.getTotalWork(), it.getValue())
                     downloadEvents onNext event
 
                     if (job.getWorkDone() == job.getTotalWork()) {

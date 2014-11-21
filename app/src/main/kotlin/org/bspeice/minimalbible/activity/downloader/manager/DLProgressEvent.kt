@@ -12,5 +12,5 @@ class DLProgressEvent(val progress: Int, val b: Book) {
         val PROGRESS_BEGINNING = 0
     }
 
-    fun toCircular() = progress.toFloat() * 360 / 100
+    fun toCircular() = (progress.toFloat() * 360 / 100).toInt()
 }

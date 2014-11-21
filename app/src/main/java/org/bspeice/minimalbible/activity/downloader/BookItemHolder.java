@@ -77,7 +77,7 @@ public class BookItemHolder {
                 .subscribe(new Action1<DLProgressEvent>() {
                     @Override
                     public void call(DLProgressEvent event) {
-                        BookItemHolder.this.displayProgress((int) event.toCircular());
+                        BookItemHolder.this.displayProgress(event.toCircular());
                     }
                 });
     }
@@ -104,21 +104,15 @@ public class BookItemHolder {
 
     /**
      * Display the current progress of this download
-     * TODO: Clean up this logic if at all possible...
      * @param progress The progress out of 360 (degrees of a circle)
      */
     private void displayProgress(int progress) {
 
+        int downloadView;
 
         if (progress == DLProgressEvent.PROGRESS_BEGINNING) {
             // Download starting
-            RelativeLayout.LayoutParams acronymParams =
-                    (RelativeLayout.LayoutParams)acronym.getLayoutParams();
-            acronymParams.addRule(RelativeLayout.LEFT_OF, downloadProgress.getId());
-
-            RelativeLayout.LayoutParams nameParams =
-                    (RelativeLayout.LayoutParams)itemName.getLayoutParams();
-            nameParams.addRule(RelativeLayout.LEFT_OF, downloadProgress.getId());
+            downloadView = downloadProgress.getId();
 
             isDownloaded.setVisibility(View.GONE);
             downloadProgress.setVisibility(View.VISIBLE);
@@ -126,13 +120,7 @@ public class BookItemHolder {
             downloadProgress.spin();
         } else if (progress < 360) {
             // Download in progress
-            RelativeLayout.LayoutParams acronymParams =
-                    (RelativeLayout.LayoutParams)acronym.getLayoutParams();
-            acronymParams.addRule(RelativeLayout.LEFT_OF, downloadProgress.getId());
-
-            RelativeLayout.LayoutParams nameParams =
-                    (RelativeLayout.LayoutParams)itemName.getLayoutParams();
-            nameParams.addRule(RelativeLayout.LEFT_OF, downloadProgress.getId());
+            downloadView = downloadProgress.getId();
 
             isDownloaded.setVisibility(View.GONE);
             downloadProgress.setVisibility(View.VISIBLE);
@@ -142,18 +130,20 @@ public class BookItemHolder {
         } else {
             // Download complete
             subscription.unsubscribe();
-            RelativeLayout.LayoutParams acronymParams =
-                    (RelativeLayout.LayoutParams)acronym.getLayoutParams();
-            acronymParams.addRule(RelativeLayout.LEFT_OF, isDownloaded.getId());
-
-            RelativeLayout.LayoutParams nameParams =
-                    (RelativeLayout.LayoutParams)itemName.getLayoutParams();
-            nameParams.addRule(RelativeLayout.LEFT_OF, isDownloaded.getId());
+            downloadView = downloadProgress.getId();
 
             isDownloaded.setVisibility(View.VISIBLE);
             downloadProgress.setVisibility(View.GONE);
             displayInstalled();
         }
+
+        RelativeLayout.LayoutParams acronymParams =
+                (RelativeLayout.LayoutParams) acronym.getLayoutParams();
+        acronymParams.addRule(RelativeLayout.LEFT_OF, downloadView);
+
+        RelativeLayout.LayoutParams nameParams =
+                (RelativeLayout.LayoutParams) itemName.getLayoutParams();
+        nameParams.addRule(RelativeLayout.LEFT_OF, downloadView);
     }
 
     public void onScrollOffscreen() {
