@@ -16,6 +16,12 @@ buildscript {
     }
 }
 
+repositories {
+    maven {
+        url 'http://repository.jetbrains.com/repo'
+    }
+}
+
 def androidModule = project(':app')
 def firstVariant = androidModule.android.applicationVariants.toList().first()
 
@@ -26,6 +32,7 @@ dependencies {
     testCompile 'org.robolectric:robolectric:+'
     testCompile 'org.mockito:mockito-all:+'
     testCompile 'com.jayway.awaitility:awaitility:+'
+    testCompile 'org.jetbrains.spek:spek:+'
 
     testCompile firstVariant.javaCompile.classpath
     testCompile firstVariant.javaCompile.outputs.files
