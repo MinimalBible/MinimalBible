@@ -2,7 +2,7 @@
 language: android
 
 script:
-  - ./gradlew test --stacktrace
+  - ./gradlew test
 
 after_success:
-  - ./gradlew jacocoTestReport coveralls --stacktrace
+  - ./gradlew jacocoTestReport coveralls

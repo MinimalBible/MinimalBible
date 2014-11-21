@@ -22,6 +22,12 @@ repositories {
     }
 }
 
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
 def androidModule = project(':app')
 def firstVariant = androidModule.android.applicationVariants.toList().first()
 
