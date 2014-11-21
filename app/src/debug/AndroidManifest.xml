@@ -1,0 +1,9 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <activity
+            android:name="org.bspeice.minimalbible.test.activity.FragmentTestActivity"
+            android:label="@string/title_activity_fragment_test"></activity>
+    </application>
+
+</manifest>
