@@ -93,25 +93,31 @@ public class BookListFragment extends BaseFragment {
                 .getString(ARG_BOOK_CATEGORY));
     }
 
+    void displayModules() {
+        displayModules(downloadPrefs.hasShownDownloadDialog());
+    }
+
     /**
      * Trigger the functionality to display a list of modules. Prompts user if downloading
      * from the internet is allowable.
      */
-    void displayModules() {
-        boolean dialogDisplayed = downloadPrefs.hasShownDownloadDialog();
-		
-		if (!dialogDisplayed) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			DownloadDialogListener dialogListener = new DownloadDialogListener();
-			builder.setMessage(
-					"About to contact servers to download content. Continue?")
-					.setPositiveButton("Yes", dialogListener)
-					.setNegativeButton("No", dialogListener)
-					.setCancelable(false).show();
-		} else {
+    void displayModules(boolean dialogDisplayed) {
+        if (!dialogDisplayed) {
+            showDialog();
+        } else {
             displayLanguageSpinner();
         }
 	}
+
+    void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        DownloadDialogListener dialogListener = new DownloadDialogListener();
+        builder.setMessage(
+                "About to contact servers to download content. Continue?")
+                .setPositiveButton("Yes", dialogListener)
+                .setNegativeButton("No", dialogListener)
+                .setCancelable(false).show();
+    }
 
     void displayLanguageSpinner() {
         ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(this.getActivity(),
