@@ -1,5 +1,6 @@
 package org.bspeice.minimalbible.activity.viewer;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
@@ -71,13 +72,11 @@ public class BookFragment extends BaseFragment {
         mainContent.getSettings().setJavaScriptEnabled(true);
 
         // TODO: Load initial text from SharedPreferences, rather than getting the actual book.
-
         displayBook(mBook);
 
         return rootView;
     }
 
-    // TODO: Remove?
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -94,6 +93,7 @@ public class BookFragment extends BaseFragment {
      *
      * @param b The book we want to display
      */
+    @SuppressLint("AddJavascriptInterface")
     private void displayBook(Book b) {
         Log.d("BookFragment", b.getName());
         ((BibleViewer)getActivity()).setActionBarTitle(b.getInitials());
@@ -112,7 +112,7 @@ public class BookFragment extends BaseFragment {
         mainContent.setWebViewClient(client);
         mainContent.addJavascriptInterface(client, "Android");
 
-        // TODO: Remove remote debugging when ready - or should this be removed?
+        // Enable remote debug
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true);
         }
