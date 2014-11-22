@@ -111,7 +111,7 @@ public class BookListFragment extends BaseFragment {
 
     void showDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        DownloadDialogListener dialogListener = new DownloadDialogListener();
+        DownloadDialogListener dialogListener = new DownloadDialogListener(this, downloadPrefs);
         builder.setMessage(
                 "About to contact servers to download content. Continue?")
                 .setPositiveButton("Yes", dialogListener)
@@ -176,39 +176,53 @@ public class BookListFragment extends BaseFragment {
                 });
     }
 
-    private class DownloadDialogListener implements
+    static class DownloadDialogListener implements
             DialogInterface.OnClickListener {
+        BookListFragment fragment;
+        DownloadPrefs downloadPrefs;
+
+        DownloadDialogListener(BookListFragment fragment, DownloadPrefs downloadPrefs) {
+            this.fragment = fragment;
+            this.downloadPrefs = downloadPrefs;
+        }
+
         @Override
         public void onClick(@NotNull DialogInterface dialog, int which) {
             downloadPrefs.hasShownDownloadDialog(true);
+            handleButton(which);
+        }
 
+        void handleButton(int which) {
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
-                    // Clicked ready to continue - allow downloading in the future
-                    downloadPrefs.hasEnabledDownload(true);
-
-                    // And warn them that it has been enabled in the future.
-                    showToast("Downloading now enabled. Disable in settings");
-                    displayModules();
+                    buttonPositive();
                     break;
 
                 // case DialogInterface.BUTTON_NEGATIVE:
                 default:
-                    // Clicked to not download - Permanently disable downloading
-                    downloadPrefs.hasEnabledDownload(false);
-                    showToast("Disabling downloading. Re-enable it in settings.");
-                    shutdown();
+                    buttonNegative();
                     break;
             }
         }
 
-        void showToast(String text) {
-            Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+        void buttonPositive() {
+            // Clicked ready to continue - allow downloading in the future
+            downloadPrefs.hasEnabledDownload(true);
+
+            // And warn them that it has been enabled in the future.
+            showToast("Downloading now enabled. Disable in settings");
+            fragment.displayModules();
         }
 
-        void shutdown() {
-            getActivity().finish();
+        void buttonNegative() {
+            // Clicked to not download - Permanently disable downloading
+            downloadPrefs.hasEnabledDownload(false);
+            showToast("Disabling downloading. Re-enable it in settings.");
+            fragment.getActivity().finish();
+        }
+
+        void showToast(String text) {
+            Toast.makeText(fragment.getActivity(), text, Toast.LENGTH_SHORT).show();
         }
     }
-
 }
