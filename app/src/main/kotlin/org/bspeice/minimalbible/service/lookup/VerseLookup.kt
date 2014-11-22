@@ -6,14 +6,16 @@ import rx.functions.Action1
 import org.crosswire.jsword.passage.Verse
 import rx.subjects.PublishSubject
 import rx.schedulers.Schedulers
-import org.crosswire.jsword.book.BookData
 import org.bspeice.minimalbible.service.format.osisparser.OsisParser
+import org.crosswire.jsword.book.getVersification
 
 /**
- * Created by bspeice on 11/12/14.
+ * Do the low-level work of getting a verse's content
+ * This class is currently impossible to test because I can't mock Verse objects
  */
-open class VerseLookup(val b: Book,
-                       val cache: LruCache<Int, String> = LruCache(1000000)) : Action1<Verse> {
+open class VerseLookup(val b: Book) : Action1<Verse> {
+
+    val cache = VerseCache()
     /**
      * The listener servers to let other objects notify us we should pre-cache verses
      */
@@ -27,7 +29,7 @@ open class VerseLookup(val b: Book,
     fun getVerseId(v: Verse) = v.getOrdinal()
 
     fun getJson(v: Verse): String =
-            if (contains(v))
+            if (cache contains v)
                 cache[getVerseId(v)]
             else {
                 val content = doLookup(v)
@@ -43,14 +45,9 @@ open class VerseLookup(val b: Book,
      * @param v The verse to look up
      * @return The JSON content of this verse
      */
-    fun doLookup(v: Verse): String {
-        val data = BookData(b, v)
-        val provider = data.getSAXEventProvider()
-        val handler = OsisParser()
-        handler.verse = v
-        provider provideSAXEvents handler
-        return handler.getJson()
-    }
+    fun doLookup(v: Verse): String = OsisParser().getJson(b, v)
+    fun doLookup(ordinal: Int): String = OsisParser()
+            .getJson(b, Verse(b.getVersification(), ordinal))
 
     /**
      * Not necessary, but helpful if you let us know ahead of time we should pre-cache a verse.
@@ -68,7 +65,7 @@ open class VerseLookup(val b: Book,
      * @param v The verse to check
      * @return Whether we can retrieve the verse from our cache
      */
-    fun contains(v: Verse) = cache[v.getOrdinal()] != null
+    open fun contains(v: Verse) = cache[v.getOrdinal()] != null
 
     // IO Thread operations begin here
 
@@ -81,4 +78,8 @@ open class VerseLookup(val b: Book,
     }
 }
 
-class DefaultVerseLookup(b: Book) : VerseLookup(b) {}
+open class VerseCache : LruCache<Int, String>(1000000) {
+
+    fun getId(v: Verse) = v.getOrdinal()
+    fun contains(v: Verse) = (this get getId(v)) != null
+}
