@@ -2,7 +2,6 @@ package org.bspeice.minimalbible.activity.downloader;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import org.bspeice.minimalbible.Injector;
@@ -45,9 +43,9 @@ public class BookListFragment extends BaseFragment {
     protected static final String ARG_BOOK_CATEGORY = "book_category";
 
     @Inject
-    protected DownloadPrefs downloadPrefs;
-    protected ProgressDialog refreshDialog;
-    @Inject RefreshManager refreshManager;
+    DownloadPrefs downloadPrefs;
+    @Inject
+    RefreshManager refreshManager;
     @Inject
     List<Language> availableLanguages;
 
@@ -56,7 +54,7 @@ public class BookListFragment extends BaseFragment {
     @InjectView(R.id.spn_available_languages)
     Spinner languagesSpinner;
 
-    private LayoutInflater inflater;
+    LayoutInflater inflater;
 
     /**
      * Returns a new instance of this fragment for the given section number.
@@ -99,8 +97,8 @@ public class BookListFragment extends BaseFragment {
      * Trigger the functionality to display a list of modules. Prompts user if downloading
      * from the internet is allowable.
      */
- 	protected void displayModules() {
-		boolean dialogDisplayed = downloadPrefs.hasShownDownloadDialog();
+    void displayModules() {
+        boolean dialogDisplayed = downloadPrefs.hasShownDownloadDialog();
 		
 		if (!dialogDisplayed) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -111,45 +109,22 @@ public class BookListFragment extends BaseFragment {
 					.setNegativeButton("No", dialogListener)
 					.setCancelable(false).show();
 		} else {
-			refreshModules();
-		}
+            displayLanguageSpinner();
+        }
 	}
 
-    /**
-     * Do the work of refreshing modules (download manager handles using cached copy vs. actual
-     * refresh), and then displaying them when ready.
-     */
-	private void refreshModules() {
-        // Check if the downloadManager has already refreshed everything
-        if (!refreshManager.getRefreshComplete().get()) {
-            // downloadManager is in progress of refreshing
-            refreshDialog = new ProgressDialog(getActivity());
-            refreshDialog.setMessage("Refreshing available modules...");
-            refreshDialog.setCancelable(false);
-            refreshDialog.show();
-        }
-
-        languagesSpinner.setAdapter(getLocaleSpinner());
-        if (BookListFragment.this.getActivity() != null) {
-            // On a screen rotate, getActivity() will be null. But, the activity
-            // will already have been set up correctly, so we don't need to worry
-            // about it.
-            // If not null, we need to set it up now.
-            setInsetsSpinner(BookListFragment.this.getActivity(), languagesSpinner);
-        }
-        if (refreshDialog != null) {
-            refreshDialog.cancel();
-        }
-    }
-
-    @SuppressWarnings("ConstantConditions")
-        // getAvailableLanguagesList() will not return null
-    SpinnerAdapter getLocaleSpinner() {
+    void displayLanguageSpinner() {
         ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(this.getActivity(),
                 android.R.layout.simple_spinner_item,
                 availableLanguages.toArray());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        return adapter;
+        languagesSpinner.setAdapter(adapter);
+
+        if (BookListFragment.this.getActivity() != null) {
+            // On a screen rotate, getActivity() will be null, but the activity
+            // will already have been set up. If not null, we need to set it up now.
+            setInsetsSpinner(BookListFragment.this.getActivity(), languagesSpinner);
+        }
     }
 
     @SuppressWarnings("unused")
@@ -207,22 +182,26 @@ public class BookListFragment extends BaseFragment {
                     downloadPrefs.hasEnabledDownload(true);
 
                     // And warn them that it has been enabled in the future.
-                    Toast.makeText(getActivity(),
-                            "Downloading now enabled. Disable in settings.",
-                            Toast.LENGTH_SHORT).show();
-                    refreshModules();
+                    showToast("Downloading now enabled. Disable in settings");
+                    displayModules();
                     break;
 
                 // case DialogInterface.BUTTON_NEGATIVE:
                 default:
                     // Clicked to not download - Permanently disable downloading
                     downloadPrefs.hasEnabledDownload(false);
-                    Toast.makeText(getActivity(),
-                            "Disabling downloading. Re-enable it in settings.",
-                            Toast.LENGTH_SHORT).show();
-                    refreshModules();
+                    showToast("Disabling downloading. Re-enable it in settings.");
+                    shutdown();
                     break;
             }
+        }
+
+        void showToast(String text) {
+            Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+        }
+
+        void shutdown() {
+            getActivity().finish();
         }
     }
 
