@@ -1,6 +1,3 @@
-/**
- * Created by bspeice on 9/12/14.
- */
 package org.bspeice.minimalbible;
 
 import android.app.Application;
@@ -14,7 +11,7 @@ import java.io.File;
 import dagger.ObjectGraph;
 
 /**
- * Created by bspeice on 9/12/14.
+ * Set up the application!
  */
 public class MinimalBible extends Application implements Injector {
     private String TAG = "MinimalBible";
