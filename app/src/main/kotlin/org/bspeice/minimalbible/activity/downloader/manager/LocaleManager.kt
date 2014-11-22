@@ -36,6 +36,7 @@ class LocaleManager(val rM: RefreshManager) {
     }
 
     // TODO: Fix the actual Language implementation - Pull Request?
+    // Can't use a data class because we need to get the name of the language
     private class FixedLanguage(language: Language?) :
             Language(language?.getCode() ?: Language.UNKNOWN_LANG_CODE) {
         override fun hashCode() = this.getName().hashCode()

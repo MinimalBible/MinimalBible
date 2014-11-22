@@ -63,8 +63,8 @@ class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
     fun downloadBook(b: Book) {
         // First, look up where the Book came from
         Observable.just(rM installerFromBook b)
-                .subscribeOn(Schedulers.io())
-                .subscribe { it.toBlocking().first() install b }
+                .observeOn(Schedulers.io())
+                .subscribe { it subscribe { it install b } }
 
         downloadEvents onNext DLProgressEvent(DLProgressEvent.PROGRESS_BEGINNING, b)
     }
