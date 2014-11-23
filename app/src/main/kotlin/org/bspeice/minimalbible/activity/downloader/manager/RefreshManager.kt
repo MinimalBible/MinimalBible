@@ -48,9 +48,9 @@ class RefreshManager(val installers: Collection<Installer>,
 
     val fifteenDaysAgo = Calendar.getInstance().getTime().getTime() - 1296000
 
-    fun doReload(enabledDownload: Boolean, lastUpdated: Long,
+    fun doReload(downloadEnabled: Boolean, lastUpdated: Long,
                  networkState: Int? = ConnectivityManager.TYPE_DUMMY): Boolean =
-            if (!enabledDownload || networkState != ConnectivityManager.TYPE_WIFI)
+            if (!downloadEnabled || networkState != ConnectivityManager.TYPE_WIFI)
                 false
             else if (lastUpdated < fifteenDaysAgo)
                 true
