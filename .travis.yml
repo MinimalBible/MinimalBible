@@ -1,5 +1,9 @@
 # We still need android to get the build tools/support libraries
 language: android
+android:
+  components:
+    - build-tools-21.1.1
+    # Don't have any other tools so far, robolectric covers pretty much everything...
 
 script:
   - ./gradlew test
