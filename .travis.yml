@@ -4,11 +4,14 @@ android:
   components:
     - tools
     - platform-tools
+    - extra-android-m2repository
+    - extra-android-support
+    - extra-google-m2repository
     - build-tools-21.1.1
     - android-21
-    - extra-android-support
-    - extra-android-m2repository
-    - extra-google-m2repository
+
+before_script:
+  - ./android update sdk -u -t 1,2,3
 
 script:
   - ./gradlew test
