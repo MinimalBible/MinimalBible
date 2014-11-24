@@ -5,7 +5,6 @@ android:
     - build-tools-21.1.1
     - android-21
     - extra-android-support
-    - extra-google-m2repository
 
 script:
   - ./gradlew test
