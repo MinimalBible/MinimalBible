@@ -7,8 +7,6 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // Version lock the gradle plugin because Kotlin only works with up to 14.2
-        // KT-6181 is open to track this issue
         classpath 'com.android.tools.build:gradle:0.14.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // NOTE: Do not place your application dependencies here; they belong
