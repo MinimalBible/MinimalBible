@@ -11,7 +11,7 @@ android:
     - android-21
 
 before_script:
-  - android update sdk -u -t 1,2,3
+  - yes | android update sdk -u -t 1,2,3
 
 script:
   - ./gradlew test
