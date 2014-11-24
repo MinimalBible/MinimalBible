@@ -3,7 +3,8 @@ language: android
 android:
   components:
     - build-tools-21.1.1
-    # Don't have any other tools so far, robolectric covers pretty much everything...
+    - android-21
+    - extra-android-support
 
 script:
   - ./gradlew test
