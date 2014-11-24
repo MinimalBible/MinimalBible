@@ -48,7 +48,7 @@ dependencies {
     compile 'com.netflix.rxjava:rxjava-android:+'
     // Version lock needed b SO question 26488015
     compile 'com.android.support:appcompat-v7:21.0.2'
-    compile 'com.android.support:appcompat-v4:21.0.2'
+    compile 'com.android.support:support-v4:21.0.2'
     compile 'org.apache.commons:commons-lang3:+'
     compile 'com.google.code.gson:gson:+'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
