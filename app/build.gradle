@@ -2,12 +2,8 @@ buildscript {
     repositories {
         mavenCentral()
     }
-    dependencies {
-        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
-    }
 }
 
-apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
@@ -44,8 +40,9 @@ dependencies {
     compile 'com.squareup.dagger:dagger:+'
     provided 'com.squareup.dagger:dagger-compiler:+'
 
-    compile 'de.devland.esperandro:esperandro-api:+'
-    provided 'de.devland.esperandro:esperandro:+'
+    // TODO: Figure out why I need to force 2.1.0 and can't just use +
+    compile 'de.devland.esperandro:esperandro-api:2.1.0'
+    provided 'de.devland.esperandro:esperandro:2.1.0'
 
     compile 'com.jakewharton:butterknife:+'
     compile 'com.readystatesoftware.systembartint:systembartint:+'
