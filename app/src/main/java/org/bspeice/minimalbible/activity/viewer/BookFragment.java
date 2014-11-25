@@ -105,6 +105,7 @@ public class BookFragment extends BaseFragment {
                 .subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
+                        // TODO: Handle activity potentially null
                         ((BibleViewer) getActivity()).setActionBarTitle(s);
                         Log.d("BibleViewClient", s);
                     }
