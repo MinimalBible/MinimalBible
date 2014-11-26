@@ -10,6 +10,10 @@ import org.bspeice.minimalbible.R
 import android.widget.TextView
 import org.bspeice.minimalbible.service.format.osisparser.OsisParser
 import org.crosswire.jsword.book.getVersification
+import org.crosswire.jsword.versification.getBooks
+import org.crosswire.jsword.versification.BibleBook
+import org.bspeice.minimalbible.activity.viewer.BookAdapter.ChapterInfo
+import android.util.Log
 
 /**
  * Adapter used for displaying a book
@@ -18,36 +22,55 @@ import org.crosswire.jsword.book.getVersification
  */
 class BookAdapter(val b: Book) : RecyclerView.Adapter<PassageView>() {
 
+    val versification = b.getVersification()
+    val bookList = versification.getBooks()
+    val chapterCount = bookList.map { versification.getLastChapter(it) - 1 }.sum()
+
+    data class ChapterInfo(val book: Book, val chapter: Int, val bibleBook: BibleBook,
+                           val vStart: Int, val vEnd: Int)
+
+    // TODO: Lazy compute values needed for this list
+    val chapterList: List<ChapterInfo> = bookList.flatMap {
+        val currentBook = it
+        (1..versification.getLastChapter(currentBook)).map { chapter ->
+            Log.d("BookAdapter", "Building info for chapter ${chapter}")
+            ChapterInfo(b, chapter, currentBook,
+                    versification.getFirstVerse(currentBook, chapter),
+                    versification.getLastVerse(currentBook, chapter))
+        }
+    }
+
     /**
-     * Create a new view
+     * I'm not sure what the position argument actually is,
+     * but on initial load it doesn't change
      */
     override fun onCreateViewHolder(parent: ViewGroup?,
-                                    position: Int): PassageView? {
+                                    position: Int): PassageView {
         val emptyView = LayoutInflater.from(parent?.getContext())
-            .inflate(R.layout.viewer_passage_view, parent, false)
+                .inflate(R.layout.viewer_passage_view, parent, false) as TextView
 
         val passage = PassageView(emptyView)
-//        passage.v setText o.getVerse(b, position).content
         return passage
     }
 
     /**
-     * Bind an existing view
+     * Bind an existing view to its chapter content
      */
-    override fun onBindViewHolder(view: PassageView, position: Int) {
-        val o = OsisParser()
-        view.v setText o.getVerse(b, position).content
-    }
+    override fun onBindViewHolder(view: PassageView, position: Int) =
+            view bind chapterList[position]
 
     /**
      * Get the number of chapters in the book
      */
-    override fun getItemCount(): Int = b.getVersification()
-            .getAllVerses().getEnd().getOrdinal()
+    override fun getItemCount(): Int = chapterCount
 }
 
-class PassageView(val _v: View) : RecyclerView.ViewHolder(_v) {
+class PassageView(val v: TextView) : RecyclerView.ViewHolder(v) {
 
-    val v = _v as TextView
-
+    fun bind(info: ChapterInfo) {
+        val o = OsisParser()
+        val string = o.getVerse(info.book, info.vEnd).content
+        Log.d("PassageView", "Book: ${info.bibleBook}, Chapter: ${info.chapter}")
+        v setText string
+    }
 }
