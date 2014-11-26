@@ -22,8 +22,10 @@ import javax.inject.Named;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -98,7 +100,8 @@ public class BookFragment extends BaseFragment {
         Log.d("BookFragment", b.getName());
         ((BibleViewer)getActivity()).setActionBarTitle(b.getInitials());
 
-        bookContent.setLayoutManager(new LinearLayoutManager(getActivity()));
+        final RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
+        bookContent.setLayoutManager(manager);
         bookContent.setAdapter(new BookAdapter(b));
     }
 }

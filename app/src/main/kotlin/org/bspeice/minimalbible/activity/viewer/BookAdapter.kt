@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import org.bspeice.minimalbible.R
 import android.widget.TextView
 import org.bspeice.minimalbible.service.format.osisparser.OsisParser
+import org.crosswire.jsword.book.getVersification
 
 /**
  * Adapter used for displaying a book
@@ -41,7 +42,8 @@ class BookAdapter(val b: Book) : RecyclerView.Adapter<PassageView>() {
     /**
      * Get the number of chapters in the book
      */
-    override fun getItemCount(): Int = 800
+    override fun getItemCount(): Int = b.getVersification()
+            .getAllVerses().getEnd().getOrdinal()
 }
 
 class PassageView(val _v: View) : RecyclerView.ViewHolder(_v) {
