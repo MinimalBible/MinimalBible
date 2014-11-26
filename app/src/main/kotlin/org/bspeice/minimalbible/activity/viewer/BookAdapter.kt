@@ -8,6 +8,7 @@ import android.view.View
 import android.view.LayoutInflater
 import org.bspeice.minimalbible.R
 import android.widget.TextView
+import org.bspeice.minimalbible.service.format.osisparser.OsisParser
 
 /**
  * Adapter used for displaying a book
@@ -25,7 +26,7 @@ class BookAdapter(val b: Book) : RecyclerView.Adapter<PassageView>() {
             .inflate(R.layout.viewer_passage_view, parent, false)
 
         val passage = PassageView(emptyView)
-        passage.v setText "1"
+//        passage.v setText o.getVerse(b, position).content
         return passage
     }
 
@@ -33,7 +34,8 @@ class BookAdapter(val b: Book) : RecyclerView.Adapter<PassageView>() {
      * Bind an existing view
      */
     override fun onBindViewHolder(view: PassageView, position: Int) {
-        view.v setText "${Integer.parseInt(view.v.getText() as String) + 1}"
+        val o = OsisParser()
+        view.v setText o.getVerse(b, position).content
     }
 
     /**
