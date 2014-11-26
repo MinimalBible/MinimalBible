@@ -4,11 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
+import android.support.v7.widget.RecyclerView;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
@@ -40,7 +41,8 @@ public class BookFragment extends BaseFragment {
     VerseLookup verseLookup;
 
     @InjectView(R.id.book_content)
-    WebView mainContent;
+    RecyclerView bookContent;
+
 
     PublishSubject<String> titleReceiver = PublishSubject.create();
 
@@ -69,7 +71,6 @@ public class BookFragment extends BaseFragment {
         this.i = (Injector) getActivity();
         i.inject(this);
         ButterKnife.inject(this, rootView);
-        mainContent.getSettings().setJavaScriptEnabled(true);
 
         // TODO: Load initial text from SharedPreferences, rather than getting the actual book.
         displayBook(mBook);
@@ -93,29 +94,11 @@ public class BookFragment extends BaseFragment {
      *
      * @param b The book we want to display
      */
-    @SuppressLint("AddJavascriptInterface")
     private void displayBook(Book b) {
         Log.d("BookFragment", b.getName());
         ((BibleViewer)getActivity()).setActionBarTitle(b.getInitials());
-        mainContent.loadUrl(getString(R.string.book_html));
 
-        BibleViewClient client = new BibleViewClient(b, verseLookup, titleReceiver);
-        titleReceiver
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        // TODO: Handle activity potentially null
-                        ((BibleViewer) getActivity()).setActionBarTitle(s);
-                        Log.d("BibleViewClient", s);
-                    }
-                });
-        mainContent.setWebViewClient(client);
-        mainContent.addJavascriptInterface(client, "Android");
-
-        // Enable remote debug
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WebView.setWebContentsDebuggingEnabled(true);
-        }
+        bookContent.setLayoutManager(new LinearLayoutManager(getActivity()));
+        bookContent.setAdapter(new BookAdapter(b));
     }
 }
