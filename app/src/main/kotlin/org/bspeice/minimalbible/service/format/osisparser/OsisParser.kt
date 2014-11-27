@@ -5,10 +5,8 @@ import org.crosswire.jsword.passage.Verse
 import java.util.ArrayDeque
 import org.xml.sax.Attributes
 import org.crosswire.jsword.book.OSISUtil
-import org.bspeice.minimalbible.SafeValDelegate
 import org.crosswire.jsword.book.BookData
 import org.crosswire.jsword.book.Book
-import org.crosswire.jsword.book.getVersification
 import kotlin.properties.Delegates
 
 /**
@@ -24,17 +22,9 @@ class OsisParser() : DefaultHandler() {
     // TODO: Implement a stack to keep min API 8
     val doWrite = ArrayDeque<Boolean>()
 
-    fun getJson(b: Book, v: Verse): String {
-        // I don't always set up my constructors to have faces, but when I do...
-        verseContent = VerseContent(v = v)
+    fun getVerse(b: Book, v: Verse): VerseContent {
+        verseContent = VerseContent(v)
         BookData(b, v).getSAXEventProvider() provideSAXEvents this
-        return verseContent.json
-    }
-
-    fun getVerse(b: Book, v: Int): VerseContent {
-        val verse = b.getVersification().decodeOrdinal(v)
-        verseContent = VerseContent(verse)
-        BookData(b, verse).getSAXEventProvider() provideSAXEvents this
         return verseContent
     }
 

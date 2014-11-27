@@ -8,6 +8,7 @@ import rx.subjects.PublishSubject
 import rx.schedulers.Schedulers
 import org.bspeice.minimalbible.service.format.osisparser.OsisParser
 import org.crosswire.jsword.book.getVersification
+import org.bspeice.minimalbible.service.format.osisparser.VerseContent
 
 /**
  * Do the low-level work of getting a verse's content
@@ -28,11 +29,11 @@ open class VerseLookup(val b: Book) : Action1<Verse> {
 
     fun getVerseId(v: Verse) = v.getOrdinal()
 
-    fun getJson(v: Verse): String =
+    fun getText(v: Verse): String =
             if (cache contains v)
                 cache[getVerseId(v)]
             else {
-                val content = doLookup(v)
+                val content = doLookup(v).content
                 notify(v)
                 content
             }
@@ -43,11 +44,11 @@ open class VerseLookup(val b: Book) : Action1<Verse> {
      * it is displayed.
      *
      * @param v The verse to look up
-     * @return The JSON content of this verse
+     * @return The string content of this verse
      */
-    fun doLookup(v: Verse): String = OsisParser().getJson(b, v)
-    fun doLookup(ordinal: Int): String = OsisParser()
-            .getJson(b, Verse(b.getVersification(), ordinal))
+    fun doLookup(v: Verse): VerseContent = OsisParser().getVerse(b, v)
+    fun doLookup(ordinal: Int): VerseContent = OsisParser()
+            .getVerse(b, b.getVersification() decodeOrdinal ordinal)
 
     /**
      * Not necessary, but helpful if you let us know ahead of time we should pre-cache a verse.

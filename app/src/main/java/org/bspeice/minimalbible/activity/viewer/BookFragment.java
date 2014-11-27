@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseFragment;
+import org.bspeice.minimalbible.service.lookup.VerseLookup;
 import org.crosswire.jsword.book.Book;
 
 import javax.inject.Inject;
@@ -34,6 +35,8 @@ public class BookFragment extends BaseFragment {
     Book mBook;
     @Inject
     PublishSubject<BookScrollEvent> scrollEventProvider;
+    @Inject
+    VerseLookup lookup;
 
     @InjectView(R.id.book_content)
     RecyclerView bookContent;
@@ -91,7 +94,7 @@ public class BookFragment extends BaseFragment {
         ((BibleViewer)getActivity()).setActionBarTitle(b.getInitials());
 
         final RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
-        BookAdapter adapter = new BookAdapter(b);
+        BookAdapter adapter = new BookAdapter(b, lookup);
         bookContent.setLayoutManager(manager);
         bookContent.setAdapter(adapter);
 

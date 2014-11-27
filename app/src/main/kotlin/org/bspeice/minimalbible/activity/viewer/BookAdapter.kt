@@ -6,19 +6,19 @@ import org.crosswire.jsword.book.Book
 import android.view.LayoutInflater
 import org.bspeice.minimalbible.R
 import android.widget.TextView
-import org.bspeice.minimalbible.service.format.osisparser.OsisParser
 import org.crosswire.jsword.book.getVersification
 import org.crosswire.jsword.versification.getBooks
 import org.crosswire.jsword.versification.BibleBook
 import org.bspeice.minimalbible.activity.viewer.BookAdapter.ChapterInfo
 import rx.subjects.PublishSubject
+import org.bspeice.minimalbible.service.lookup.VerseLookup
 
 /**
  * Adapter used for displaying a book
  * Displays one chapter at a time,
  * as each TextView widget is it's own line break
  */
-class BookAdapter(val b: Book)
+class BookAdapter(val b: Book, val lookup: VerseLookup)
 : RecyclerView.Adapter<PassageView>() {
 
     val versification = b.getVersification()
@@ -58,7 +58,7 @@ class BookAdapter(val b: Book)
         val emptyView = LayoutInflater.from(parent?.getContext())
                 .inflate(R.layout.viewer_passage_view, parent, false) as TextView
 
-        val passage = PassageView(emptyView)
+        val passage = PassageView(emptyView, b, lookup)
         return passage
     }
 
@@ -87,16 +87,16 @@ class BookAdapter(val b: Book)
     }
 }
 
-class PassageView(val v: TextView) : RecyclerView.ViewHolder(v) {
-    val parser = OsisParser()
+class PassageView(val v: TextView, val b: Book, val lookup: VerseLookup)
+: RecyclerView.ViewHolder(v) {
 
-    fun getVerseText(b: Book, verseRange: Progression<Int>) =
-            verseRange.map { parser.getVerse(b, it).content }
+    fun getVerseText(verseRange: Progression<Int>) =
+            verseRange.map { lookup.getText(b.getVersification().decodeOrdinal(it)) }
 
     fun reduceText(verses: List<String>) = verses.join(" ")
 
     // Uses functional style, but those parentheses man... you'd think I was writing LISP
     fun bind(info: ChapterInfo) {
-        v.setText(reduceText(getVerseText(info.book, info.vStart..info.vEnd)))
+        v.setText(reduceText(getVerseText(info.vStart..info.vEnd)))
     }
 }
