@@ -104,6 +104,13 @@ public class BibleViewerModules {
     }
 
     @Provides
+    @Named("MainAdapter")
+    @Singleton
+    BookAdapter bookAdapter(@Named("MainBook") Book b, VerseLookup v) {
+        return new BookAdapter(b, v);
+    }
+
+    @Provides
     @Singleton
     PublishSubject<BookScrollEvent> scrollEventProvider() {
         return PublishSubject.create();

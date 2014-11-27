@@ -10,9 +10,9 @@ import org.crosswire.jsword.book.Book
 import kotlin.properties.Delegates
 
 /**
- * Created by bspeice on 9/10/14.
+ * Parse out the OSIS XML into whatever we want!
+ * TODO: Speed up parsing. This is the single most expensive repeated operation
  */
-
 class OsisParser() : DefaultHandler() {
 
     // Don't pass a verse as part of the constructor, but still guarantee
