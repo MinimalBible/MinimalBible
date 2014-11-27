@@ -1,20 +1,17 @@
 package org.bspeice.minimalbible.activity.viewer;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v7.widget.RecyclerView;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseFragment;
-import org.bspeice.minimalbible.service.lookup.VerseLookup;
 import org.crosswire.jsword.book.Book;
 
 import javax.inject.Inject;
@@ -22,10 +19,6 @@ import javax.inject.Named;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -40,13 +33,10 @@ public class BookFragment extends BaseFragment {
     @Named("MainBook")
     Book mBook;
     @Inject
-    VerseLookup verseLookup;
+    PublishSubject<BookScrollEvent> scrollEventProvider;
 
     @InjectView(R.id.book_content)
     RecyclerView bookContent;
-
-
-    PublishSubject<String> titleReceiver = PublishSubject.create();
 
     /**
      * Returns a new instance of this fragment for the given book.
@@ -101,7 +91,10 @@ public class BookFragment extends BaseFragment {
         ((BibleViewer)getActivity()).setActionBarTitle(b.getInitials());
 
         final RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
+        BookAdapter adapter = new BookAdapter(b);
         bookContent.setLayoutManager(manager);
-        bookContent.setAdapter(new BookAdapter(b));
+        bookContent.setAdapter(adapter);
+
+        adapter.bindScrollHandler(scrollEventProvider, manager);
     }
 }

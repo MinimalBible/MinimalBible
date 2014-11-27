@@ -3,8 +3,6 @@ package org.bspeice.minimalbible.activity.viewer
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import org.crosswire.jsword.book.Book
-import org.crosswire.jsword.passage.Verse
-import android.view.View
 import android.view.LayoutInflater
 import org.bspeice.minimalbible.R
 import android.widget.TextView
@@ -13,14 +11,15 @@ import org.crosswire.jsword.book.getVersification
 import org.crosswire.jsword.versification.getBooks
 import org.crosswire.jsword.versification.BibleBook
 import org.bspeice.minimalbible.activity.viewer.BookAdapter.ChapterInfo
-import android.util.Log
+import rx.subjects.PublishSubject
 
 /**
  * Adapter used for displaying a book
  * Displays one chapter at a time,
  * as each TextView widget is it's own line break
  */
-class BookAdapter(val b: Book) : RecyclerView.Adapter<PassageView>() {
+class BookAdapter(val b: Book)
+: RecyclerView.Adapter<PassageView>() {
 
     val versification = b.getVersification()
     val bookList = versification.getBooks()
@@ -48,7 +47,7 @@ class BookAdapter(val b: Book) : RecyclerView.Adapter<PassageView>() {
             val verseCount = versification.getLastVerse(currentBook, it)
             ChapterInfo(b, it, currentBook, firstVerse, firstVerse + verseCount)
         }
-    }
+    };
 
     /**
      * I'm not sure what the position argument actually represents,
@@ -73,6 +72,19 @@ class BookAdapter(val b: Book) : RecyclerView.Adapter<PassageView>() {
      * Get the number of chapters in the book
      */
     override fun getItemCount(): Int = chapterCount
+
+    fun bindScrollHandler(provider: PublishSubject<BookScrollEvent>,
+                          lM: RecyclerView.LayoutManager) {
+        provider subscribe {
+            val event = it
+            chapterList.withIndices()
+                    .filter {
+                        event.b == it.second.bibleBook &&
+                                event.chapter == it.second.chapter
+                    }
+                    .forEach { lM scrollToPosition it.first }
+        }
+    }
 }
 
 class PassageView(val v: TextView) : RecyclerView.ViewHolder(v) {

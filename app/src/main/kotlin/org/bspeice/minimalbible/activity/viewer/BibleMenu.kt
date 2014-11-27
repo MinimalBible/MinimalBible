@@ -13,6 +13,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.content.res.Resources
 import android.support.annotation.IdRes
+import android.widget.ExpandableListView
+import rx.subjects.PublishSubject
 
 /**
  * Created by bspeice on 10/24/14.
@@ -24,6 +26,22 @@ class BibleMenu(val b: Book) : BaseExpandableListAdapter() {
     val menuMappings = b.getVersification().getBooks().map {
         Pair(it, b.getVersification().getLastChapter(it))
     }
+
+    /**
+     * The listener that should be registered to receive click events
+     * It's created here because we need access to the menuMappings
+     */
+    fun getMenuClickListener(listener: PublishSubject<BookScrollEvent>) =
+            object : ExpandableListView.OnChildClickListener {
+                override fun onChildClick(listView: ExpandableListView?, childView: View?,
+                                          groupPosition: Int, childPosition: Int, id: Long): Boolean {
+
+                    val map = menuMappings[groupPosition]
+                    listener onNext BookScrollEvent(map.first, map.second)
+
+                    return true; // Event was handled
+                }
+            }
 
     var groupHighlighted: Int = 0
     var childHighlighted: Int = 0

@@ -17,6 +17,7 @@ import dagger.Provides;
 import de.devland.esperandro.Esperandro;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.subjects.PublishSubject;
 
 /**
  * Modules used for the BibleViewer activity
@@ -100,5 +101,11 @@ public class BibleViewerModules {
     @Singleton
     VerseLookup verseLookup(@Named("MainBook") Book b) {
         return new VerseLookup(b);
+    }
+
+    @Provides
+    @Singleton
+    PublishSubject<BookScrollEvent> scrollEventProvider() {
+        return PublishSubject.create();
     }
 }

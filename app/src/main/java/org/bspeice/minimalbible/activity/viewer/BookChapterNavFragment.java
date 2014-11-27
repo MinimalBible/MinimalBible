@@ -14,6 +14,8 @@ import org.crosswire.jsword.book.Book;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import rx.subjects.PublishSubject;
+
 /**
  * ExpandableListView for managing books of the Bible.
  * We extend from @link{BaseNavigationDrawerFragment} so we can inherit some of the lifecycle
@@ -27,6 +29,9 @@ public class BookChapterNavFragment extends NavDrawerFragment {
     @Inject @Named("MainBook")
     Book mainBook;
 
+    @Inject
+    PublishSubject<BookScrollEvent> scrollListener;
+
     ExpandableListView mActualListView;
 
     @Override
@@ -35,9 +40,11 @@ public class BookChapterNavFragment extends NavDrawerFragment {
         Injector i = (Injector) getActivity();
         i.inject(this);
 
+        BibleMenu menu = new BibleMenu(mainBook);
         mActualListView = (ExpandableListView) inflater.inflate(
                 R.layout.fragment_expandable_navigation_drawer, container, false);
-        mActualListView.setAdapter(new BibleMenu(mainBook));
+        mActualListView.setAdapter(menu);
+        mActualListView.setOnChildClickListener(menu.getMenuClickListener(scrollListener));
 
         mActualListView.setItemChecked(mCurrentSelectedPosition, true);
         return mActualListView;
