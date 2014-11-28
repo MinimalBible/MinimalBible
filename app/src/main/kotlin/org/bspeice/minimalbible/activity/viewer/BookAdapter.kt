@@ -77,12 +77,16 @@ class BookAdapter(val b: Book, val lookup: VerseLookup)
                           lM: RecyclerView.LayoutManager) {
         provider subscribe {
             val event = it
-            chapterList.withIndices()
-                    .filter {
-                        event.b == it.second.bibleBook &&
-                                event.chapter == it.second.chapter
-                    }
-                    .forEach { lM scrollToPosition it.first }
+            lM scrollToPosition
+                    // Get all objects in the form (index, object)
+                    chapterList.withIndices()
+                            // Get one that matches our book and chapter
+                            .first {
+                                event.b == it.second.bibleBook &&
+                                        event.chapter == it.second.chapter
+                            }
+                            // And get that index value to scroll to
+                            .first
         }
     }
 }
