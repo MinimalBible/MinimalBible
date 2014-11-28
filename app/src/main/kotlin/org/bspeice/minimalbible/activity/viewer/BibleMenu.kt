@@ -37,7 +37,9 @@ class BibleMenu(val b: Book) : BaseExpandableListAdapter() {
                                           groupPosition: Int, childPosition: Int, id: Long): Boolean {
 
                     val map = menuMappings[groupPosition]
-                    listener onNext BookScrollEvent(map.first, map.second)
+                    // childPosition is index-based
+                    // TODO: Figure out why trying chapter 0 triggers a NotImplementedException...
+                    listener onNext BookScrollEvent(map.first, childPosition + 1)
 
                     return true; // Event was handled
                 }
