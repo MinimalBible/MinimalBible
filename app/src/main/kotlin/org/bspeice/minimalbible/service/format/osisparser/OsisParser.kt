@@ -32,6 +32,7 @@ class OsisParser() : DefaultHandler() {
                               qName: String, attributes: Attributes) {
         when (localName) {
             OSISUtil.OSIS_ELEMENT_VERSE -> doWrite.push(true)
+            "divineName" -> doWrite.push(true)
             else -> doWrite.push(false)
         }
     }
