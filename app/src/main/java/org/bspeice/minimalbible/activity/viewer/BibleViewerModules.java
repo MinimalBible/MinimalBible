@@ -106,8 +106,9 @@ public class BibleViewerModules {
     @Provides
     @Named("MainAdapter")
     @Singleton
-    BookAdapter bookAdapter(@Named("MainBook") Book b, VerseLookup v) {
-        return new BookAdapter(b, v);
+    BookAdapter bookAdapter(@Named("MainBook") Book b, VerseLookup v,
+                            BibleViewerPreferences prefs) {
+        return new BookAdapter(b, v, prefs);
     }
 
     @Provides

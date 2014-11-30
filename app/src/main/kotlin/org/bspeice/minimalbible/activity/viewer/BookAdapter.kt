@@ -17,13 +17,15 @@ import android.text.style.StyleSpan
 import android.graphics.Typeface
 import android.text.style.SuperscriptSpan
 import android.text.style.RelativeSizeSpan
+import android.util.TypedValue
 
 /**
  * Adapter used for displaying a book
  * Displays one chapter at a time,
  * as each TextView widget is it's own line break
  */
-class BookAdapter(val b: Book, val lookup: VerseLookup)
+class BookAdapter(val b: Book, val lookup: VerseLookup,
+                  val prefs: BibleViewerPreferences)
 : RecyclerView.Adapter<PassageView>() {
 
     val versification = b.getVersification()
@@ -75,6 +77,9 @@ class BookAdapter(val b: Book, val lookup: VerseLookup)
                                     position: Int): PassageView {
         val emptyView = LayoutInflater.from(parent?.getContext())
                 .inflate(R.layout.viewer_passage_view, parent, false) as TextView
+
+        // TODO: Prefs object for handling this?
+        emptyView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
 
         val passage = PassageView(emptyView, b, lookup)
         return passage
