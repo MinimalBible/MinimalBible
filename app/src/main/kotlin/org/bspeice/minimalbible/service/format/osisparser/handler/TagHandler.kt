@@ -10,8 +10,6 @@ import android.text.style.CharacterStyle
 
 trait TagHandler {
     fun render(builder: SpannableStringBuilder, info: VerseContent, chars: String)
-
-
 }
 
 data class AppendArgs(val text: String, val span: Any?) {

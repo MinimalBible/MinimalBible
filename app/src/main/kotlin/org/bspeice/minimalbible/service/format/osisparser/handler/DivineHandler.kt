@@ -14,6 +14,6 @@ class DivineHandler() : TagHandler {
 
     fun buildDivineName(chars: String) =
             listOf(AppendArgs(chars take 1, null),
-                    AppendArgs(chars drop 1, RelativeSizeSpan(.9f))
+                    AppendArgs((chars drop 1).toUpperCase(), RelativeSizeSpan(.8f))
             )
 }

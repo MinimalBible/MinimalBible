@@ -22,7 +22,7 @@ class VerseHandler() : TagHandler {
     fun buildVerseHeader(chapter: Int, verseNum: Int, verseStart: Boolean): AppendArgs =
             when {
                 !verseStart -> AppendArgs("", null)
-                verseNum == 1 -> AppendArgs("$chapter", StyleSpan(Typeface.BOLD))
+                verseNum == 1 -> AppendArgs("$chapter ", StyleSpan(Typeface.BOLD))
                 else -> AppendArgs("${verseNum}", listOf(SuperscriptSpan(), RelativeSizeSpan(.75f)))
             }
 }
