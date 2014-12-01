@@ -2,7 +2,6 @@ package org.bspeice.minimalbible.activity.viewer;
 
 import android.util.Log;
 
-import org.bspeice.minimalbible.service.lookup.VerseLookup;
 import org.bspeice.minimalbible.service.manager.BookManager;
 import org.crosswire.jsword.book.Book;
 
@@ -98,17 +97,10 @@ public class BibleViewerModules {
     }
 
     @Provides
-    @Singleton
-    VerseLookup verseLookup(@Named("MainBook") Book b) {
-        return new VerseLookup(b);
-    }
-
-    @Provides
     @Named("MainAdapter")
     @Singleton
-    BookAdapter bookAdapter(@Named("MainBook") Book b, VerseLookup v,
-                            BibleViewerPreferences prefs) {
-        return new BookAdapter(b, v, prefs);
+    BookAdapter bookAdapter(@Named("MainBook") Book b, BibleViewerPreferences prefs) {
+        return new BookAdapter(b, prefs);
     }
 
     @Provides

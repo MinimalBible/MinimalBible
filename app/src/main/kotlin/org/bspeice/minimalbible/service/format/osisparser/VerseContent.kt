@@ -7,7 +7,7 @@ import com.google.gson.Gson
 import org.crosswire.jsword.passage.Verse
 import java.util.ArrayList
 
-//TODO: JSON Streaming parsing? http://instagram-engineering.tumblr.com/post/97147584853/json-parsing
+// TODO: Refactor to a VerseInfo class, not the actual content to support "streaming" parsing
 data class VerseContent(val v: Verse,
                         val id: Int = v.getOrdinal(),
                         val bookName: String = v.getName(),
