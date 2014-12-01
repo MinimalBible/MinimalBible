@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?><!-- I have to change the namespace slightly since this is part of the org.bspeice.minimalbible
+package as defined in AndroidManifest.xml. Otherwise, everything is intact as supplied,
+but I will likely want to re-implement this in the future -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cmwmobile="http://schemas.android.com/apk/res/org.bspeice.minimalbible">
+
+    <com.cmwmobile.android.samples.SeekBarDialogPreference
+        android:defaultValue="14"
+        android:key="baseTextSize"
+        android:summary="Font Size"
+        android:title="Font Size"
+        cmwmobile:maximumValue="28"
+        cmwmobile:minimumValue="8"
+        cmwmobile:stepSize="1"
+        cmwmobile:units="pt." />
+
+</PreferenceScreen>

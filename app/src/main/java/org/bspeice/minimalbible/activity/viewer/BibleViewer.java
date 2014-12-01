@@ -17,6 +17,7 @@ import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 import org.bspeice.minimalbible.activity.navigation.NavDrawerFragment;
+import org.bspeice.minimalbible.activity.settings.MinimalBibleSettings;
 import org.crosswire.jsword.book.Book;
 
 import javax.inject.Inject;
@@ -142,8 +143,9 @@ public class BibleViewer extends BaseActivity implements
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
-			return true;
-		} else if (id == R.id.action_downloads) {
+            Intent i = new Intent(this, MinimalBibleSettings.class);
+            startActivityForResult(i, 0);
+        } else if (id == R.id.action_downloads) {
 			startActivity(new Intent(this, DownloadActivity.class));
 		}
 		return super.onOptionsItemSelected(item);

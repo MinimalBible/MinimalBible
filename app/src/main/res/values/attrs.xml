@@ -15,5 +15,13 @@
         <attr name="barLength" format="dimension" />
         <attr name="contourColor" format="color"/>
         <attr name="contourSize" format="dimension"/>
-    </declare-styleable>   
+    </declare-styleable>
+
+    <!-- Copyright CMW Mobile.com, 2010. -->
+    <declare-styleable name="SeekBarDialogPreference">
+        <attr name="maximumValue" format="integer" />
+        <attr name="minimumValue" format="integer" />
+        <attr name="stepSize" format="integer" />
+        <attr name="units" format="string" />
+    </declare-styleable>
 </resources>

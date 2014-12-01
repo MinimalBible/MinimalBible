@@ -74,8 +74,8 @@ class BookAdapter(val b: Book, val prefs: BibleViewerPreferences)
         val emptyView = LayoutInflater.from(parent?.getContext())
                 .inflate(R.layout.viewer_passage_view, parent, false) as TextView
 
-        // TODO: Prefs object for handling this?
-        emptyView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+        // TODO: Listen for changes to the text size?
+        emptyView.setTextSize(TypedValue.COMPLEX_UNIT_SP, prefs.baseTextSize().toFloat())
 
         val passage = PassageView(emptyView, b)
         return passage

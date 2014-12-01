@@ -6,7 +6,7 @@ import de.devland.esperandro.annotations.SharedPreferences;
 /**
  * Created by bspeice on 7/11/14.
  */
-@SharedPreferences(name = "BibleViewerPreferences")
+@SharedPreferences
 public interface BibleViewerPreferences {
 
     String defaultBookName();
