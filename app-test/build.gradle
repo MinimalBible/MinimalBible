@@ -55,9 +55,14 @@ jacocoTestReport {
 
     Additionally, to properly exclude, we need to run that code outside the doFirst block.
     No clue why this is, but please don't change this without extensive testing.
+
+    Finally, because we actually exclude these files from the output, they are removed
+    from the actual classpath, meaning no test classes can reference any of the below.
+    Otherwise, I'd remove com/toddddavies/** as well
     */
     def jacocoExcludes = [
-            "android/**/*"
+            "android/**/*",
+            "com/cmwmobile/**"
     ]
     firstVariant.javaCompile.exclude(jacocoExcludes).outputs.files
 
