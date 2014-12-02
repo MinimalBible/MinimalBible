@@ -1,5 +1,6 @@
 package org.bspeice.minimalbible.activity.downloader;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -14,6 +15,7 @@ import org.bspeice.minimalbible.OGHolder;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
 import org.bspeice.minimalbible.activity.navigation.NavDrawerFragment;
+import org.bspeice.minimalbible.activity.settings.MinimalBibleSettings;
 import org.crosswire.jsword.book.BookCategory;
 
 import java.util.List;
@@ -136,7 +138,8 @@ public class DownloadActivity extends BaseActivity implements
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            return true;
+            Intent i = new Intent(this, MinimalBibleSettings.class);
+            startActivityForResult(i, 0);
         }
         return super.onOptionsItemSelected(item);
     }
