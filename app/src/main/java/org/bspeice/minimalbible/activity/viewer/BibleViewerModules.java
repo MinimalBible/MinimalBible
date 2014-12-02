@@ -78,7 +78,7 @@ public class BibleViewerModules {
                         })
                         .toBlocking().first();
 
-                prefs.defaultBookName(fallback.getName());
+                prefs.defaultBookInitials(fallback.getName());
                 return fallback;
             } catch (NoSuchElementException e) {
                 // If no books are installed, there's really nothing we can do...

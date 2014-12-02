@@ -15,5 +15,6 @@ public interface BibleViewerPreferences {
 
     @Default(ofInt = 14)
     int baseTextSize();
+
     void baseTextSize(int baseTextSize);
 }
