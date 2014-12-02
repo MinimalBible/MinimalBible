@@ -19,5 +19,4 @@ public interface DownloadPrefs {
     long downloadRefreshedOn();
 
     void downloadRefreshedOn(long downloadRefreshedOn);
-
 }

@@ -14,4 +14,15 @@ but I will likely want to re-implement this in the future -->
         cmwmobile:stepSize="1"
         cmwmobile:units="pt." />
 
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="hasEnabledDownload"
+        android:summary="Whether MinimalBible can use the Internet"
+        android:title="Internet usage enabled" />
+
+    <org.bspeice.minimalbible.activity.settings.AvailableBookPreference
+        android:key="defaultBookInitials"
+        android:summary="Which book to display in the main window"
+        android:title="Active Book" />
+
 </PreferenceScreen>

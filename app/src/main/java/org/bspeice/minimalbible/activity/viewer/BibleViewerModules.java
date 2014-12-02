@@ -50,7 +50,7 @@ public class BibleViewerModules {
                 .first(new Func1<Book, Boolean>() {
                     @Override
                     public Boolean call(Book book) {
-                        return book.getName().equals(prefs.defaultBookName());
+                        return book.getInitials().equals(prefs.defaultBookInitials());
                     }
                 })
                 .subscribe(new Action1<Book>() {

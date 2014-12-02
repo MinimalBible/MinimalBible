@@ -9,11 +9,10 @@ import de.devland.esperandro.annotations.SharedPreferences;
 @SharedPreferences
 public interface BibleViewerPreferences {
 
-    String defaultBookName();
+    String defaultBookInitials();
     void defaultBookName(String defaultBookName);
 
     @Default(ofInt = 14)
     int baseTextSize();
-
     void baseTextSize(int baseTextSize);
 }
