@@ -9,6 +9,7 @@ extra-android-m2repository
 extra-android-support
 extra-google-m2repository"
 
+sudo apt-get update
 sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch
 wget http://dl.google.com/android/android-sdk_r23.0.2-linux.tgz
 tar -zxvf android-sdk_r23.0.2-linux.tgz
