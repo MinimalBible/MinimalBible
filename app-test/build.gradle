@@ -28,6 +28,7 @@ test {
     }
 }
 
+// TODO: Make sure we test against the Debug variant
 def androidModule = project(':app')
 def firstVariant = androidModule.android.applicationVariants.toList().first()
 
