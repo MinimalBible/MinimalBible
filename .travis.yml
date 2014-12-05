@@ -3,7 +3,7 @@ env:
   - ANDROID_HOME="./android-sdk-linux"
 
 before_install:
-  - bash android_install.sh $COMPONENTS
+  - bash android_install.sh
 
 script:
   - ./gradlew test
