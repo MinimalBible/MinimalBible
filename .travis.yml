@@ -1,4 +1,6 @@
 language: java
+env:
+  - ANDROID_HOME="./android-sdk-linux"
 
 before_install:
   - bash android_install.sh $COMPONENTS
