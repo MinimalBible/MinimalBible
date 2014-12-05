@@ -10,10 +10,11 @@ extra-android-support
 extra-google-m2repository"
 
 wget http://dl.google.com/android/android-sdk_r23.0.2-linux.tgz
-tar xf android-sdk_r23.0.2-linux.tgz
+tar -zxvf android-sdk_r23.0.2-linux.tgz
 cd android-sdk-linux/
 export ANDROID_HOME=`pwd`
-ls android-sdk-linux/
+ls
+ls *
 
 for COMP in ${COMPONENTS}
 do
