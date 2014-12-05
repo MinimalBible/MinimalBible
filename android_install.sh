@@ -16,5 +16,3 @@ for COMP in ${COMPONENTS}
 do
 	echo "yes" | android-sdk-linux/tools/android update sdk -u -a -t ${COMP}
 done
-
-cd -
