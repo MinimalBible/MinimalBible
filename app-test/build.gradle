@@ -72,6 +72,7 @@ jacocoTestReport {
 		
 		// And finally tell Jacoco to only include said files in the report
         classDirectories = outputTree
+        sourceDirectories = files(androidModule.android.sourceSets.main.java.srcDirs)
     }
 
     reports {
