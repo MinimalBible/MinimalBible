@@ -5,6 +5,7 @@ env:
 before_install:
   - bash android_install.sh
 
+# TODO: Even using language: java, this fails on the first try, succeeds on second, please fix
 script:
   - ./gradlew test
 
