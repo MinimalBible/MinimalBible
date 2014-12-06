@@ -3,7 +3,7 @@ apply plugin: 'kotlin'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
-//evaluationDependsOn(":app:compileDebugJava")
+evaluationDependsOn(":app:compileDebugJava")
 
 buildscript {
     repositories {
@@ -74,18 +74,16 @@ jacocoTestReport {
         classDirectories = outputTree
     }
 
-    // We must specify sourceDirectories here (not in doFirst) because this
-    // will happen at configuration time. We only want to change classDirectories
-    // when generating the actual report
-    sourceDirectories = files(androidModule.android.sourceSets.main.java.srcDirs)
-
     reports {
         xml.enabled true
     }
+}
+
+coveralls {
+    sourceDirs = files(androidModule.android.sourceSets.main.java.srcDirs).files.absolutePath
 }
 
 tasks.withType(Test) {
     scanForTestClasses = false
     includes = testIncludes
 }
-
