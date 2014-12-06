@@ -72,8 +72,12 @@ jacocoTestReport {
 		
 		// And finally tell Jacoco to only include said files in the report
         classDirectories = outputTree
-        sourceDirectories = files(androidModule.android.sourceSets.main.java.srcDirs)
     }
+
+    // We must specify sourceDirectories here (not in doFirst) because this
+    // will happen at configuration time. We only want to change classDirectories
+    // when generating the actual report
+    sourceDirectories = files(androidModule.android.sourceSets.main.java.srcDirs)
 
     reports {
         xml.enabled true
