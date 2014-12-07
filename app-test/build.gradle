@@ -35,7 +35,8 @@ def jacocoExcludes = [
         'com/todddavies/**',
 		'com/cmwmobile/**',
 		'org/bspeice/minimalbible/R*',
-		'**/*$$*'
+        '**/BookAdapter$ChapterInfo*',
+		'**/*$$*' // Dagger/Butterknife
 ]
 
 dependencies {
@@ -71,7 +72,9 @@ jacocoTestReport {
 		}
 		
 		// And finally tell Jacoco to only include said files in the report
+        // For whatever reason, firstVariant.javaCompile.exclude(jacocoExcludes) doesn't work...
         classDirectories = outputTree
+        sourceDirectories = files(androidModule.android.sourceSets.main.java.srcDirs)
     }
 
     reports {
