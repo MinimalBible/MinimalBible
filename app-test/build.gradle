@@ -43,7 +43,7 @@ dependencies {
     compile androidModule
 
     testCompile 'junit:junit:4.+'
-    testCompile 'org.robolectric:robolectric:+'
+    testCompile 'org.robolectric:robolectric:2.+'
     testCompile 'org.mockito:mockito-core:+'
     testCompile 'com.jayway.awaitility:awaitility:+'
     testCompile 'org.jetbrains.spek:spek:+'
