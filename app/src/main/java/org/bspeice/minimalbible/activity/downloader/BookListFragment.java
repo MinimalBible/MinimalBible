@@ -120,7 +120,7 @@ public class BookListFragment extends BaseFragment {
     }
 
     void displayLanguageSpinner() {
-        ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(this.getActivity(),
+        ArrayAdapter<Object> adapter = new ArrayAdapter<>(this.getActivity(),
                 android.R.layout.simple_spinner_item,
                 availableLanguages.toArray());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -164,6 +164,12 @@ public class BookListFragment extends BaseFragment {
                     @Override
                     public Boolean call(Book book) {
                         return book.getBookCategory() == category;
+                    }
+                })
+                .filter(new Func1<Book, Boolean>() {
+                    @Override
+                    public Boolean call(Book book) {
+                        return book.getLanguage() != null;
                     }
                 })
                 .filter(new Func1<Book, Boolean>() {
