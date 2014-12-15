@@ -28,15 +28,16 @@ def firstVariant = androidModule.android.applicationVariants.toList().first()
 
 // TODO: Not yet including Spek tests, fix that.
 def testIncludes = [
-        '**/*Test.class'
+        '**/*Test.class',
+        '**/*Spek.class'
 ]
 def jacocoExcludes = [
         'android/**',
         'com/todddavies/**',
-		'com/cmwmobile/**',
-		'org/bspeice/minimalbible/R*',
+        'com/cmwmobile/**',
+        'org/bspeice/minimalbible/R*',
         '**/BookAdapter$ChapterInfo*',
-		'**/*$$*' // Dagger/Butterknife
+        '**/*$$*' // Dagger/Butterknife
 ]
 
 dependencies {
@@ -54,24 +55,24 @@ dependencies {
 }
 
 def buildExcludeTree(path, excludes) {
-	def tree = fileTree(path).exclude(excludes)
-	tree
+    def tree = fileTree(path).exclude(excludes)
+    tree
 }
 
 jacocoTestReport {
     doFirst {
-		// First we build a list of our base directories
-		def fileList = new ArrayList<String>()
+        // First we build a list of our base directories
+        def fileList = new ArrayList<String>()
         def outputsList = firstVariant.javaCompile.outputs.files
-		outputsList.each { fileList.add(it.absolutePath.toString()) }
+        outputsList.each { fileList.add(it.absolutePath.toString()) }
 
-		// And build a fileTree from those
-		def outputTree = fileList.inject { tree1, tree2 ->
-			buildExcludeTree(tree1, jacocoExcludes) +
-			buildExcludeTree(tree2, jacocoExcludes)
-		}
-		
-		// And finally tell Jacoco to only include said files in the report
+        // And build a fileTree from those
+        def outputTree = fileList.inject { tree1, tree2 ->
+            buildExcludeTree(tree1, jacocoExcludes) +
+                    buildExcludeTree(tree2, jacocoExcludes)
+        }
+
+        // And finally tell Jacoco to only include said files in the report
         // For whatever reason, firstVariant.javaCompile.exclude(jacocoExcludes) doesn't work...
         classDirectories = outputTree
         sourceDirectories = files(androidModule.android.sourceSets.main.java.srcDirs)

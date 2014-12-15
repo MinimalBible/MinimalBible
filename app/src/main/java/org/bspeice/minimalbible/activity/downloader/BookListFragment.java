@@ -15,6 +15,7 @@ import android.widget.Toast;
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseFragment;
+import org.bspeice.minimalbible.activity.downloader.manager.LocaleManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.common.util.Language;
 import org.crosswire.jsword.book.Book;
@@ -36,18 +37,21 @@ import rx.functions.Func1;
 import rx.functions.Func2;
 
 /**
- * A placeholder fragment containing a simple view.
+ * A fragment to list out the books available for downloading.
+ * Each fragment will be responsible for a single category,
+ * another fragment will be created if a second category is needed.
  */
 
 public class BookListFragment extends BaseFragment {
     protected static final String ARG_BOOK_CATEGORY = "book_category";
+    protected BookCategory bookCategory;
 
     @Inject
     DownloadPrefs downloadPrefs;
     @Inject
     RefreshManager refreshManager;
     @Inject
-    List<Language> availableLanguages;
+    LocaleManager localeManager;
 
     @InjectView(R.id.lst_download_available)
     ListView downloadsAvailable;
@@ -55,6 +59,9 @@ public class BookListFragment extends BaseFragment {
     Spinner languagesSpinner;
 
     LayoutInflater inflater;
+
+    // A cache of the languages currently available for this category
+    List<Language> availableLanguages;
 
     /**
      * Returns a new instance of this fragment for the given section number.
@@ -72,6 +79,9 @@ public class BookListFragment extends BaseFragment {
     public void onCreate(Bundle state) {
         super.onCreate(state);
         ((Injector)getActivity()).inject(this);
+
+        bookCategory = BookCategory.fromString(getArguments().getString(ARG_BOOK_CATEGORY));
+        availableLanguages = localeManager.sortedLanguagesForCategory(bookCategory);
     }
 
     @Override
@@ -122,7 +132,8 @@ public class BookListFragment extends BaseFragment {
     void displayLanguageSpinner() {
         ArrayAdapter<Object> adapter = new ArrayAdapter<>(this.getActivity(),
                 android.R.layout.simple_spinner_item,
-                availableLanguages.toArray());
+                availableLanguages.toArray()
+        );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         languagesSpinner.setAdapter(adapter);
 
@@ -138,7 +149,7 @@ public class BookListFragment extends BaseFragment {
     public void onClick(final int position) {
         booksByLanguage(refreshManager.getFlatModules(),
                 availableLanguages.get(position),
-                BookCategory.fromString(getArguments().getString(ARG_BOOK_CATEGORY)))
+                bookCategory)
                 // Repack all the books
                 .toSortedList(new Func2<Book, Book, Integer>() {
                     @Override
@@ -157,6 +168,7 @@ public class BookListFragment extends BaseFragment {
                 });
     }
 
+    // TODO: Refactor out, this information should come from LocaleManager
     protected Observable<Book> booksByLanguage(Observable<Book> books, final Language language,
                                                final BookCategory category) {
         return books

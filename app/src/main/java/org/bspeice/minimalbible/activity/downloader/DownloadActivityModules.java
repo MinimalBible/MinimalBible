@@ -8,7 +8,6 @@ import org.bspeice.minimalbible.MinimalBibleModules;
 import org.bspeice.minimalbible.activity.downloader.manager.BookManager;
 import org.bspeice.minimalbible.activity.downloader.manager.LocaleManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
-import org.crosswire.common.util.Language;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookCategory;
 import org.crosswire.jsword.book.Books;
@@ -49,17 +48,20 @@ public class DownloadActivityModules {
         this.activity = activity;
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     DownloadPrefs provideDownloadPrefs() {
         return Esperandro.getPreferences(DownloadPrefs.class, activity);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     DownloadActivity provideDownloadActivity() {
         return activity;
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     Injector provideActivityInjector() {
         return activity;
     }
@@ -67,19 +69,24 @@ public class DownloadActivityModules {
     /**
      * Provide the context for the DownloadActivity. We name it so that we don't have to
      * \@Provides a specific class, but can keep track of what exactly we mean by "Context"
+     *
      * @return The DownloadActivity Context
      */
-    @Provides @Singleton @Named("DownloadActivityContext")
+    @Provides
+    @Singleton
+    @Named("DownloadActivityContext")
     Context provideActivityContext() {
         return activity;
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     BookManager provideBookDownloadManager(Books installedBooks, RefreshManager rm) {
         return new BookManager(installedBooks, rm);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     @Named("ValidCategories")
     List<BookCategory> provideValidCategories() {
         return new ArrayList<BookCategory>() {{
@@ -91,7 +98,8 @@ public class DownloadActivityModules {
     }
 
     //TODO: Move this to a true async
-    @Provides @Singleton
+    @Provides
+    @Singleton
     Books provideInstalledBooks() {
         return Books.installed();
     }
@@ -101,12 +109,14 @@ public class DownloadActivityModules {
         return b.getBooks();
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     Collection<Installer> provideInstallers() {
         return new InstallManager().getInstallers().values();
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     RefreshManager provideRefreshManager(Collection<Installer> installers, DownloadPrefs prefs,
                                          @Named("DownloadActivityContext") Context context) {
         return new RefreshManager(installers, prefs,
@@ -116,10 +126,5 @@ public class DownloadActivityModules {
     @Provides
     LocaleManager provideLocaleManager(RefreshManager refreshManager) {
         return new LocaleManager(refreshManager);
-    }
-
-    @Provides
-    List<Language> availableLanguages(LocaleManager localeManager) {
-        return localeManager.getSortedLanguagesList();
     }
 }

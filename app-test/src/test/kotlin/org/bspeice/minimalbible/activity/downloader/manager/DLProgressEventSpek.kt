@@ -8,7 +8,7 @@ import org.mockito.Mockito.mock
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertEquals
 
-class DLProgressEventSpecs : Spek() {{
+class DLProgressEventSpek : Spek() {{
 
     given("a DLProgressEvent created with 50% progress and a mock book") {
         val mockBook = mock(javaClass<Book>())

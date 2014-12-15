@@ -2,43 +2,52 @@ package org.bspeice.minimalbible.activity.downloader.manager
 
 import org.crosswire.common.util.Language
 import rx.Observable
-import rx.observables.GroupedObservable
+import org.crosswire.jsword.book.BookCategory
+import kotlin.platform.platformStatic
 
+/**
+ * Took me a significant amount of time, but this is an implementation I can live with.
+ * An ideal solution would be able to group by the category first, then language, with all
+ * modules underneath, so something like Map<BookCategory, Map<Language, List<Book>>>.
+ * That said, trying to build said map is a bit ridiculous. The way I wrote it requires
+ * using functions instead of cached values, but I'll get over it.
+ */
 class LocaleManager(val rM: RefreshManager) {
 
     val currentLanguage = Language.DEFAULT_LANG
 
-    private val languageModuleMap = rM.flatModules
-            // Language doesn't have hashCode(), so we actually group by its String
-            .groupBy { FixedLanguage(it.getLanguage()) }
+    // Get all modules grouped by language first
+    val modulesByCategory = rM.flatModules.groupBy { it.getBookCategory() }
 
-    // I would suppress the warning here if I could figure out how...
-    val modulesByLanguage = languageModuleMap
-            .map { GroupedObservable.from(it.getKey(): Language, it) }
+    fun languagesForCategory(cat: BookCategory): Observable<Language> = modulesByCategory
+            // Then filter according to the requested language
+            .filter { it.getKey() == cat }
+            // Then map the GroupedObservable Book element to its actual language
+            .flatMap { it.map { it.getLanguage() } }
+            // Making sure to discard anything with a null language
+            .filter { it != null }
+            // And remove duplicates. The flatMap above means that we will have one entry
+            // for each book, so we need to remove duplicate entries of
+            // languages with more than one book to them
+            .distinct()
 
-    // Cast back to the original Language implementation
-    val availableLanguages: Observable<Language> = languageModuleMap.map { it.getKey() }
-    val sortedLanguagesList =
-            Core.sortedLanguagesList(availableLanguages, currentLanguage).toBlocking().first()
+    fun sortedLanguagesForCategory(cat: BookCategory): List<Language> =
+            languagesForCategory(cat)
+                    // Finally, sort all languages, prioritizing the current
+                    .toSortedList { left, right -> compareLanguages(left, right, currentLanguage) }
+                    // And flatten this into the actual List needed
+                    .toBlocking().first()
 
-    object Core {
-        fun sortedLanguagesList(availableLanguages: Observable<Language>,
-                                currentLanguage: Language) =
-            availableLanguages.toSortedList {(left, right) ->
-                // Prioritize our current language first
-                if (left.getName() == currentLanguage.getName())
+    class object {
+        platformStatic
+        fun compareLanguages(left: Language, right: Language, current: Language) =
+                if (left == right)
+                    0
+                else if (left.getName() == current.getName())
                     -1
-                else if (right.getName() == currentLanguage.getName())
+                else if (right.getName() == current.getName())
                     1
                 else
                     left.getName() compareTo right.getName()
-            }
-    }
-
-    // TODO: Fix the actual Language implementation - Pull Request?
-    // Can't use a data class because we need to get the name of the language
-    private class FixedLanguage(language: Language?) :
-            Language(language?.getCode() ?: Language.UNKNOWN_LANG_CODE) {
-        override fun hashCode() = this.getName().hashCode()
     }
 }
