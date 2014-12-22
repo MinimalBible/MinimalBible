@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="statusbar">#dddddd</color>
-    <color name="actionbar">#ffffff</color>
-    <color name="navbar_highlight">#cc0000</color>
-    <color name="navbar_unhighlighted">#000000</color>
-    <color name="content_text">#000000</color>
+    <color name="colorPrimary">#f44336</color>
+    <color name="textColorPrimary">#ffffff</color>
+    <color name="colorAccent">#d50000</color>
+    <color name="textColorAccent">#ffffff</color>
+
+    <color name="textColor">#000000</color>
+
+    <color name="navigationBackground">#cccccc</color>
+    <color name="textNavigation">#000</color>
 </resources>

@@ -1,49 +1,37 @@
 package org.bspeice.minimalbible.activity.viewer;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBible;
 import org.bspeice.minimalbible.OGHolder;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
-import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
-import org.bspeice.minimalbible.activity.navigation.NavDrawerFragment;
-import org.bspeice.minimalbible.activity.settings.MinimalBibleSettings;
 import org.crosswire.jsword.book.Book;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import dagger.ObjectGraph;
 
-public class BibleViewer extends BaseActivity implements
-        NavDrawerFragment.NavigationDrawerCallbacks,
-        Injector {
+public class BibleViewer extends BaseActivity implements Injector {
 
     @Inject
     @Named("MainBook")
     Book mainBook;
 
+    @InjectView(R.id.navigation_drawer)
+    ListView drawerContent;
+
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
+
     private ObjectGraph bvObjectGraph;
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the
-     * navigation drawer.
-     */
-    private BookChapterNavFragment mNavigationDrawerFragment;
-    /**
-     * Used to store the last screen title. For use in
-     * {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
 
     /**
      * Build a scoped object graph for anything used by the BibleViewer
@@ -69,8 +57,6 @@ public class BibleViewer extends BaseActivity implements
 
     /**
      * Set up the application
-     * TODO: Get the main book, rather than the first installed book.
-     *
      * @param savedInstanceState Android's savedInstanceState
      */
     @Override
@@ -79,75 +65,15 @@ public class BibleViewer extends BaseActivity implements
 
         this.inject(this);
 
-        // If no books are installed, we need to download one first.
-        if (mainBook == null) {
-            // If there are no books installed...
-            Log.e(getLocalClassName(), "No books are currently installed, starting DownloadManager");
-            Intent i = new Intent(BibleViewer.this, DownloadActivity.class);
-            startActivityForResult(i, 0);
-            finish();
-        } else {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            Fragment f = BookFragment.newInstance(mainBook.getName());
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, f)
-                    .commit();
-            setContentView(R.layout.activity_bible_viewer);
+        setContentView(R.layout.activity_bible_viewer);
+        ButterKnife.inject(this);
 
-            mNavigationDrawerFragment = (BookChapterNavFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.navigation_drawer);
-            mTitle = getTitle();
+        setSupportActionBar(toolbar);
 
-            // Set up the drawer.
-            mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
-                    (DrawerLayout) findViewById(R.id.drawer_layout));
-        }
+        String[] drawerStrings = new String[]{"Content 1", "Content 2"};
+        drawerContent.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+                drawerStrings));
+
+        setInsets(this, drawerContent);
     }
-
-	@Override
-	public void onNavigationDrawerItemSelected(int position) {
-		// Handle a navigation movement
-	}
-
-    public void setActionBarTitle(String title) {
-        ActionBar actionBar = getSupportActionBar();
-        mTitle = title;
-        actionBar.setTitle(title);
-    }
-
-	public void restoreActionBar() {
-		ActionBar actionBar = getSupportActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setTitle(mTitle);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-        if (mNavigationDrawerFragment != null &&
-                !mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-			// decide what to show in the action bar.
-			getMenuInflater().inflate(R.menu.main, menu);
-			restoreActionBar();
-			return true;
-		}
-		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-            Intent i = new Intent(this, MinimalBibleSettings.class);
-            startActivityForResult(i, 0);
-        } else if (id == R.id.action_downloads) {
-			startActivity(new Intent(this, DownloadActivity.class));
-		}
-		return super.onOptionsItemSelected(item);
-	}
 }

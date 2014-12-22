@@ -1,12 +1,6 @@
 <resources>
 
-    <!--
-        Base application theme for API 19+. This theme completely replaces
-        AppBaseTheme from BOTH res/values/styles.xml and
-        res/values-v11/styles.xml on API 19+ devices.
-    -->
-    <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
-
+    <style name="MinimalBible" parent="MinimalBibleBase">
         <!-- API 19 theme customizations can go here. -->
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
@@ -14,7 +8,7 @@
     </style>
 
     <style name="ActionBar" parent="@style/Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/actionbar</item>
+        <item name="android:background">@color/colorPrimary</item>
     </style>
 
 </resources>

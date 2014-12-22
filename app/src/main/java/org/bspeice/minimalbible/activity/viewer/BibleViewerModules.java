@@ -16,7 +16,6 @@ import dagger.Provides;
 import de.devland.esperandro.Esperandro;
 import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.subjects.PublishSubject;
 
 /**
  * Modules used for the BibleViewer activity
@@ -24,8 +23,6 @@ import rx.subjects.PublishSubject;
 @Module(
         injects = {
                 BibleViewer.class,
-                BookFragment.class,
-                BookChapterNavFragment.class
         }
 )
 @SuppressWarnings("unused")
@@ -96,6 +93,8 @@ public class BibleViewerModules {
         return new BookManager();
     }
 
+    /*
+    Commenting, as I will likely need these in the near future.
     @Provides
     @Named("MainAdapter")
     @Singleton
@@ -108,4 +107,5 @@ public class BibleViewerModules {
     PublishSubject<BookScrollEvent> scrollEventProvider() {
         return PublishSubject.create();
     }
+    */
 }

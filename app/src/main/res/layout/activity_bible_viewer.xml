@@ -6,37 +6,36 @@
     android:layout_height="match_parent"
     tools:context="org.bspeice.minimalbible.activities.viewer.BibleViewer">
 
-    <!--
-         As the main content view, the view below consumes the entire
-         space available using match_parent in both dimensions.
-    -->
-
-    <FrameLayout
+    <!-- Main content -->
+    <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:fitsSystemWindows="true" />
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
-    <!--
-         android:layout_gravity="start" tells DrawerLayout to treat
-         this as a sliding drawer on the left side for left-to-right
-         languages and on the right side for right-to-left languages.
-         If you're not building against API 17 or higher, use
-         android:layout_gravity="left" instead.
-    -->
-    <!--
-         The drawer is given a fixed width in dp and extends the full height of
-         the container.
-    -->
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:minHeight="?attr/actionBarSize" />
 
-    <fragment
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Main Content" />
+
+
+    </LinearLayout>
+
+    <!-- Navigation drawer - layout_gravity:start activates the magic. -->
+    <ListView
         android:id="@+id/navigation_drawer"
-        android:name="org.bspeice.minimalbible.activity.viewer.BookChapterNavFragment"
+        style="@style/MinimalBible.NavigationDrawer"
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:clipToPadding="false"
         android:fitsSystemWindows="true" />
 
 </android.support.v4.widget.DrawerLayout>

@@ -1,22 +1,27 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!-- Customize your theme here. -->
+    <style name="MinimalBibleBase" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
     </style>
 
-    <!-- We have a base theme so that KitKat can go translucent here. -->
-    <style name="AppBaseTheme" parent="Theme.AppCompat.Light" />
+    <!-- Actual application style. Allows selective over-riding while inheriting
+    from the parent -->
+    <style name="MinimalBible" parent="MinimalBibleBase" />
 
     <!-- Almost re-use style from Widget.Holo.Button.Borderless -->
-    <style name="AppBaseTheme.Borderless">
-        <item name="android:background">?android:attr/selectableItemBackground</item>
+    <style name="MinimalBibleBase.Borderless">
+    <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:paddingLeft">4dip</item>
         <item name="android:paddingRight">4dip</item>
         <!-- Requires API 17
         <item name="android:paddingStart">4dip</item>
         <item name="android:paddingEnd">4dip</item>
         -->
+    </style>
+
+    <style name="MinimalBible.NavigationDrawer">
+        <item name="android:background">@color/navigationBackground</item>
     </style>
 
 </resources>

@@ -3,5 +3,4 @@
     android:id="@+id/passage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:textColor="@color/content_text" />
+    android:orientation="vertical" />

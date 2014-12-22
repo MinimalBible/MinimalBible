@@ -89,9 +89,7 @@ public class ListNavAdapter<T> extends BaseAdapter {
         public void bind() {
             content.setText(object.toString());
             if (highlighted) {
-                content.setTextColor(v.getResources().getColor(R.color.navbar_highlight));
-            } else {
-                content.setTextColor(v.getResources().getColor(R.color.navbar_unhighlighted));
+                content.setTextColor(v.getResources().getColor(R.color.colorPrimary));
             }
         }
     }

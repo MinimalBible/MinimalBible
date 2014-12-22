@@ -92,10 +92,9 @@ class BibleMenu(val b: Book) : BaseExpandableListAdapter() {
         val content = bindTo.findViewById(resource) as TextView
         val resources = bindTo.getResources(): Resources
 
-        fun getHighlightedColor(highlighted: Boolean) = when(highlighted) {
-            true -> resources getColor R.color.navbar_highlight
-            else -> resources getColor R.color.navbar_unhighlighted // false
-        }
+        fun getHighlightedColor(highlighted: Boolean) =
+                if (highlighted) resources getColor R.color.colorAccent
+                else resources getColor R.color.textColor
 
         fun bind(obj: Any, highlighted: Boolean) {
             content setText obj.toString()
