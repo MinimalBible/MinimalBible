@@ -26,7 +26,6 @@ repositories {
 def androidModule = project(':app')
 def firstVariant = androidModule.android.applicationVariants.toList().first()
 
-// TODO: Not yet including Spek tests, fix that.
 def testIncludes = [
         '**/*Test.class',
         '**/*Spek.class'
