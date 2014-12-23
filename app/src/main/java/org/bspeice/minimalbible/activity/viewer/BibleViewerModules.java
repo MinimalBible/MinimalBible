@@ -92,20 +92,4 @@ public class BibleViewerModules {
     BookManager bookManager() {
         return new BookManager();
     }
-
-    /*
-    Commenting, as I will likely need these in the near future.
-    @Provides
-    @Named("MainAdapter")
-    @Singleton
-    BookAdapter bookAdapter(@Named("MainBook") Book b, BibleViewerPreferences prefs) {
-        return new BookAdapter(b, prefs);
-    }
-
-    @Provides
-    @Singleton
-    PublishSubject<BookScrollEvent> scrollEventProvider() {
-        return PublishSubject.create();
-    }
-    */
 }

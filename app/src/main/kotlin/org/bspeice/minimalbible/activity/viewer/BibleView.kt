@@ -15,6 +15,28 @@ import android.text.SpannableStringBuilder
 import android.util.TypedValue
 import org.bspeice.minimalbible.service.format.osisparser.OsisParser
 import android.util.Log
+import android.content.Context
+import android.util.AttributeSet
+import kotlin.properties.Delegates
+import android.support.v7.widget.LinearLayoutManager
+import android.widget.LinearLayout
+
+class BibleView(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, attrs) {
+    var bibleContent: RecyclerView by Delegates.notNull();
+
+    {
+        val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        // Don't attach yet, as we haven't finished setup
+        val rootView = inflater.inflate(R.layout.view_bible, this, true)
+
+        bibleContent = rootView.findViewById(R.id.bible_content) as RecyclerView
+        bibleContent setLayoutManager LinearLayoutManager(ctx)
+    }
+
+    fun setBook(b: Book, prefs: BibleViewerPreferences) {
+        bibleContent setAdapter BookAdapter(b, prefs)
+    }
+}
 
 /**
  * Adapter used for displaying a book

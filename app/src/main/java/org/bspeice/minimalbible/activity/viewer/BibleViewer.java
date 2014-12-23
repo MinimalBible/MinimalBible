@@ -25,8 +25,14 @@ public class BibleViewer extends BaseActivity implements Injector {
     @Named("MainBook")
     Book mainBook;
 
+    @Inject
+    BibleViewerPreferences prefs;
+
     @InjectView(R.id.navigation_drawer)
     BibleMenu bibleMenu;
+
+    @InjectView(R.id.content)
+    BibleView bibleContent;
 
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
@@ -78,5 +84,7 @@ public class BibleViewer extends BaseActivity implements Injector {
         setSupportActionBar(toolbar);
         bibleMenu.setBible(mainBook);
         setInsets(this, bibleMenu);
+
+        bibleContent.setBook(mainBook, prefs);
     }
 }
