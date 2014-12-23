@@ -13,6 +13,7 @@
         android:theme="@style/MinimalBible">
         <activity
             android:name=".activity.downloader.DownloadActivity"
+            android:exported="true"
             android:label="@string/app_name" />
         <activity
             android:name=".activity.settings.MinimalBibleSettings"

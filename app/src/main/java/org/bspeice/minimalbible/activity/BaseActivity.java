@@ -30,7 +30,7 @@ public class BaseActivity extends ActionBarActivity {
     protected static void setInsets(Activity context, View view) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return;
         SystemBarTintManager.SystemBarConfig config = getConfig(context);
-        view.setPadding(0, config.getPixelInsetTop(true), config.getPixelInsetRight(), config.getPixelInsetBottom());
+        view.setPadding(0, config.getPixelInsetTop(false), config.getPixelInsetRight(), config.getPixelInsetBottom());
     }
 
     @SuppressWarnings("unused")

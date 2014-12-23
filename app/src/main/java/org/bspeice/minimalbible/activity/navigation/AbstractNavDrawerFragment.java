@@ -99,9 +99,11 @@ public abstract class AbstractNavDrawerFragment extends Fragment {
                 GravityCompat.START);
         // set up the drawer's list view with items and click listener
 
+        /* TODO: Switch to Toolbar
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
+        */
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the navigation drawer and the action bar app icon.

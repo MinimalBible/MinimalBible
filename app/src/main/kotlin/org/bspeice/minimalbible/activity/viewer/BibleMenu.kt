@@ -15,12 +15,29 @@ import android.content.res.Resources
 import android.support.annotation.IdRes
 import android.widget.ExpandableListView
 import rx.subjects.PublishSubject
+import android.widget.LinearLayout
+import android.app.Activity
+import android.util.AttributeSet
+import kotlin.properties.Delegates
+import org.bspeice.minimalbible.activity.setInset
+import android.support.annotation.LayoutRes
 
-/**
- * Created by bspeice on 10/24/14.
- */
+class BibleMenu(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, attrs) {
+    var menuContent: ExpandableListView by Delegates.notNull();
 
-class BibleMenu(val b: Book) : BaseExpandableListAdapter() {
+    {
+        val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        inflater.inflate(R.layout.view_bible_menu, this, true)
+
+        menuContent = findViewById(R.id.menu) as ExpandableListView
+    }
+
+    fun setBible(b: Book) = menuContent.setAdapter(BibleAdapter(b))
+
+    fun placeInset(a: Activity) = setInset(a)
+}
+
+class BibleAdapter(val b: Book) : BaseExpandableListAdapter() {
 
     // Map BibleBooks to the number of chapters they have
     val menuMappings = b.getVersification().getBooks().map {
@@ -65,15 +82,16 @@ class BibleMenu(val b: Book) : BaseExpandableListAdapter() {
     override fun isChildSelectable(group: Int, child: Int): Boolean = true
 
     private fun doBinding(convertView: View?, parent: ViewGroup,
-                          obj: Any, highlight: Boolean): View {
+                          obj: Any, highlight: Boolean,
+                          LayoutRes layout: Int): View {
         val finalView: View = convertView ?:
                 (parent.getContext()
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
-                        .inflate(R.layout.list_navigation_drawer, parent, false)
+                        .inflate(layout, parent, false)
 
         val holder: NavItemHolder =
                 if (finalView.getTag() != null) finalView.getTag() as NavItemHolder
-                else NavItemHolder(finalView, R.id.navlist_content)
+                else NavItemHolder(finalView, R.id.content)
 
         holder.bind(obj, highlight)
         finalView setTag holder
@@ -82,11 +100,14 @@ class BibleMenu(val b: Book) : BaseExpandableListAdapter() {
 
     override fun getGroupView(position: Int, expanded: Boolean,
                               convertView: View?, parent: ViewGroup): View =
-            doBinding(convertView, parent, getGroup(position), position == groupHighlighted)
+            doBinding(convertView, parent, getGroup(position),
+                    position == groupHighlighted, R.layout.list_bible_menu_group)
 
     override fun getChildView(group: Int, child: Int, isLast: Boolean,
                               convertView: View?, parent: ViewGroup): View =
-            doBinding(convertView, parent, getChild(group, child), child == childHighlighted)
+            doBinding(convertView, parent, getChild(group, child),
+                    group == groupHighlighted && child == childHighlighted,
+                    R.layout.list_bible_menu_child)
 
     class NavItemHolder(val bindTo: View, IdRes resource: Int) {
         val content = bindTo.findViewById(resource) as TextView

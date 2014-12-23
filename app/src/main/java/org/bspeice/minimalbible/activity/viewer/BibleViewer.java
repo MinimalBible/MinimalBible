@@ -1,15 +1,15 @@
 package org.bspeice.minimalbible.activity.viewer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBible;
 import org.bspeice.minimalbible.OGHolder;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
+import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 import org.crosswire.jsword.book.Book;
 
 import javax.inject.Inject;
@@ -26,7 +26,7 @@ public class BibleViewer extends BaseActivity implements Injector {
     Book mainBook;
 
     @InjectView(R.id.navigation_drawer)
-    ListView drawerContent;
+    BibleMenu bibleMenu;
 
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
@@ -57,23 +57,26 @@ public class BibleViewer extends BaseActivity implements Injector {
 
     /**
      * Set up the application
+     *
      * @param savedInstanceState Android's savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         this.inject(this);
+
+        // Check that we have a book installed
+        if (mainBook == null) {
+            // No books installed, start the downloader.
+            Intent i = new Intent(this, DownloadActivity.class);
+            startActivityForResult(i, 0);
+        }
 
         setContentView(R.layout.activity_bible_viewer);
         ButterKnife.inject(this);
 
         setSupportActionBar(toolbar);
-
-        String[] drawerStrings = new String[]{"Content 1", "Content 2"};
-        drawerContent.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
-                drawerStrings));
-
-        setInsets(this, drawerContent);
+        bibleMenu.setBible(mainBook);
+        setInsets(this, bibleMenu);
     }
 }

@@ -5,13 +5,9 @@
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
     </style>
 
-    <!-- Actual application style. Allows selective over-riding while inheriting
-    from the parent -->
-    <style name="MinimalBible" parent="MinimalBibleBase" />
-
     <!-- Almost re-use style from Widget.Holo.Button.Borderless -->
     <style name="MinimalBibleBase.Borderless">
-    <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:paddingLeft">4dip</item>
         <item name="android:paddingRight">4dip</item>
         <!-- Requires API 17
@@ -20,8 +16,14 @@
         -->
     </style>
 
-    <style name="MinimalBible.NavigationDrawer">
+    <style name="MinimalBibleBase.NavigationDrawer">
         <item name="android:background">@color/navigationBackground</item>
+        <item name="android:paddingLeft">8dp</item>
     </style>
 
+    <!-- Actual application style. Allows selective over-riding while inheriting
+    from the parent -->
+    <style name="MinimalBible" parent="MinimalBibleBase" />
+
+    <style name="MinimalBible.NavigationDrawer" parent="MinimalBibleBase.NavigationDrawer" />
 </resources>
