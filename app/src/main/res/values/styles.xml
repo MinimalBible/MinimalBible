@@ -2,7 +2,12 @@
 
     <!-- Base application theme. -->
     <style name="MinimalBibleBase" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Toolbar text color -->
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <!-- Overflow dots color -->
+        <item name="android:textColorSecondary">@color/textColorPrimary</item>
+        <!-- Overflow menu text item color -->
+        <item name="android:textColor">@color/textColor</item>
     </style>
 
     <!-- Almost re-use style from Widget.Holo.Button.Borderless -->
@@ -21,9 +26,16 @@
         <item name="android:paddingLeft">8dp</item>
     </style>
 
+    <style name="MinimalBibleBase.Settings" parent="MinimalBibleBase">
+        <item name="android:textColor">@color/settingsTextColor</item>
+        <item name="android:textColorSecondary">@color/settingsTextColorSecondary</item>
+    </style>
+
     <!-- Actual application style. Allows selective over-riding while inheriting
     from the parent -->
     <style name="MinimalBible" parent="MinimalBibleBase" />
 
     <style name="MinimalBible.NavigationDrawer" parent="MinimalBibleBase.NavigationDrawer" />
+
+    <style name="MinimalBible.Settings" parent="MinimalBibleBase.Settings" />
 </resources>

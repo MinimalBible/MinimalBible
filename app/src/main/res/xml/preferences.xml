@@ -4,10 +4,11 @@ but I will likely want to re-implement this in the future -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:cmwmobile="http://schemas.android.com/apk/res/org.bspeice.minimalbible">
 
+    <!-- The summary comes from the preference dynamically setting everything -->
+    <!-- TODO: Get the title from strings.xml and update MinimalBibleSettings.kt -->
     <com.cmwmobile.android.samples.SeekBarDialogPreference
         android:defaultValue="14"
         android:key="baseTextSize"
-        android:summary="Font Size"
         android:title="Font Size"
         cmwmobile:maximumValue="28"
         cmwmobile:minimumValue="8"
@@ -22,7 +23,6 @@ but I will likely want to re-implement this in the future -->
 
     <org.bspeice.minimalbible.activity.settings.AvailableBookPreference
         android:key="defaultBookInitials"
-        android:summary="Which book to display in the main window"
         android:title="Active Book" />
 
 </PreferenceScreen>

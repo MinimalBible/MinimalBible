@@ -9,4 +9,7 @@
 
     <color name="navigationBackground">#cccccc</color>
     <color name="textNavigation">#000</color>
+
+    <color name="settingsTextColor">#000</color>
+    <color name="settingsTextColorSecondary">#9e9e9e</color>
 </resources>

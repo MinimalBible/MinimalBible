@@ -119,8 +119,10 @@ public class SeekBarDialogPreference extends
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
-        if (positiveResult && shouldPersist())
+        if (positiveResult && shouldPersist()) {
+            setSummary((value + minimumValue) + " " + units);
             persistInt(value + minimumValue);
+        }
     }
 
     @Override
@@ -129,5 +131,12 @@ public class SeekBarDialogPreference extends
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+    }
+
+    @Override
+    public CharSequence getSummary() {
+        // We have to use getPersistedInt over `value` since it will not have
+        // been set yet.
+        return getPersistedInt(minimumValue) + " " + units;
     }
 }

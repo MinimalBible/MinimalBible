@@ -39,4 +39,15 @@ public class AvailableBookPreference extends ListPreference {
 
         return super.onCreateView(parent);
     }
+
+    @Override
+    public CharSequence getSummary() {
+        return getEntry();
+    }
+
+    @Override
+    protected void onDialogClosed(boolean positiveResult) {
+        super.onDialogClosed(positiveResult);
+        setSummary(getEntry());
+    }
 }

@@ -3,6 +3,8 @@ package org.bspeice.minimalbible.activity.viewer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBible;
@@ -10,6 +12,7 @@ import org.bspeice.minimalbible.OGHolder;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
+import org.bspeice.minimalbible.activity.settings.MinimalBibleSettings;
 import org.crosswire.jsword.book.Book;
 
 import javax.inject.Inject;
@@ -86,5 +89,25 @@ public class BibleViewer extends BaseActivity implements Injector {
         setInsets(this, bibleMenu);
 
         bibleContent.setBook(mainBook, prefs);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.viewer, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent i = new Intent(this, MinimalBibleSettings.class);
+            startActivityForResult(i, 0);
+        } else if (id == R.id.action_downloads) {
+            Intent i = new Intent(this, DownloadActivity.class);
+            startActivityForResult(i, 0);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
