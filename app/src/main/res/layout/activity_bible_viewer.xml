@@ -6,12 +6,13 @@
     android:layout_height="match_parent"
     tools:context="org.bspeice.minimalbible.activities.viewer.BibleViewer">
 
-    <!-- Main content -->
+    <!-- Main content
+    fitsSystemWindows not set so that the Bible view can flow
+    over the navigation drawer -->
     <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar

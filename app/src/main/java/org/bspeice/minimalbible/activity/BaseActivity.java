@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -29,25 +30,31 @@ public class BaseActivity extends ActionBarActivity {
     }
 
     public static void setupInsets(Activity context, View view) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             SystemBarTintManager.SystemBarConfig config = getConfig(context);
-            view.setPadding(0, config.getPixelInsetTop(false), config.getPixelInsetRight(), config.getPixelInsetBottom());
+            view.setPadding(0, config.getPixelInsetTop(false),
+                    config.getPixelInsetRight(), config.getPixelInsetBottom());
+        }
+    }
+
+    /**
+     * Calculate the offset needed for a Toolbar
+     * The reason we need a separate method is because we don't want
+     * the SystemBarTintManager calculating an offset for the navigation bar
+     *
+     * @param context
+     * @param view
+     */
+    public static void setupToolbar(Activity context, Toolbar view) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            SystemBarTintManager.SystemBarConfig config = getConfig(context);
+            view.setPadding(0, config.getPixelInsetTop(false),
+                    config.getPixelInsetRight(), 0);
         }
     }
 
     protected static SystemBarTintManager.SystemBarConfig getConfig(Activity context) {
         return new SystemBarTintManager(context).getConfig();
-    }
-
-    /**
-     * Calculate the offset we need to display properly if the System bar is translucent
-     *
-     * @param context The {@link android.app.Activity} we are displaying in
-     * @param view    The {@link android.view.View} we need to calculate the offset for.
-     */
-    @SuppressWarnings("unused")
-    protected static void setInsets(Activity context, View view) {
-        setupInsets(context, view);
     }
 
     @SuppressWarnings("unused")
@@ -58,6 +65,20 @@ public class BaseActivity extends ActionBarActivity {
         view.setPadding(0, config.getPixelInsetTop(true) + marginTopBottom,
                 config.getPixelInsetRight(),
                 marginTopBottom);
+    }
+
+    /**
+     * Calculate the offset we need to display properly if the System bar is translucent
+     *
+     * @param view    The {@link android.view.View} we need to calculate the offset for.
+     */
+    @SuppressWarnings("unused")
+    protected void setInsets(View view) {
+        setupInsets(this, view);
+    }
+
+    protected void setInsetToolbar(Toolbar toolbar) {
+        setupToolbar(this, toolbar);
     }
 
     @Override

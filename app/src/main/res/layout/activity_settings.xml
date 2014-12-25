@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?><!-- layout_marginTop is for the transparent status bar offset.
 Normally you'd use the SystemBarTintManager but I was having issues with it. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="24dp"
     android:orientation="vertical">
 
     <!-- Use style="MinimalBible" because we over-ride the settings in AndroidManifest.xml -->

@@ -21,13 +21,14 @@
         -->
     </style>
 
-    <style name="MinimalBibleBase.NavigationDrawer">
-        <item name="android:background">@color/navigationBackground</item>
-        <item name="android:paddingLeft">8dp</item>
+    <style name="MinimalBibleBase.NavigationDrawer" parent="MinimalBibleBase">
+    <item name="android:background">@color/navigationBackground</item>
     </style>
 
+    <!-- Inherits from MinimalBible as a parent so that
+    translucent statusbar is automatically applied -->
     <style name="MinimalBibleBase.Settings" parent="MinimalBible">
-    <item name="android:textColor">@color/settingsTextColor</item>
+        <item name="android:textColor">@color/settingsTextColor</item>
         <item name="android:textColorSecondary">@color/settingsTextColorSecondary</item>
     </style>
 
