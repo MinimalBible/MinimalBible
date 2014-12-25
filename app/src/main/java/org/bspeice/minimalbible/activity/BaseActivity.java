@@ -16,6 +16,25 @@ import org.bspeice.minimalbible.R;
  */
 public class BaseActivity extends ActionBarActivity {
 
+    // TODO: Refactor these methods to a utility class
+    public static void setupStatusBar(Activity activity) {
+        // Only set the tint if the device is running KitKat or above
+        // TODO: Can this be set as part of styles.xml?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            SystemBarTintManager tintManager = new SystemBarTintManager(activity);
+            tintManager.setStatusBarTintEnabled(true);
+            tintManager.setStatusBarTintColor(activity.getResources()
+                    .getColor(R.color.colorPrimary));
+        }
+    }
+
+    public static void setupInsets(Activity context, View view) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            SystemBarTintManager.SystemBarConfig config = getConfig(context);
+            view.setPadding(0, config.getPixelInsetTop(false), config.getPixelInsetRight(), config.getPixelInsetBottom());
+        }
+    }
+
     protected static SystemBarTintManager.SystemBarConfig getConfig(Activity context) {
         return new SystemBarTintManager(context).getConfig();
     }
@@ -28,9 +47,7 @@ public class BaseActivity extends ActionBarActivity {
      */
     @SuppressWarnings("unused")
     protected static void setInsets(Activity context, View view) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return;
-        SystemBarTintManager.SystemBarConfig config = getConfig(context);
-        view.setPadding(0, config.getPixelInsetTop(false), config.getPixelInsetRight(), config.getPixelInsetBottom());
+        setupInsets(context, view);
     }
 
     @SuppressWarnings("unused")
@@ -47,13 +64,6 @@ public class BaseActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Only set the tint if the device is running KitKat or above
-        // TODO: Can this be set as part of styles.xml?
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            SystemBarTintManager tintManager = new SystemBarTintManager(this);
-            tintManager.setStatusBarTintEnabled(true);
-            tintManager.setStatusBarTintColor(getResources().getColor(
-                    R.color.colorPrimary));
-        }
+        setupStatusBar(this);
     }
 }

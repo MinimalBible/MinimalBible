@@ -26,8 +26,8 @@
         <item name="android:paddingLeft">8dp</item>
     </style>
 
-    <style name="MinimalBibleBase.Settings" parent="MinimalBibleBase">
-        <item name="android:textColor">@color/settingsTextColor</item>
+    <style name="MinimalBibleBase.Settings" parent="MinimalBible">
+    <item name="android:textColor">@color/settingsTextColor</item>
         <item name="android:textColorSecondary">@color/settingsTextColorSecondary</item>
     </style>
 
