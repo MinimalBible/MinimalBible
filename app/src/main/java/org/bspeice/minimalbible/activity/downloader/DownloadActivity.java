@@ -81,6 +81,8 @@ public class DownloadActivity extends BaseActivity implements
         setContentView(R.layout.activity_download);
         ButterKnife.inject(this);
 
+        setSupportActionBar(toolbar);
+
         navigationContent.setAdapter(
                 new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
                         validCategories));
