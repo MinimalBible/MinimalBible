@@ -3,11 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.bspeice.minimalbible.DownloadActivity$PlaceholderFragment" >
+    tools:context="org.bspeice.minimalbible.DownloadActivity$PlaceholderFragment">
 
     <Spinner
         android:id="@+id/spn_available_languages"
-        style="@style/MinimalBible.Spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize" />

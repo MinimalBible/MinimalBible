@@ -1,10 +1,12 @@
 package org.bspeice.minimalbible.activity.downloader;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,9 +90,20 @@ public class BookListFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        this.inflater = inflater;
-        View rootView = inflater.inflate(R.layout.fragment_download, container,
+        /*
+        In order to get the spinner arrow button to have the right color, we need to modify
+        android:textColorSecondary of the parent theme. For whatever reason, applying this
+        modification in the XML doesn't work. However, I don't want to have a different theme for
+        the entire activity, so what the below accomplishes is the same as specifying
+        android:theme in the AndroidManifest for an activity.
+        So if you ever change the below code: PLEASE, make sure the language selector colors
+        are correct.
+         */
+        Context ctx = new ContextThemeWrapper(getActivity(), R.style.MinimalBible_DownloadList);
+        this.inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View rootView = this.inflater.inflate(R.layout.fragment_download, container,
                 false);
+
         ButterKnife.inject(this, rootView);
         displayModules();
 
