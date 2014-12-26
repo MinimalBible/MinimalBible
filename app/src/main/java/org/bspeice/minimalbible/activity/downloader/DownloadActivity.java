@@ -3,48 +3,49 @@ package org.bspeice.minimalbible.activity.downloader;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBible;
 import org.bspeice.minimalbible.OGHolder;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
-import org.bspeice.minimalbible.activity.navigation.NavDrawerFragment;
 import org.bspeice.minimalbible.activity.settings.MinimalBibleSettings;
 import org.crosswire.jsword.book.BookCategory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import dagger.ObjectGraph;
 
 public class DownloadActivity extends BaseActivity implements
-        NavDrawerFragment.NavigationDrawerCallbacks,
-        Injector {
-
-    private final String TAG = "DownloadActivity";
-    private final String TAG_CURRENT_CATEGORY = "CurrentCategory";
+        Injector,
+        AdapterView.OnItemClickListener {
 
     @Inject
     @Named("ValidCategories")
     List<BookCategory> validCategories;
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the
-     * navigation drawer.
-     */
-    private DownloadNavDrawerFragment mNavigationDrawerFragment;
-    /**
-     * Used to store the last screen title. For use in
-     * {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
+
+    @InjectView(R.id.navigation_drawer)
+    LinearLayout navigationDrawer;
+
+    @InjectView(R.id.navigation_content)
+    ListView navigationContent;
+
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
 
     private ObjectGraph daObjectGraph;
 
@@ -56,7 +57,6 @@ public class DownloadActivity extends BaseActivity implements
             OGHolder holder = OGHolder.get(this);
             ObjectGraph holderGraph = holder.fetchGraph();
             if (holderGraph == null) {
-                Log.i(TAG, "Rebuilding ObjectGraph...");
                 daObjectGraph = MinimalBible.get(this)
                         .plus(new DownloadActivityModules(this));
                 holder.persistGraph(daObjectGraph);
@@ -79,55 +79,19 @@ public class DownloadActivity extends BaseActivity implements
         inject(this);
 
         setContentView(R.layout.activity_download);
+        ButterKnife.inject(this);
 
-        mNavigationDrawerFragment = (DownloadNavDrawerFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
-
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
-
-        // And select our first item
-        int itemToSelect = 0;
-        if (savedInstanceState != null) {
-            itemToSelect = savedInstanceState.getInt(TAG_CURRENT_CATEGORY);
-        }
-        mNavigationDrawerFragment.selectItem(itemToSelect);
-    }
-
-    @Override
-    public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-        //TODO: Switch to AutoFactory pattern, rather than newInstance()
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager
-                .beginTransaction()
-                .replace(R.id.container,
-                        BookListFragment.newInstance(validCategories.get(position))).commit();
-    }
-
-    public void onSectionAttached(String category) {
-        mTitle = category;
-    }
-
-    public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+        navigationContent.setAdapter(
+                new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+                        validCategories));
+        navigationContent.setOnItemClickListener(this);
+        setInsets(navigationDrawer);
+        handleSelect(0);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.download, menu);
-            restoreActionBar();
-            return true;
-        }
+        getMenuInflater().inflate(R.menu.download, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -145,9 +109,25 @@ public class DownloadActivity extends BaseActivity implements
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(TAG_CURRENT_CATEGORY,
-                mNavigationDrawerFragment.getCurrentPosition());
+    public void onItemClick(@NotNull AdapterView<?> parent,
+                            @NotNull View view, int position, long id) {
+        handleSelect(position);
+    }
+
+    public void handleSelect(int position) {
+        // update the main content by replacing fragments
+        //TODO: Switch to AutoFactory pattern, rather than newInstance()
+        BookCategory category = validCategories.get(position);
+        setTitle(category.toString());
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager
+                .beginTransaction()
+                .replace(R.id.content,
+                        BookListFragment.newInstance(validCategories.get(position)))
+                .commit();
+    }
+
+    private void setTitle(String title) {
+        toolbar.setTitle(title);
     }
 }

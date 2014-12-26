@@ -4,17 +4,32 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.bspeice.minimalbible.activities.downloader.DownloadActivity" >
+    tools:context="org.bspeice.minimalbible.activities.downloader.DownloadActivity">
 
     <!--
          As the main content view, the view below consumes the entire
          space available using match_parent in both dimensions.
     -->
-
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:minHeight="?attr/actionBarSize" />
+
+        <FrameLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
 
     <!--
          android:layout_gravity="start" tells DrawerLayout to treat
@@ -27,12 +42,24 @@
          The drawer is given a fixed width in dp and extends the full height of
          the container.
     -->
-
-    <fragment
+    <LinearLayout
         android:id="@+id/navigation_drawer"
-        android:name="org.bspeice.minimalbible.activity.downloader.DownloadNavDrawerFragment"
+        style="@style/MinimalBible.NavigationDrawer"
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
-        android:layout_gravity="start" />
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
+        <TextView
+            style="@style/MinimalBible.NavigationDrawer.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_download_title_categories" />
+
+        <ListView
+            android:id="@+id/navigation_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

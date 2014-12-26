@@ -11,5 +11,6 @@
     <string name="activity_downloader">Downloads</string>
 
     <string name="book_removal_failure">Could not remove book. Try restarting application?</string>
+    <string name="action_download_title_categories">Categories</string>
 
 </resources>

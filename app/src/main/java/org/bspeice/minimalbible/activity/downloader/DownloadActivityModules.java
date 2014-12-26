@@ -34,7 +34,6 @@ import de.devland.esperandro.Esperandro;
                 BookItemHolder.class,
                 BookManager.class,
                 RefreshManager.class,
-                DownloadNavDrawerFragment.class,
                 DownloadActivity.class
         },
         addsTo = MinimalBibleModules.class,

@@ -9,16 +9,10 @@
     layouts without worrying about min API and paddingStart shenanigans -->
     <TextView
         android:id="@+id/title"
+        style="@style/MinimalBible.NavigationDrawer.Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:gravity="center_vertical"
-        android:minHeight="?attr/actionBarSize"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:text="@string/app_name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textColor="?android:textColorPrimary" />
+        android:text="@string/app_name" />
 
     <ExpandableListView
         android:id="@+id/menu"

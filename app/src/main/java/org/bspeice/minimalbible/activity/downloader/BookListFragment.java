@@ -1,9 +1,10 @@
 package org.bspeice.minimalbible.activity.downloader;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,13 +97,6 @@ public class BookListFragment extends BaseFragment {
         return rootView;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        ((DownloadActivity) activity).onSectionAttached(getArguments()
-                .getString(ARG_BOOK_CATEGORY));
-    }
-
     void displayModules() {
         displayModules(downloadPrefs.hasShownDownloadDialog());
     }
@@ -130,18 +124,14 @@ public class BookListFragment extends BaseFragment {
     }
 
     void displayLanguageSpinner() {
-        ArrayAdapter<Object> adapter = new ArrayAdapter<>(this.getActivity(),
+        ArrayAdapter<Object> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_spinner_item,
                 availableLanguages.toArray()
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         languagesSpinner.setAdapter(adapter);
-
-        if (BookListFragment.this.getActivity() != null) {
-            // On a screen rotate, getActivity() will be null, but the activity
-            // will already have been set up. If not null, we need to set it up now.
-            setInsetsSpinner(BookListFragment.this.getActivity(), languagesSpinner);
-        }
+        Drawable d = languagesSpinner.getBackground();
+        Log.d("Spinner", d.toString());
     }
 
     @SuppressWarnings("unused")

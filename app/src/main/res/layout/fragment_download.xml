@@ -1,22 +1,20 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="org.bspeice.minimalbible.DownloadActivity$PlaceholderFragment" >
 
     <Spinner
         android:id="@+id/spn_available_languages"
+        style="@style/MinimalBible.Spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" />
+        android:minHeight="?attr/actionBarSize" />
 
     <ListView
         android:id="@+id/lst_download_available"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/spn_available_languages" />
+        android:layout_height="wrap_content" />
 
-</RelativeLayout>
+</LinearLayout>

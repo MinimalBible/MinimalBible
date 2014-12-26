@@ -22,7 +22,17 @@
     </style>
 
     <style name="MinimalBibleBase.NavigationDrawer" parent="MinimalBibleBase">
-    <item name="android:background">@color/navigationBackground</item>
+        <item name="android:background">@color/navigationBackground</item>
+    </style>
+
+    <style name="MinimalBibleBase.NavigationDrawer.Title">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
 
     <!-- Inherits from MinimalBible as a parent so that
@@ -32,11 +42,27 @@
         <item name="android:textColorSecondary">@color/settingsTextColorSecondary</item>
     </style>
 
+    <!-- Clear the background (including the drop-down arrow) for spinners.
+    Some quick documentation: The spinner is a 9-patch controlled by android:background.
+    I have no idea why it's using the "dark" spinner drop-down, as everything points
+    to it using the light spinner, being that the activity inherits the application theme,
+    and the application theme is light by proxy of MinimalBible -> MinimalBibleBase.
+    However, when I set the Download activity theme to Light.NoActionBar, the spinner color
+    corrects itself (while messing up a couple other things).
+    TODO: Why the heck is the spinner drop-down white? -->
+    <style name="MinimalBibleBase.Spinner">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
     <!-- Actual application style. Allows selective over-riding while inheriting
     from the parent -->
     <style name="MinimalBible" parent="MinimalBibleBase" />
 
     <style name="MinimalBible.NavigationDrawer" parent="MinimalBibleBase.NavigationDrawer" />
+
+    <style name="MinimalBible.NavigationDrawer.Title" parent="MinimalBibleBase.NavigationDrawer.Title" />
+
+    <style name="MinimalBible.Spinner" parent="MinimalBibleBase.Spinner" />
 
     <style name="MinimalBible.Settings" parent="MinimalBibleBase.Settings" />
 </resources>

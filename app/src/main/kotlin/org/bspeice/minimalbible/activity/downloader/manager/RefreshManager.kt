@@ -9,6 +9,7 @@ import java.util.Calendar
 import org.bspeice.minimalbible.activity.downloader.DownloadPrefs
 import android.net.ConnectivityManager
 import org.crosswire.jsword.book.BookComparators
+import java.util.Date
 
 /**
  * Created by bspeice on 10/22/14.
@@ -23,6 +24,7 @@ class RefreshManager(val installers: Collection<Installer>,
                     .map {
                         if (doReload()) {
                             it.reloadBookList() // TODO: Handle InstallException
+                            prefs.downloadRefreshedOn(Date().getTime())
                         }
                         mapOf(Pair(it, it.getBooks()))
                     }
@@ -31,9 +33,9 @@ class RefreshManager(val installers: Collection<Installer>,
 
     val flatModules: Observable<Book> =
             availableModules
-                // Map -> Lists
-                .flatMap { Observable.from(it.values()) }
-                // Lists -> Single list
+                    // Map -> Lists
+                    .flatMap { Observable.from(it.values()) }
+                    // Lists -> Single list
                     .flatMap { Observable.from(it) }
 
     val flatModulesSorted = flatModules.toSortedList {(book1, book2) ->
