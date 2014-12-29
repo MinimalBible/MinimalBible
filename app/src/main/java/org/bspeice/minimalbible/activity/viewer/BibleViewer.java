@@ -23,6 +23,8 @@ import javax.inject.Named;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import dagger.ObjectGraph;
+import rx.functions.Action1;
+import rx.subjects.PublishSubject;
 
 public class BibleViewer extends BaseActivity implements Injector {
 
@@ -32,6 +34,9 @@ public class BibleViewer extends BaseActivity implements Injector {
 
     @Inject
     BibleViewerPreferences prefs;
+
+    @Inject
+    PublishSubject<BookScrollEvent> scrollEventPublisher;
 
     @InjectView(R.id.navigation_drawer)
     BibleMenu bibleMenu;
@@ -101,8 +106,27 @@ public class BibleViewer extends BaseActivity implements Injector {
 
         setInsetToolbar(toolbar);
 
+        // Currently you must set up the menu in exactly this order. Do I need to refactor this?
+        bibleMenu.setScrollEventPublisher(scrollEventPublisher);
         bibleMenu.setBible(mainBook);
+
+        // If a new chapter is selected, make sure we close the drawer
+        // We can't specify `this` as the subscriber since we can't
+        // extend Action1
+        scrollEventPublisher.subscribe(new Action1<BookScrollEvent>() {
+            @Override
+            public void call(BookScrollEvent bookScrollEvent) {
+                closeMenu();
+            }
+        });
+
+        // Set up the view to respond to scroll events as well. Again, exact order is needed.
+        bibleContent.setScrollPublisher(scrollEventPublisher);
         bibleContent.setBook(mainBook, prefs);
+    }
+
+    public void closeMenu() {
+        drawerLayout.closeDrawers();
     }
 
     @Override

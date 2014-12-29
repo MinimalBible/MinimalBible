@@ -22,19 +22,23 @@ import android.support.v7.widget.LinearLayoutManager
 import android.widget.LinearLayout
 
 class BibleView(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, attrs) {
-    var bibleContent: RecyclerView by Delegates.notNull();
+    var bibleContent: RecyclerView by Delegates.notNull()
+    var scrollPublisher: PublishSubject<BookScrollEvent> by Delegates.notNull()
+
+    val layoutManager: LinearLayoutManager = LinearLayoutManager(ctx)
+    val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater;
 
     {
-        val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        // Don't attach yet, as we haven't finished setup
         val rootView = inflater.inflate(R.layout.view_bible, this, true)
 
         bibleContent = rootView.findViewById(R.id.bible_content) as RecyclerView
-        bibleContent setLayoutManager LinearLayoutManager(ctx)
+        bibleContent setLayoutManager layoutManager
     }
 
     fun setBook(b: Book, prefs: BibleViewerPreferences) {
-        bibleContent setAdapter BookAdapter(b, prefs)
+        val adapter = BookAdapter(b, prefs)
+        adapter.bindScrollHandler(scrollPublisher, layoutManager)
+        bibleContent setAdapter adapter
     }
 }
 
@@ -114,7 +118,7 @@ class BookAdapter(val b: Book, val prefs: BibleViewerPreferences)
      */
     override fun getItemCount(): Int = chapterCount
 
-    fun bindScrollHandler(provider: PublishSubject<BookScrollEvent>,
+    public fun bindScrollHandler(provider: PublishSubject<BookScrollEvent>,
                           lM: RecyclerView.LayoutManager) {
         provider subscribe {
             val event = it
