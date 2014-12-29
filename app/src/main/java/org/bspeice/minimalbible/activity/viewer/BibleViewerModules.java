@@ -2,9 +2,11 @@ package org.bspeice.minimalbible.activity.viewer;
 
 import android.util.Log;
 
+import org.bspeice.minimalbible.MinimalBibleModules;
 import org.bspeice.minimalbible.service.manager.BookManager;
 import org.crosswire.jsword.book.Book;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -24,7 +26,8 @@ import rx.subjects.PublishSubject;
 @Module(
         injects = {
                 BibleViewer.class,
-        }
+        },
+        addsTo = MinimalBibleModules.class
 )
 @SuppressWarnings("unused")
 public class BibleViewerModules {
@@ -90,8 +93,8 @@ public class BibleViewerModules {
 
     @Provides
     @Singleton
-    BookManager bookManager() {
-        return new BookManager();
+    BookManager bookManager(List<String> exclude) {
+        return new BookManager(exclude);
     }
 
     @Provides

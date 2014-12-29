@@ -8,7 +8,6 @@ import org.bspeice.minimalbible.MinimalBibleModules;
 import org.bspeice.minimalbible.activity.downloader.manager.BookManager;
 import org.bspeice.minimalbible.activity.downloader.manager.LocaleManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
-import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.BookCategory;
 import org.crosswire.jsword.book.Books;
 import org.crosswire.jsword.book.install.InstallManager;
@@ -96,18 +95,6 @@ public class DownloadActivityModules {
         }};
     }
 
-    //TODO: Move this to a true async
-    @Provides
-    @Singleton
-    Books provideInstalledBooks() {
-        return Books.installed();
-    }
-
-    @Provides
-    List<Book> provideInstalledBooks(Books b) {
-        return b.getBooks();
-    }
-
     @Provides
     @Singleton
     Collection<Installer> provideInstallers() {
@@ -116,9 +103,10 @@ public class DownloadActivityModules {
 
     @Provides
     @Singleton
-    RefreshManager provideRefreshManager(Collection<Installer> installers, DownloadPrefs prefs,
+    RefreshManager provideRefreshManager(Collection<Installer> installers, List<String> exclude,
+                                         DownloadPrefs prefs,
                                          @Named("DownloadActivityContext") Context context) {
-        return new RefreshManager(installers, prefs,
+        return new RefreshManager(installers, exclude, prefs,
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
     }
 

@@ -14,11 +14,9 @@ import javax.inject.Singleton
  */
 
 Singleton
-open class BookManager() {
-    // Some extra books like to think they're installed, but trigger NPE all over the place...
-    val ignore = array("ERen_no", "ot1nt2");
+open class BookManager(val ignore: List<String>) {
 
-
+    // TODO: Remove static reference to Books.installed()
     open val installedBooks = Observable.from(Books.installed()!!.getBooks())
             ?.filter { !ignore.contains(it!!.getInitials()) }
             ?.cache() ?: throw NoBooksInstalledException()

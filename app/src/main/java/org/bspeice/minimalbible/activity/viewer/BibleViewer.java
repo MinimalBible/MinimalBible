@@ -54,6 +54,8 @@ public class BibleViewer extends BaseActivity implements Injector {
 
     /**
      * Build a scoped object graph for anything used by the BibleViewer
+     * and inject ourselves
+     * TODO: Refactor so buildObjGraph doesn't have side effects
      */
     private void buildObjGraph() {
         if (bvObjectGraph == null) {

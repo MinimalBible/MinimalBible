@@ -16,6 +16,7 @@ import java.util.Date
  */
 
 class RefreshManager(val installers: Collection<Installer>,
+                     val exclude: List<String>,
                      val prefs: DownloadPrefs,
                      val connManager: ConnectivityManager?) {
     val refreshComplete = AtomicBoolean()
@@ -26,7 +27,9 @@ class RefreshManager(val installers: Collection<Installer>,
                             it.reloadBookList() // TODO: Handle InstallException
                             prefs.downloadRefreshedOn(Date().getTime())
                         }
-                        mapOf(Pair(it, it.getBooks()))
+                        val validBooks = it.getBooks()
+                                .filterNot { exclude contains it.getInitials() }
+                        mapOf(Pair(it, validBooks))
                     }
                     .subscribeOn(Schedulers.io())
                     .cache();
