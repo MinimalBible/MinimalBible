@@ -145,6 +145,8 @@ public class DownloadActivity extends BaseActivity implements
     }
 
     private void setTitle(String title) {
-        toolbar.setTitle(title);
+        // toolbar.setTitle() doesn't work on activity load, otherwise that would
+        // be the preference.
+        getSupportActionBar().setTitle(title);
     }
 }
