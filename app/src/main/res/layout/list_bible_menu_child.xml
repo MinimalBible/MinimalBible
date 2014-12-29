@@ -1,17 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+Layout for displaying child elements of the Bible Menu
+This needs a bit of explaining since its a bit complicated.
+There are three TextViews, each for displaying a single chapter.
+In order to make sure they are all aligned correctly, *even when
+one or more doesn't have any text*, they are set to 0dp width initially,
+and the weights are used to determine how big they should actually be.
+This way, no "wrap_content" width is used, messing up alignment
+because one cell doesn't have a value.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/content"
-        android:layout_width="match_parent"
+        android:id="@+id/content1"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:gravity="center_vertical|center_horizontal"
         android:minHeight="?android:attr/listPreferredItemHeight"
-        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
-        android:paddingRight="?android:attr/expandableListPreferredChildPaddingLeft"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:paddingLeft="@dimen/biblemenu_child_padding"
+        android:paddingRight="@dimen/biblemenu_child_padding"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_weight="1" />
 
+    <TextView
+        android:id="@+id/content2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:paddingLeft="@dimen/biblemenu_child_padding"
+        android:paddingRight="@dimen/biblemenu_child_padding"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/content3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:paddingLeft="@dimen/biblemenu_child_padding"
+        android:paddingRight="@dimen/biblemenu_child_padding"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_weight="1" />
 </LinearLayout>

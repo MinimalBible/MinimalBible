@@ -8,14 +8,14 @@
     <!-- Both paddingLeft and Right are given to support RtL
     layouts without worrying about min API and paddingStart shenanigans -->
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/_bible_title"
         style="@style/MinimalBible.NavigationDrawer.Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/app_name" />
 
     <ExpandableListView
-        android:id="@+id/menu"
+        android:id="@+id/_bible_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

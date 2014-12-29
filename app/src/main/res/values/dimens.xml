@@ -9,4 +9,6 @@
     <dimen name="navigation_drawer_highlight_height">32dp</dimen>
 
     <dimen name="toolbar_height">56dp</dimen>
+
+    <dimen name="biblemenu_child_padding">8dp</dimen>
 </resources>
