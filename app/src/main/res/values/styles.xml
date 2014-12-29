@@ -8,6 +8,8 @@
         <item name="android:textColorSecondary">@color/textColorPrimary</item>
         <!-- Overflow menu text item color -->
         <item name="android:textColor">@color/textColor</item>
+        <!-- Hamburger bar animation -->
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
     </style>
 
     <!-- Almost re-use style from Widget.Holo.Button.Borderless -->
@@ -19,6 +21,11 @@
         <item name="android:paddingStart">4dip</item>
         <item name="android:paddingEnd">4dip</item>
         -->
+    </style>
+
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@color/textColorPrimary</item>
     </style>
 
     <style name="MinimalBibleBase.NavigationDrawer" parent="MinimalBibleBase">
