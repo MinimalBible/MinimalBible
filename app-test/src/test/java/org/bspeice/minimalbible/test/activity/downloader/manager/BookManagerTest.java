@@ -25,7 +25,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -235,6 +237,11 @@ public class BookManagerTest implements Injector {
             return new InstallManager().getInstallers().values();
         }
 
+        @Provides
+        List<String> excludeList() {
+            return new ArrayList<>();
+        }
+
         void setConnectivityManager(ConnectivityManager manager) {
             this.manager = manager;
         }
@@ -245,8 +252,8 @@ public class BookManagerTest implements Injector {
 
         @Provides
         @Singleton
-        RefreshManager refreshManager(Collection<Installer> installers) {
-            return new RefreshManager(installers,
+        RefreshManager refreshManager(Collection<Installer> installers, List<String> excludes) {
+            return new RefreshManager(installers, excludes,
                     prefs, manager);
         }
 

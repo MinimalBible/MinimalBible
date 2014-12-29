@@ -190,9 +190,14 @@ public class RefreshManagerTest implements Injector {
         }
 
         @Provides
+        List<String> excludeList() {
+            return new ArrayList<>();
+        }
+
+        @Provides
         @Singleton
-        RefreshManager refreshManager(Collection<Installer> installers) {
-            return new RefreshManager(installers,
+        RefreshManager refreshManager(Collection<Installer> installers, List<String> excludes) {
+            return new RefreshManager(installers, excludes,
                     prefs, manager);
         }
     }
