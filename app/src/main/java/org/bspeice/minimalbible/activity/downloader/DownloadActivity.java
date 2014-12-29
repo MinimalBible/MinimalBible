@@ -3,6 +3,7 @@ package org.bspeice.minimalbible.activity.downloader;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +47,9 @@ public class DownloadActivity extends BaseActivity implements
 
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
+
+    @InjectView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
 
     private ObjectGraph daObjectGraph;
 
@@ -127,6 +131,8 @@ public class DownloadActivity extends BaseActivity implements
                 .replace(R.id.content,
                         BookListFragment.newInstance(validCategories.get(position)))
                 .commit();
+
+        drawerLayout.closeDrawers();
     }
 
     private void setTitle(String title) {
