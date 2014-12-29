@@ -39,6 +39,7 @@ class BibleView(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, a
         val adapter = BookAdapter(b, prefs)
         adapter.bindScrollHandler(scrollPublisher, layoutManager)
         bibleContent setAdapter adapter
+        bibleContent scrollToPosition prefs.currentChapter()
     }
 }
 
@@ -110,8 +111,10 @@ class BookAdapter(val b: Book, val prefs: BibleViewerPreferences)
     /**
      * Bind an existing view to its chapter content
      */
-    override fun onBindViewHolder(view: PassageView, position: Int) =
-            view bind chapterList[position]
+    override fun onBindViewHolder(view: PassageView, position: Int) {
+        prefs.currentChapter(position)
+        return view bind chapterList[position]
+    }
 
     /**
      * Get the number of chapters in the book

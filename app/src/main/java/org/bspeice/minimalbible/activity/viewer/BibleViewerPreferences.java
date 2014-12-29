@@ -17,4 +17,8 @@ public interface BibleViewerPreferences {
     int baseTextSize();
 
     void baseTextSize(int baseTextSize);
+
+    int currentChapter();
+
+    void currentChapter(int currentChapter);
 }
