@@ -91,6 +91,8 @@ public class BibleViewer extends BaseActivity implements Injector {
             // No books installed, start the downloader.
             Intent i = new Intent(this, DownloadActivity.class);
             startActivityForResult(i, 0);
+            finish();
+            return;
         }
 
         setContentView(R.layout.activity_bible_viewer);
