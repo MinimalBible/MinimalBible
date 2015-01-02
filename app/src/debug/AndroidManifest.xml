@@ -4,9 +4,9 @@
     <application
         android:name="org.bspeice.minimalbible.MinimalBibleDebug"
         tools:replace="android:name">
-        <activity
+        <!-- <activity
             android:name="org.bspeice.minimalbible.test.activity.FragmentTestActivity"
-            android:label="@string/title_activity_fragment_test" />
+            android:label="@string/title_activity_fragment_test" /> -->
     </application>
 
 </manifest>
