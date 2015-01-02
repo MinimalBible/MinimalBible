@@ -11,4 +11,7 @@
 
     <string name="error_book_refresh">Error refreshing. Try again later</string>
 
+    <string name="contact_developer_address">bspeice.nc@gmail.com</string>
+    <string name="contact_developer_subject">MinimalBible Feedback</string>
+
 </resources>

@@ -25,4 +25,9 @@ but I will likely want to re-implement this in the future -->
         android:key="defaultBookInitials"
         android:title="Active Book" />
 
+    <org.bspeice.minimalbible.activity.settings.ContactPreference
+        android:key="null"
+        android:summary="Let the developers know what you think of the app!"
+        android:title="Contact Me" />
+
 </PreferenceScreen>
