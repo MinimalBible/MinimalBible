@@ -6,7 +6,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
     <string name="activity_downloader">Downloads</string>
-    <string name="book_removal_failure">Could not remove book. Try restarting application?</string>
+    <string name="book_removal_failure">Could not remove, please restart application</string>
     <string name="action_download_title_categories">Categories</string>
+
+    <string name="error_book_refresh">Error refreshing. Try again later</string>
 
 </resources>

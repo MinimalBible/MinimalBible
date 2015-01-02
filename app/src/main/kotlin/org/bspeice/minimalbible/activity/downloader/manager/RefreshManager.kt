@@ -1,7 +1,6 @@
 package org.bspeice.minimalbible.activity.downloader.manager
 
 import org.crosswire.jsword.book.install.Installer
-import java.util.concurrent.atomic.AtomicBoolean
 import rx.Observable
 import org.crosswire.jsword.book.Book
 import rx.schedulers.Schedulers
@@ -19,12 +18,12 @@ class RefreshManager(val installers: Collection<Installer>,
                      val exclude: List<String>,
                      val prefs: DownloadPrefs,
                      val connManager: ConnectivityManager?) {
-    val refreshComplete = AtomicBoolean()
+
     val availableModules: Observable<Map<Installer, List<Book>>> =
             Observable.from(installers)
                     .map {
                         if (doReload()) {
-                            it.reloadBookList() // TODO: Handle InstallException
+                            it.reloadBookList()
                             prefs.downloadRefreshedOn(Date().getTime())
                         }
                         val validBooks = it.getBooks()
@@ -44,12 +43,6 @@ class RefreshManager(val installers: Collection<Installer>,
     val flatModulesSorted = flatModules.toSortedList {(book1, book2) ->
         BookComparators.getInitialComparator().compare(book1, book2)
     };
-
-    // Constructor - Split from the value creation because `subscribe` returns
-    // the subscriber object, not the underlying value
-    {
-        availableModules.subscribe({}, {}, { refreshComplete set true })
-    }
 
     val fifteenDaysAgo = Calendar.getInstance().getTime().getTime() - 1296000
 

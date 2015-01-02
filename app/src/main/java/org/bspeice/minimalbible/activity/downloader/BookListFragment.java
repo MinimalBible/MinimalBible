@@ -3,9 +3,7 @@ package org.bspeice.minimalbible.activity.downloader;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +31,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnItemSelected;
+import dagger.Lazy;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -52,7 +51,7 @@ public class BookListFragment extends BaseFragment {
     @Inject
     DownloadPrefs downloadPrefs;
     @Inject
-    RefreshManager refreshManager;
+    Lazy<RefreshManager> refreshManager;
     @Inject
     LocaleManager localeManager;
 
@@ -143,14 +142,29 @@ public class BookListFragment extends BaseFragment {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         languagesSpinner.setAdapter(adapter);
-        Drawable d = languagesSpinner.getBackground();
-        Log.d("Spinner", d.toString());
+
+        // Use Object to avoid the incredibly long type parameters
+        refreshManager.get().getAvailableModules()
+                .subscribe(new Action1<Object>() {
+                               @Override
+                               public void call(Object o) {
+                               }
+                           },
+                        new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                Toast.makeText(getActivity(),
+                                        getString(R.string.error_book_refresh),
+                                        Toast.LENGTH_SHORT)
+                                        .show();
+                            }
+                        });
     }
 
     @SuppressWarnings("unused")
     @OnItemSelected(R.id.spn_available_languages)
     public void onClick(final int position) {
-        booksByLanguage(refreshManager.getFlatModules(),
+        booksByLanguage(refreshManager.get().getFlatModules(),
                 availableLanguages.get(position),
                 bookCategory)
                 // Repack all the books
@@ -231,6 +245,7 @@ public class BookListFragment extends BaseFragment {
             downloadPrefs.hasEnabledDownload(true);
 
             // And warn them that it has been enabled in the future.
+            // TODO: Migrate to strings.xml
             showToast("Downloading now enabled. Disable in settings");
             fragment.displayModules();
         }
@@ -238,6 +253,7 @@ public class BookListFragment extends BaseFragment {
         void buttonNegative() {
             // Clicked to not download - Permanently disable downloading
             downloadPrefs.hasEnabledDownload(false);
+            // TODO: Migrate to strings.xml
             showToast("Disabling downloading. Re-enable it in settings.");
             fragment.getActivity().finish();
         }
