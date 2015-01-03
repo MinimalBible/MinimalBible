@@ -37,7 +37,7 @@ class RefreshManagerSpek() : Spek() {{
 
         on("creating a new RefreshManager and mock preferences") {
             val mockPrefs = buildMockPrefs()
-            val rM = buildRefreshmanager(listOf(installer, installer), mockPrefs)
+            buildRefreshmanager(listOf(installer, installer), mockPrefs)
 
             it("should not have updated the prefs as part of the constructor") {
                 verify(mockPrefs, never())
