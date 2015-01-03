@@ -11,15 +11,11 @@ import org.crosswire.jsword.book.install.Installer;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,7 +25,6 @@ import dagger.ObjectGraph;
 import dagger.Provides;
 import rx.functions.Action1;
 
-import static com.jayway.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
@@ -98,40 +93,6 @@ public class RefreshManagerTest implements Injector {
 
         assertSame(mockInstaller, i);
         verify(mockInstaller).getBooks();
-    }
-
-    @Test
-    public void testRefreshSeparateThread() {
-        mockInstaller = mock(Installer.class);
-        final List<Book> bookList = new ArrayList<Book>();
-        when(mockInstaller.getBooks()).thenAnswer(new Answer<List<Book>>() {
-            @Override
-            public List<Book> answer(InvocationOnMock invocationOnMock) throws Throwable {
-                Thread.sleep(1000); // Just long enough to give us a gap between
-                // refresh start and complete
-                return bookList;
-            }
-        });
-
-        Collection<Installer> mockInstallers = new ArrayList<Installer>();
-        mockInstallers.add(mockInstaller);
-
-        RMTModules modules = new RMTModules(mockInstallers);
-        mObjectGraph = ObjectGraph.create(modules);
-
-        // And the actual test
-        mObjectGraph.inject(this);
-
-        // So the refresh should be kicked off at the constructor, meaning that it's not "complete"
-        assertFalse(rM.getRefreshComplete().get());
-
-        // But, if it's on another thread, it should finish up eventually, right?
-        await().atMost(5, TimeUnit.SECONDS).until(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                return rM.getRefreshComplete().get();
-            }
-        });
     }
 
     /**

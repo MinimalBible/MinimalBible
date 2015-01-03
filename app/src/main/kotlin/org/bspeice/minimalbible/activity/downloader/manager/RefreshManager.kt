@@ -8,7 +8,6 @@ import java.util.Calendar
 import org.bspeice.minimalbible.activity.downloader.DownloadPrefs
 import android.net.ConnectivityManager
 import org.crosswire.jsword.book.BookComparators
-import java.util.Date
 
 /**
  * Created by bspeice on 10/22/14.
@@ -19,19 +18,24 @@ class RefreshManager(val installers: Collection<Installer>,
                      val prefs: DownloadPrefs,
                      val connManager: ConnectivityManager?) {
 
+    val currentTime = Calendar.getInstance().getTime().getTime()
+    val fifteenDaysAgo = currentTime - 1296000
+
     val availableModules: Observable<Map<Installer, List<Book>>> =
             Observable.from(installers)
                     .map {
-                        if (doReload()) {
+                        if (performReload())
                             it.reloadBookList()
-                            prefs.downloadRefreshedOn(Date().getTime())
-                        }
-                        val validBooks = it.getBooks()
-                                .filterNot { exclude contains it.getInitials() }
-                        mapOf(Pair(it, validBooks))
+
+                        // TODO: mapOf(it to booksFromInstaller)
+                        mapOf(Pair(it,
+                                booksFromInstaller(it, exclude)))
                     }
+                    // Don't update timestamps until done. Additionally, make this operation
+                    // part of the pipeline, so it remains a cold observable
+                    .doOnCompleted { prefs.downloadRefreshedOn(currentTime) }
                     .subscribeOn(Schedulers.io())
-                    .cache();
+                    .cache()
 
     val flatModules: Observable<Book> =
             availableModules
@@ -42,9 +46,7 @@ class RefreshManager(val installers: Collection<Installer>,
 
     val flatModulesSorted = flatModules.toSortedList {(book1, book2) ->
         BookComparators.getInitialComparator().compare(book1, book2)
-    };
-
-    val fifteenDaysAgo = Calendar.getInstance().getTime().getTime() - 1296000
+    }
 
     fun doReload(downloadEnabled: Boolean, lastUpdated: Long,
                  networkState: Int? = ConnectivityManager.TYPE_DUMMY): Boolean =
@@ -55,9 +57,13 @@ class RefreshManager(val installers: Collection<Installer>,
             else
                 false
 
-    fun doReload(): Boolean = doReload(prefs.hasEnabledDownload(),
-            prefs.downloadRefreshedOn(),
-            connManager?.getActiveNetworkInfo()?.getType())
+    fun performReload() =
+            doReload(prefs.hasEnabledDownload(),
+                    prefs.downloadRefreshedOn(),
+                    connManager?.getActiveNetworkInfo()?.getType())
+
+    fun booksFromInstaller(inst: Installer, exclude: List<String>) =
+            inst.getBooks().filterNot { exclude contains it.getInitials() }
 
     fun installerFromBook(b: Book): Observable<Installer> = Observable.just(
             availableModules.filter {
