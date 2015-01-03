@@ -1,9 +1,14 @@
 package org.bspeice.minimalbible.activity.viewer;
 
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +19,7 @@ import org.bspeice.minimalbible.OGHolder;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
+import org.bspeice.minimalbible.activity.search.BasicSearch;
 import org.bspeice.minimalbible.activity.settings.MinimalBibleSettings;
 import org.crosswire.jsword.book.Book;
 
@@ -136,6 +142,21 @@ public class BibleViewer extends BaseActivity implements Injector {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.viewer, menu);
+
+        // Set up search - most of it is handled by the SearchView itself, but
+        // we do have some work so that it knows which activity to start
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        // And we can't call getActionView() directly, because it needs API 11+
+        MenuItem item = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+
+        // The Android docs instruct you to set up search in the current activity.
+        // We want the search to actually run elsewhere.
+        ComponentName cN = new ComponentName(this, BasicSearch.class);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(cN));
+
         return super.onCreateOptionsMenu(menu);
     }
 

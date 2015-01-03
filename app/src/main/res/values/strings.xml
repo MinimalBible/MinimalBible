@@ -8,11 +8,12 @@
     <string name="activity_downloader">Downloads</string>
     <string name="book_removal_failure">Could not remove, please restart application</string>
     <string name="action_download_title_categories">Categories</string>
-
     <string name="error_book_refresh">Error refreshing. Try again later</string>
-
     <string name="contact_developer_address">bspeice.nc@gmail.com</string>
     <string name="contact_developer_subject">MinimalBible Feedback</string>
     <string name="action_search_title">Search</string>
+    <string name="title_activity_search_results">SearchResults</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_search_hint">Verse Content</string>
 
 </resources>

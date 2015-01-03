@@ -10,6 +10,8 @@
         <item name="android:textColor">@color/textColor</item>
         <!-- Hamburger bar animation -->
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <!-- SearchView hint text -->
+        <item name="android:textColorHint">@color/textColorPrimary</item>
     </style>
 
     <!-- Almost re-use style from Widget.Holo.Button.Borderless -->

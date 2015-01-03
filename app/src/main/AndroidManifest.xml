@@ -11,6 +11,11 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/MinimalBible">
+
+        <meta-data
+            android:name="android.app.searchable"
+            android:resource="@xml/searchable" />
+
         <activity
             android:name=".activity.downloader.DownloadActivity"
             android:label="@string/app_name" />
@@ -21,11 +26,30 @@
         <activity
             android:name=".activity.viewer.BibleViewer"
             android:label="@string/app_name">
-        <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Searching is weird - make sure you add the right metadata for each activity.
+            http://stackoverflow.com/a/11704661 -->
+            <meta-data
+                android:name="android.app.default-searchable"
+                android:value=".activity.search.BasicSearch" />
+        </activity>
+
+        <!-- TODO: Launch basic search as singleTop? -->
+        <activity
+            android:name=".activity.search.BasicSearch"
+            android:label="@string/title_activity_search_results">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
     </application>
+
 </manifest>
