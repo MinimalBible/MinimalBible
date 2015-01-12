@@ -75,7 +75,7 @@ public class MinimalBibleModules {
                 .filter(new Func1<Book, Boolean>() {
                     @Override
                     public Boolean call(Book book) {
-                        return invalidBooks.contains(book.getInitials());
+                        return !invalidBooks.contains(book.getInitials());
                     }
                 })
                 .toList().toBlocking().first();
