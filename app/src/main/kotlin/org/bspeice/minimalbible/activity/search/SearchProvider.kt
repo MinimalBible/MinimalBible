@@ -8,6 +8,7 @@ import org.crosswire.jsword.passage.Verse
  */
 class SearchProvider() {
 
+    [suppress("UNUSED_PARAMETER")]
     public fun basicTextSearch(text: String): List<Verse> =
             listOf()
 }
