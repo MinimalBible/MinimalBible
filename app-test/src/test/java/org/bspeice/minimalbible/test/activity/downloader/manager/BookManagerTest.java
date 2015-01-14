@@ -2,7 +2,6 @@ package org.bspeice.minimalbible.test.activity.downloader.manager;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.activity.downloader.DownloadPrefs;
@@ -40,6 +39,7 @@ import dagger.Provides;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.subjects.PublishSubject;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static org.junit.Assert.assertFalse;
@@ -82,38 +82,42 @@ public class BookManagerTest implements Injector {
                 });
     }
 
-    @Ignore
+    // TODO: Why doesn't this work?
+    @Ignore("Should be working, but isn't...")
+    @Test
     public void testInstallBook() throws Exception {
         final Book toInstall = installableBooks().toBlocking().first();
-
-        bookManager.installBook(toInstall);
 
         final AtomicBoolean signal = new AtomicBoolean(false);
         bookManager.getDownloadEvents()
                 .subscribe(new Action1<DLProgressEvent>() {
                     @Override
                     public void call(DLProgressEvent dlProgressEvent) {
+                        System.out.println(dlProgressEvent.getAverageProgress());
                         if (dlProgressEvent.getB().getInitials().equals(toInstall.getInitials())
-                                && dlProgressEvent.getProgress() == DLProgressEvent.PROGRESS_COMPLETE) {
+                                && dlProgressEvent.getAverageProgress() == DLProgressEvent.PROGRESS_COMPLETE) {
                             signal.set(true);
                         }
                     }
                 });
 
-        await().atMost(60, TimeUnit.SECONDS)
+        bookManager.downloadBook(toInstall);
+
+        await().atMost(30, TimeUnit.SECONDS)
                 .untilTrue(signal);
     }
 
-    @Ignore
+    // TODO: Why doesn't this work?
+    @Ignore("Should be working, but isn't...")
+    @Test
     public void testJobIdMatch() {
         final Book toInstall = installableBooks().toBlocking().first();
-        final String jobName = bookManager.getJobId(toInstall);
+        final String jobName = bookManager.getJobNames(toInstall).get(0);
         final AtomicBoolean jobNameMatch = new AtomicBoolean(false);
 
         JobManager.addWorkListener(new WorkListener() {
             @Override
             public void workProgressed(WorkEvent ev) {
-                Log.d("testJobIdMatch", ev.getJob().getJobID() + " " + jobName);
                 if (ev.getJob().getJobID().equals(jobName)) {
                     jobNameMatch.set(true);
                 }
@@ -124,8 +128,8 @@ public class BookManagerTest implements Injector {
             }
         });
 
-        bookManager.installBook(toInstall);
-        await().atMost(5, TimeUnit.SECONDS)
+        bookManager.downloadBook(toInstall);
+        await().atMost(10, TimeUnit.SECONDS)
                 .untilTrue(jobNameMatch);
     }
 
@@ -169,20 +173,19 @@ public class BookManagerTest implements Injector {
     public void testWorkProgressedCorrectProgress() {
         Book mockBook = mock(Book.class);
         when(mockBook.getInitials()).thenReturn("mockBook");
-        String bookJobName = bookManager.getJobId(mockBook);
-        bookManager.getBookMappings().put(bookJobName, mockBook);
+        String bookJobName = bookManager.getJobNames(mockBook).get(0);
+        bookManager.getInProgressJobNames().put(bookJobName, mockBook);
 
         // Percent to degrees
-        int workProgress = 1;
-        int totalWork = 2;
-        final int circularProgress = 180;
+        final int workDone = 50; // 50%
+        // There are two jobs, each comprising 180 degrees.
+        // Since we are simulating one job being 50% complete, that's 90 degrees
+        final int circularProgress = 90;
         WorkEvent ev = mock(WorkEvent.class);
         Progress p = mock(Progress.class);
 
         when(p.getJobID()).thenReturn(bookJobName);
-        when(p.getWorkDone()).thenReturn(workProgress);
-        when(p.getTotalWork()).thenReturn(totalWork);
-
+        when(p.getWork()).thenReturn(workDone);
         when(ev.getJob()).thenReturn(p);
 
         final AtomicBoolean progressCorrect = new AtomicBoolean(false);
@@ -259,8 +262,15 @@ public class BookManagerTest implements Injector {
 
         @Provides
         @Singleton
-        BookManager bookDownloadManager(Books installed, RefreshManager rm) {
-            return new BookManager(installed, rm);
+        PublishSubject<DLProgressEvent> dlProgressEventPublisher() {
+            return PublishSubject.create();
+        }
+
+        @Provides
+        @Singleton
+        BookManager bookDownloadManager(Books installed, RefreshManager rm,
+                                        PublishSubject<DLProgressEvent> eventPublisher) {
+            return new BookManager(installed, rm, eventPublisher);
         }
     }
 }

@@ -12,33 +12,41 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import org.crosswire.jsword.book.BookException
+import org.crosswire.jsword.util.IndexDownloader
+import org.crosswire.common.progress.Progress
 
 /**
  * Single point of authority for what is being downloaded and its progress
  * Please note that you should never be modifying installedBooks,
  * only operate on installedBooksList
  */
-//TODO: Install indexes for Bibles
-//TODO: Figure out how to get Robolectric to mock the Log, rather than removing the calls
-class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
+class BookManager(private val installedBooks: Books,
+                  val rM: RefreshManager,
+                  val downloadEvents: PublishSubject<DLProgressEvent>) :
         WorkListener, BooksListener {
+
+    private val bookJobNamePrefix = Progress.INSTALL_BOOK.substringBeforeLast("%s")
+    private val indexJobNamePrefix = Progress.DOWNLOAD_SEARCH_INDEX.substringBeforeLast("%s")
+
+    /**
+     * List of jobs currently active by their job name
+     */
+    val inProgressJobNames: MutableMap<String, Book> = hashMapOf()
 
     /**
      * Cached copy of downloads in progress so views displaying this info can get it quickly.
      */
-    // TODO: Combine to one map
-    val bookMappings: MutableMap<String, Book> = hashMapOf()
     val inProgressDownloads: MutableMap<Book, DLProgressEvent> = hashMapOf()
 
     /**
      * A list of books that is locally maintained - installedBooks isn't always up-to-date
      */
-    val installedBooksList: MutableList<Book> = installedBooks.getBooks() ?: linkedListOf()
-    val downloadEvents: PublishSubject<DLProgressEvent> = PublishSubject.create();
+    val installedBooksList: MutableList<Book> = installedBooks.getBooks() ?: linkedListOf();
 
     {
         JobManager.addWorkListener(this)
         installedBooks.addBooksListener(this)
+        downloadEvents.subscribe { this.inProgressDownloads[it.b] = it }
     }
 
     /**
@@ -48,25 +56,35 @@ class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
      * @param b The book to predict the download job name of
      * @return The name of the job that will/is download/ing this book
      */
-    fun getJobId(b: Book) = "INSTALL_BOOK-${b.getInitials()}"
-
-    fun installBook(b: Book) {
-        downloadBook(b)
-        addJob(getJobId(b), b)
-        downloadEvents onNext DLProgressEvent(DLProgressEvent.PROGRESS_BEGINNING, b)
-    }
-
-    fun addJob(jobId: String, b: Book) {
-        bookMappings.put(jobId, b)
-    }
+    fun getJobNames(b: Book) = listOf("${bookJobNamePrefix}${b.getInitials()}",
+            "${indexJobNamePrefix}${b.getInitials()}")
 
     fun downloadBook(b: Book) {
         // First, look up where the Book came from
-        Observable.just(rM installerFromBook b)
-                .observeOn(Schedulers.io())
-                .subscribe { it subscribe { it install b } }
+        val installerObs = Observable.just(rM installerFromBook b)
 
-        downloadEvents onNext DLProgressEvent(DLProgressEvent.PROGRESS_BEGINNING, b)
+        // And subscribe on two different threads for the download
+        // Not sure why we need two threads, guessing it's because the
+        // thread is closed when the install event is done
+        installerObs
+                .observeOn(Schedulers.newThread())
+                .subscribe {
+                    // Download the actual book
+                    it subscribe { it install b }
+                }
+
+        installerObs
+                .observeOn(Schedulers.newThread())
+                .subscribe {
+                    // Download the book index
+                    it subscribe { IndexDownloader.downloadIndex(b, it) }
+                }
+
+        // Then notify everyone that we're starting
+        downloadEvents onNext DLProgressEvent.beginningEvent(b)
+
+        // Finally register the jobs in progress
+        getJobNames(b).forEach { this.inProgressJobNames[it] = b }
     }
 
     /**
@@ -100,6 +118,7 @@ class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
             return false
         }
     }
+
     /**
      * Check the status of a book download in progress.
      * @param b The book to get the current progress of
@@ -112,20 +131,24 @@ class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
     // TODO: I have a strange feeling I can simplify this further...
     override fun workProgressed(ev: WorkEvent) {
         val job = ev.getJob()
-        bookMappings.filter { it.getKey() == job.getJobID() }
-                .map {
-                    // We multiply by 100 first to avoid integer truncation
-                    // Also avoids roundoff error. Neat trick, but I'm spending just as much time
-                    // documenting it as implementing the floating point would take
-                    val event = DLProgressEvent(job.getWorkDone() * 100 / job.getTotalWork(), it.getValue())
-                    downloadEvents onNext event
 
-                    if (job.getWorkDone() == job.getTotalWork()) {
-                        inProgressDownloads remove bookMappings[job.getJobID()]
-                        bookMappings remove job.getJobID()
-                    } else
-                        inProgressDownloads.put(it.getValue(), event)
-                }
+        val book = inProgressJobNames[job.getJobID()] as Book
+        val oldEvent = inProgressDownloads[book] ?: DLProgressEvent.beginningEvent(book)
+
+        var newEvent: DLProgressEvent
+        if (job.getJobID().contains(bookJobNamePrefix))
+            newEvent = oldEvent.copy(bookProgress = job.getWork())
+        else
+            newEvent = oldEvent.copy(indexProgress = job.getWork())
+
+        downloadEvents onNext newEvent
+
+        if (newEvent.averageProgress == DLProgressEvent.PROGRESS_COMPLETE) {
+            inProgressDownloads remove inProgressJobNames[job.getJobID()]
+            inProgressJobNames remove job.getJobID()
+        } else
+            inProgressDownloads.put(book, newEvent)
+
     }
 
     override fun workStateChanged(ev: WorkEvent) {
@@ -133,18 +156,8 @@ class BookManager(private val installedBooks: Books, val rM: RefreshManager) :
     }
 
     override fun bookAdded(booksEvent: BooksEvent) {
-        // It's possible the install finished before we received a progress event for it,
-        // we handle that case here.
-        val b = booksEvent.getBook()
-//        Log.d("BookDownloadManager", "Book added: ${b.getName()}")
-        inProgressDownloads remove b
-
-        // Not sure why, but the inProgressDownloads might not have our book,
-        // so we always trigger the PROGRESS_COMPLETE event.
-        downloadEvents onNext DLProgressEvent(DLProgressEvent.PROGRESS_COMPLETE, b)
-
-        // And update the locally available list
-        installedBooksList add b
+        // Update the local list of available books
+        installedBooksList add booksEvent.getBook()
     }
 
     override fun bookRemoved(booksEvent: BooksEvent) {

@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.MinimalBibleModules;
 import org.bspeice.minimalbible.activity.downloader.manager.BookManager;
+import org.bspeice.minimalbible.activity.downloader.manager.DLProgressEvent;
 import org.bspeice.minimalbible.activity.downloader.manager.LocaleManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.jsword.book.BookCategory;
@@ -23,6 +24,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import de.devland.esperandro.Esperandro;
+import rx.subjects.PublishSubject;
 
 /**
  * Module mappings for the classes under the Download Activity
@@ -79,8 +81,15 @@ public class DownloadActivityModules {
 
     @Provides
     @Singleton
-    BookManager provideBookDownloadManager(Books installedBooks, RefreshManager rm) {
-        return new BookManager(installedBooks, rm);
+    PublishSubject<DLProgressEvent> dlProgressEventPublisher() {
+        return PublishSubject.create();
+    }
+
+    @Provides
+    @Singleton
+    BookManager provideBookDownloadManager(Books installedBooks, RefreshManager rm,
+                                           PublishSubject<DLProgressEvent> progressEvents) {
+        return new BookManager(installedBooks, rm, progressEvents);
     }
 
     @Provides

@@ -12,7 +12,7 @@ class DLProgressEventSpek : Spek() {{
 
     given("a DLProgressEvent created with 50% progress and a mock book") {
         val mockBook = mock(javaClass<Book>())
-        val dlEvent = DLProgressEvent(50, mockBook)
+        val dlEvent = DLProgressEvent(50, 50, mockBook)
 
         on("getting the progress in degrees") {
             val progressDegrees = dlEvent.toCircular()

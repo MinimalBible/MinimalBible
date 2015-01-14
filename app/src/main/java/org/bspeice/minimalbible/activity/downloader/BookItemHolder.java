@@ -25,6 +25,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.subjects.PublishSubject;
 
 /**
 * Created by bspeice on 5/20/14.
@@ -47,6 +48,9 @@ public class BookItemHolder {
     BookManager bookManager;
     @Inject @Named("DownloadActivityContext")
     Context ctx;
+    @Inject
+    PublishSubject<DLProgressEvent> downloadProgressEvents;
+
     private Subscription subscription;
 
     // TODO: Factory style?
@@ -61,12 +65,13 @@ public class BookItemHolder {
         itemName.setText(b.getName());
         DLProgressEvent dlProgressEvent = bookManager.getDownloadProgress(b);
         if (dlProgressEvent != null) {
-            displayProgress((int) dlProgressEvent.toCircular());
+            displayProgress(dlProgressEvent.toCircular());
         } else if (bookManager.isInstalled(b)) {
             displayInstalled();
         }
+
         //TODO: Refactor
-        subscription = bookManager.getDownloadEvents()
+        subscription = downloadProgressEvents
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter(new Func1<DLProgressEvent, Boolean>() {
                     @Override
@@ -98,7 +103,7 @@ public class BookItemHolder {
                         , Toast.LENGTH_SHORT).show();
             }
         } else {
-            bookManager.installBook(this.b);
+            bookManager.downloadBook(this.b);
         }
     }
 
