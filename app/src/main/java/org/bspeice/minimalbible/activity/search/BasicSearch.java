@@ -10,6 +10,9 @@ import org.bspeice.minimalbible.MinimalBible;
 import org.bspeice.minimalbible.OGHolder;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
+import org.crosswire.jsword.passage.Verse;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -65,6 +68,7 @@ public class BasicSearch extends BaseActivity
 
         String query = intent.getStringExtra(SearchManager.QUERY);
         Toast.makeText(this, "Searching for: " + query, Toast.LENGTH_SHORT).show();
-        searchProvider.basicTextSearch(query);
+        List<Verse> results = searchProvider.basicTextSearch(query);
+        Toast.makeText(this, "Found results: " + results.size(), Toast.LENGTH_SHORT).show();
     }
 }

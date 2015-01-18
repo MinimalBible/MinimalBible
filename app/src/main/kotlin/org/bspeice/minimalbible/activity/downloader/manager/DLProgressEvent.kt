@@ -5,8 +5,7 @@ import org.crosswire.jsword.book.Book
 /**
  * Created by bspeice on 11/11/14.
  */
-data class DLProgressEvent(val bookProgress: Int,
-                           val indexProgress: Int,
+data class DLProgressEvent(val progress: Int,
                            val b: Book) {
     class object {
         val PROGRESS_COMPLETE = 100
@@ -16,12 +15,8 @@ data class DLProgressEvent(val bookProgress: Int,
          * Build a DLProgressEvent that is just beginning
          * Mostly just a nice shorthand
          */
-        fun beginningEvent(b: Book) = DLProgressEvent(DLProgressEvent.PROGRESS_BEGINNING,
-                DLProgressEvent.PROGRESS_BEGINNING, b)
+        fun beginningEvent(b: Book) = DLProgressEvent(DLProgressEvent.PROGRESS_BEGINNING, b)
     }
 
-    val averageProgress: Int
-        get() = (bookProgress + indexProgress) / 2
-
-    fun toCircular() = (averageProgress.toFloat() * 360 / 100).toInt()
+    fun toCircular() = (progress.toFloat() * 360 / 100).toInt()
 }

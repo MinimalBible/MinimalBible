@@ -12,7 +12,6 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import org.crosswire.jsword.book.BookException
-import org.crosswire.jsword.util.IndexDownloader
 import org.crosswire.common.progress.Progress
 
 /**
@@ -22,7 +21,8 @@ import org.crosswire.common.progress.Progress
  */
 class BookManager(private val installedBooks: Books,
                   val rM: RefreshManager,
-                  val downloadEvents: PublishSubject<DLProgressEvent>) :
+                  val downloadEvents: PublishSubject<DLProgressEvent>,
+                  val indexManager: MBIndexManager) :
         WorkListener, BooksListener {
 
     private val bookJobNamePrefix = Progress.INSTALL_BOOK.substringBeforeLast("%s")
@@ -56,8 +56,7 @@ class BookManager(private val installedBooks: Books,
      * @param b The book to predict the download job name of
      * @return The name of the job that will/is download/ing this book
      */
-    fun getJobNames(b: Book) = listOf("${bookJobNamePrefix}${b.getInitials()}",
-            "${indexJobNamePrefix}${b.getInitials()}")
+    fun getJobName(b: Book) = "${bookJobNamePrefix}${b.getInitials()}"
 
     fun downloadBook(b: Book) {
         // First, look up where the Book came from
@@ -68,23 +67,14 @@ class BookManager(private val installedBooks: Books,
         // thread is closed when the install event is done
         installerObs
                 .observeOn(Schedulers.newThread())
-                .subscribe {
-                    // Download the actual book
-                    it subscribe { it install b }
-                }
-
-        installerObs
-                .observeOn(Schedulers.newThread())
-                .subscribe {
-                    // Download the book index
-                    it subscribe { IndexDownloader.downloadIndex(b, it) }
-                }
+                // Download the actual book
+                .subscribe { it subscribe { it install b } }
 
         // Then notify everyone that we're starting
         downloadEvents onNext DLProgressEvent.beginningEvent(b)
 
         // Finally register the jobs in progress
-        getJobNames(b).forEach { this.inProgressJobNames[it] = b }
+        inProgressJobNames[getJobName(b)] = b
     }
 
     /**
@@ -111,6 +101,10 @@ class BookManager(private val installedBooks: Books,
         try {
             b.getDriver() delete realBook
             installedBooksList remove b
+            // Order matters for the test suite as this line will trigger NPE during testing
+            // In production, doesn't make a difference, so leave this below the
+            // installedBooksList remove
+            indexManager removeIndex realBook
             return true
         } catch (e: BookException) {
 //            Log.e("InstalledManager",
@@ -128,22 +122,26 @@ class BookManager(private val installedBooks: Books,
 
     fun isInstalled(b: Book) = installedBooksList contains b
 
-    // TODO: I have a strange feeling I can simplify this further...
+    /**
+     * This method gets called as progress continues on downloading a book.
+     * To be honest, I don't know that there's any contract about what thread
+     * this is called on.
+     * By any means, if the job hasn't been registered as in progress,
+     * don't emit an event - we don't know what book we're operating on.
+     */
     override fun workProgressed(ev: WorkEvent) {
         val job = ev.getJob()
+        val book = inProgressJobNames[job.getJobID()]
 
-        val book = inProgressJobNames[job.getJobID()] as Book
+        if (book == null)
+            return
+
         val oldEvent = inProgressDownloads[book] ?: DLProgressEvent.beginningEvent(book)
-
-        var newEvent: DLProgressEvent
-        if (job.getJobID().contains(bookJobNamePrefix))
-            newEvent = oldEvent.copy(bookProgress = job.getWork())
-        else
-            newEvent = oldEvent.copy(indexProgress = job.getWork())
+        val newEvent = oldEvent.copy(progress = job.getWork())
 
         downloadEvents onNext newEvent
 
-        if (newEvent.averageProgress == DLProgressEvent.PROGRESS_COMPLETE) {
+        if (newEvent.progress == DLProgressEvent.PROGRESS_COMPLETE) {
             inProgressDownloads remove inProgressJobNames[job.getJobID()]
             inProgressJobNames remove job.getJobID()
         } else

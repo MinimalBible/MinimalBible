@@ -1,6 +1,11 @@
 package org.bspeice.minimalbible.activity.search;
 
 import org.bspeice.minimalbible.MinimalBibleModules;
+import org.crosswire.jsword.book.Book;
+import org.crosswire.jsword.index.IndexManager;
+import org.crosswire.jsword.index.IndexManagerFactory;
+
+import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
@@ -12,7 +17,13 @@ import dagger.Provides;
 public class SearchModules {
 
     @Provides
-    SearchProvider searchProvider() {
-        return new SearchProvider();
+    SearchProvider searchProvider(@Named("MainBook") Book book,
+                                  IndexManager indexManager) {
+        return new SearchProvider(book, indexManager);
+    }
+
+    @Provides
+    IndexManager jswordIndexManager() {
+        return IndexManagerFactory.getIndexManager();
     }
 }

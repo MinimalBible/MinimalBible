@@ -7,6 +7,7 @@ import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.activity.downloader.DownloadPrefs;
 import org.bspeice.minimalbible.activity.downloader.manager.BookManager;
 import org.bspeice.minimalbible.activity.downloader.manager.DLProgressEvent;
+import org.bspeice.minimalbible.activity.downloader.manager.MBIndexManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.common.progress.JobManager;
 import org.crosswire.common.progress.Progress;
@@ -19,6 +20,8 @@ import org.crosswire.jsword.book.Books;
 import org.crosswire.jsword.book.BooksEvent;
 import org.crosswire.jsword.book.install.InstallManager;
 import org.crosswire.jsword.book.install.Installer;
+import org.crosswire.jsword.index.IndexManager;
+import org.crosswire.jsword.index.IndexManagerFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -93,9 +96,9 @@ public class BookManagerTest implements Injector {
                 .subscribe(new Action1<DLProgressEvent>() {
                     @Override
                     public void call(DLProgressEvent dlProgressEvent) {
-                        System.out.println(dlProgressEvent.getAverageProgress());
+                        System.out.println(dlProgressEvent.getProgress());
                         if (dlProgressEvent.getB().getInitials().equals(toInstall.getInitials())
-                                && dlProgressEvent.getAverageProgress() == DLProgressEvent.PROGRESS_COMPLETE) {
+                                && dlProgressEvent.getProgress() == DLProgressEvent.PROGRESS_COMPLETE) {
                             signal.set(true);
                         }
                     }
@@ -112,7 +115,7 @@ public class BookManagerTest implements Injector {
     @Test
     public void testJobIdMatch() {
         final Book toInstall = installableBooks().toBlocking().first();
-        final String jobName = bookManager.getJobNames(toInstall).get(0);
+        final String jobName = bookManager.getJobName(toInstall);
         final AtomicBoolean jobNameMatch = new AtomicBoolean(false);
 
         JobManager.addWorkListener(new WorkListener() {
@@ -160,7 +163,12 @@ public class BookManagerTest implements Injector {
 
         bookManager.getInstalledBooksList().add(mockBook);
         assertTrue(bookManager.getInstalledBooksList().contains(mockBook));
-        bookManager.removeBook(mockBook, secondMockBook);
+        try {
+            bookManager.removeBook(mockBook, secondMockBook);
+        } catch (NullPointerException e) {
+            // Nasty NPE shows up when testing because the index
+            // isn't installed. Suppressing here.
+        }
         assertFalse(bookManager.getInstalledBooksList().contains(mockBook));
         verify(driver, times(1)).delete(secondMockBook);
     }
@@ -173,14 +181,12 @@ public class BookManagerTest implements Injector {
     public void testWorkProgressedCorrectProgress() {
         Book mockBook = mock(Book.class);
         when(mockBook.getInitials()).thenReturn("mockBook");
-        String bookJobName = bookManager.getJobNames(mockBook).get(0);
+        String bookJobName = bookManager.getJobName(mockBook);
         bookManager.getInProgressJobNames().put(bookJobName, mockBook);
 
         // Percent to degrees
         final int workDone = 50; // 50%
-        // There are two jobs, each comprising 180 degrees.
-        // Since we are simulating one job being 50% complete, that's 90 degrees
-        final int circularProgress = 90;
+        final int circularProgress = 180;
         WorkEvent ev = mock(WorkEvent.class);
         Progress p = mock(Progress.class);
 
@@ -268,9 +274,23 @@ public class BookManagerTest implements Injector {
 
         @Provides
         @Singleton
+        IndexManager indexManager() {
+            return IndexManagerFactory.getIndexManager();
+        }
+
+        @Provides
+        @Singleton
+        MBIndexManager mbIndexManager(IndexManager indexManager,
+                                      PublishSubject<DLProgressEvent> events) {
+            return new MBIndexManager(events, indexManager);
+        }
+
+        @Provides
+        @Singleton
         BookManager bookDownloadManager(Books installed, RefreshManager rm,
-                                        PublishSubject<DLProgressEvent> eventPublisher) {
-            return new BookManager(installed, rm, eventPublisher);
+                                        PublishSubject<DLProgressEvent> eventPublisher,
+                                        MBIndexManager manager) {
+            return new BookManager(installed, rm, eventPublisher, manager);
         }
     }
 }

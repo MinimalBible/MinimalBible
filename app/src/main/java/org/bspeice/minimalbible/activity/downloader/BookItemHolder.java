@@ -28,8 +28,8 @@ import rx.functions.Func1;
 import rx.subjects.PublishSubject;
 
 /**
-* Created by bspeice on 5/20/14.
-*/
+ * Created by bspeice on 5/20/14.
+ */
 public class BookItemHolder {
 
     // TODO: The holder should register and unregister itself for DownloadProgress events
@@ -46,7 +46,8 @@ public class BookItemHolder {
     ProgressWheel downloadProgress;
     @Inject
     BookManager bookManager;
-    @Inject @Named("DownloadActivityContext")
+    @Inject
+    @Named("DownloadActivityContext")
     Context ctx;
     @Inject
     PublishSubject<DLProgressEvent> downloadProgressEvents;
@@ -65,7 +66,7 @@ public class BookItemHolder {
         itemName.setText(b.getName());
         DLProgressEvent dlProgressEvent = bookManager.getDownloadProgress(b);
         if (dlProgressEvent != null) {
-            displayProgress(dlProgressEvent.toCircular());
+            displayProgress(dlProgressEvent);
         } else if (bookManager.isInstalled(b)) {
             displayInstalled();
         }
@@ -82,7 +83,7 @@ public class BookItemHolder {
                 .subscribe(new Action1<DLProgressEvent>() {
                     @Override
                     public void call(DLProgressEvent event) {
-                        BookItemHolder.this.displayProgress(event.toCircular());
+                        BookItemHolder.this.displayProgress(event);
                     }
                 });
     }
@@ -109,33 +110,31 @@ public class BookItemHolder {
 
     /**
      * Display the current progress of this download
-     * @param progress The progress out of 360 (degrees of a circle)
+     *
+     * @param event The event we need to display progress for
      */
-    private void displayProgress(int progress) {
+    private void displayProgress(DLProgressEvent event) {
 
-        int downloadView;
+        int downloadView = downloadProgress.getId();
+        int progress = event.getProgress();
+        int circular = event.toCircular();
 
         if (progress == DLProgressEvent.PROGRESS_BEGINNING) {
             // Download starting
-            downloadView = downloadProgress.getId();
-
             isDownloaded.setVisibility(View.GONE);
             downloadProgress.setVisibility(View.VISIBLE);
 
             downloadProgress.spin();
-        } else if (progress < 360) {
+        } else if (progress < DLProgressEvent.PROGRESS_COMPLETE) {
             // Download in progress
-            downloadView = downloadProgress.getId();
-
             isDownloaded.setVisibility(View.GONE);
             downloadProgress.setVisibility(View.VISIBLE);
 
             downloadProgress.stopSpinning();
-            downloadProgress.setProgress(progress);
+            downloadProgress.setProgress(circular);
         } else {
             // Download complete
             subscription.unsubscribe();
-            downloadView = downloadProgress.getId();
 
             isDownloaded.setVisibility(View.VISIBLE);
             downloadProgress.setVisibility(View.GONE);
