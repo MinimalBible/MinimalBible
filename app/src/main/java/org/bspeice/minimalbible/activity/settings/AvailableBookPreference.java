@@ -36,7 +36,7 @@ public class AvailableBookPreference extends ListPreference {
         for (int i = 0; i < books.size(); i++) {
             Book b = books.get(i);
             entries[i] = b.getName();
-            entryValues[i] = b.getName();
+            entryValues[i] = b.getInitials();
         }
 
         setEntries(entries);
