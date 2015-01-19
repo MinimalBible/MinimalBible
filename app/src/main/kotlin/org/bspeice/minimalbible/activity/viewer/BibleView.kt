@@ -17,27 +17,25 @@ import org.bspeice.minimalbible.service.format.osisparser.OsisParser
 import android.util.Log
 import android.content.Context
 import android.util.AttributeSet
-import kotlin.properties.Delegates
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.LinearLayout
+import android.view.View
 
 class BibleView(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, attrs) {
-    var bibleContent: RecyclerView by Delegates.notNull()
-    var scrollPublisher: PublishSubject<BookScrollEvent> by Delegates.notNull()
 
     val layoutManager: LinearLayoutManager = LinearLayoutManager(ctx)
     val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater;
+    val contentView: View = inflater.inflate(R.layout.view_bible, this, true)
+    val bibleContent = contentView.findViewById(R.id.bible_content) as RecyclerView
 
     {
-        val rootView = inflater.inflate(R.layout.view_bible, this, true)
-
-        bibleContent = rootView.findViewById(R.id.bible_content) as RecyclerView
         bibleContent setLayoutManager layoutManager
     }
 
-    fun setBook(b: Book, prefs: BibleViewerPreferences) {
+    fun doInitialize(b: Book, prefs: BibleViewerPreferences,
+                     publisher: PublishSubject<BookScrollEvent>) {
         val adapter = BookAdapter(b, prefs)
-        adapter.bindScrollHandler(scrollPublisher, layoutManager)
+        adapter.bindScrollHandler(publisher, layoutManager)
         bibleContent setAdapter adapter
         bibleContent scrollToPosition prefs.currentChapter()
     }

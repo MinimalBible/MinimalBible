@@ -17,26 +17,19 @@ import rx.subjects.PublishSubject
 import android.widget.LinearLayout
 import android.app.Activity
 import android.util.AttributeSet
-import kotlin.properties.Delegates
 import org.bspeice.minimalbible.activity.setInset
 import android.support.annotation.LayoutRes
 import org.crosswire.jsword.versification.BibleBook
 
 class BibleMenu(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, attrs) {
-    var menuContent: ExpandableListView by Delegates.notNull()
-    var scrollEventPublisher: PublishSubject<BookScrollEvent> by Delegates.notNull();
+    val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val contentView = inflater.inflate(R.layout.view_bible_menu, this, true)
+    val menuContent = findViewById(R.id._bible_menu) as ExpandableListView
 
-    {
-        val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        inflater.inflate(R.layout.view_bible_menu, this, true)
-
-        menuContent = findViewById(R.id._bible_menu) as ExpandableListView
-    }
-
-    fun setBible(b: Book) {
-        val adapter = BibleAdapter(b, scrollEventPublisher)
+    fun doInitialize(b: Book, publisher: PublishSubject<BookScrollEvent>) {
+        val adapter = BibleAdapter(b, publisher)
         menuContent setAdapter adapter
-        scrollEventPublisher subscribe {
+        publisher subscribe {
             menuContent.collapseGroup(adapter.getGroupIdForBook(it.b))
         }
     }

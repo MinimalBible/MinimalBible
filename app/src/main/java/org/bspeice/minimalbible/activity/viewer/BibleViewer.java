@@ -116,9 +116,6 @@ public class BibleViewer extends BaseActivity implements Injector {
 
         setInsetToolbar(toolbar);
 
-        // Currently you must set up the menu in exactly this order. Do I need to refactor this?
-        bibleMenu.setScrollEventPublisher(scrollEventPublisher);
-        bibleMenu.setBible(mainBook);
 
         // If a new chapter is selected, make sure we close the drawer
         // We can't specify `this` as the subscriber since we can't
@@ -130,9 +127,8 @@ public class BibleViewer extends BaseActivity implements Injector {
             }
         });
 
-        // Set up the view to respond to scroll events as well. Again, exact order is needed.
-        bibleContent.setScrollPublisher(scrollEventPublisher);
-        bibleContent.setBook(mainBook, prefs);
+        bibleMenu.doInitialize(mainBook, scrollEventPublisher);
+        bibleContent.doInitialize(mainBook, prefs, scrollEventPublisher);
     }
 
     public void closeMenu() {
