@@ -51,7 +51,7 @@ class BookAdapter(val b: Book, val prefs: BibleViewerPreferences)
 
     val versification = b.getVersification()
     val bookList = versification.getBooks()
-    val chapterCount = bookList.map { versification.getLastChapter(it) - 1 }.sum()
+    //    val chapterCount = bookList.map { versification.getLastChapter(it) - 1 }.sum()
 
     /**
      * Store information needed to decode the text of a chapter
@@ -117,7 +117,7 @@ class BookAdapter(val b: Book, val prefs: BibleViewerPreferences)
     /**
      * Get the number of chapters in the book
      */
-    override fun getItemCount(): Int = chapterCount
+    override fun getItemCount(): Int = chapterList.size()
 
     public fun bindScrollHandler(provider: PublishSubject<BookScrollEvent>,
                           lM: RecyclerView.LayoutManager) {
