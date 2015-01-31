@@ -21,9 +21,9 @@ class SearchProvider(val b: Book, val indexManager: IndexManager) {
             return listOf()
         }
 
-        val searchText = defaultSearchType.decorate(text)
-        val results = b.find(searchText)
-        return results.map { it as Verse }
+        val searchText = defaultSearchType decorate text
+        val results = b find searchText
+        return results map { it as Verse }
     }
 
     /**
@@ -31,6 +31,6 @@ class SearchProvider(val b: Book, val indexManager: IndexManager) {
      * seem to register itself properly in the book metadata
      */
     public fun isSearchAvailable(): Boolean =
-            indexManager.isIndexed(b)
+            indexManager isIndexed b
 
 }
