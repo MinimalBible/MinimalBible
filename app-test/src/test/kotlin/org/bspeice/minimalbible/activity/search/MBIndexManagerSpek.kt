@@ -12,6 +12,7 @@ import com.jayway.awaitility.Awaitility
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
+import kotlin.test.fail
 
 /**
  * Created by bspeice on 2/16/15.
@@ -107,11 +108,23 @@ class MBIndexManagerSpek() : Spek() {{
                 assertTrue(indexManager indexReady book)
             }
         }
+
+        on("attempting to index anyway") {
+            it("should throw an error") {
+                try {
+                    indexManager buildIndex book
+                    fail()
+                } catch (e: IllegalStateException) {
+                    // Intentionally empty body
+                }
+            }
+        }
     }
 
     given("a Book with an indexing error") {
         val mocks = Mocks()
         val book = mocks.mockBook
+        val mockIndex = mocks.mockIndex
         val indexManager = mocks.indexManager
 
         Mockito.`when`(book.getIndexStatus())
@@ -128,9 +141,18 @@ class MBIndexManagerSpek() : Spek() {{
                 assertFalse(indexManager indexReady book)
             }
         }
+
+        on("attempting to index") {
+            indexManager buildIndex book
+
+            it("should run the index") {
+                Mockito.verify(mockIndex, Mockito.times(1))
+                        .scheduleIndexCreation(book);
+            }
+        }
     }
 
-    given("a Book in progress of being indexed") {
+    given("a Book in process of being indexed") {
         val mocks = Mocks()
         val book = mocks.mockBook
         val indexManager = mocks.indexManager
@@ -147,6 +169,17 @@ class MBIndexManagerSpek() : Spek() {{
         on("trying to determine if the index is ready") {
             it("should let us know that the index is still in progress") {
                 assertFalse(indexManager shouldIndex book)
+            }
+        }
+
+        on("attempting to index anyway") {
+            it("should throw an error to let us know it will not index") {
+                try {
+                    indexManager buildIndex book
+                    fail()
+                } catch (e: IllegalStateException) {
+                    // Intentionally empty body
+                }
             }
         }
     }
