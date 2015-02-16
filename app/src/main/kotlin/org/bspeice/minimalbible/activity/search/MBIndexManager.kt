@@ -13,7 +13,9 @@ import rx.subjects.ReplaySubject
  */
 class MBIndexManager(val indexManager: IndexManager) {
 
-    fun shouldIndex(b: Book) = b.getIndexStatus() == IndexStatus.UNDONE
+    fun shouldIndex(b: Book) = b.getIndexStatus() == IndexStatus.UNDONE ||
+            b.getIndexStatus() == IndexStatus.INVALID
+
     fun indexReady(b: Book) = b.getIndexStatus() == IndexStatus.DONE
 
     /**
@@ -24,7 +26,7 @@ class MBIndexManager(val indexManager: IndexManager) {
      */
     fun buildIndex(b: Book): ReplaySubject<IndexStatus> {
         if (!shouldIndex(b)) {
-            Log.e("MBIndexManager", "Current status is ${b.getIndexStatus()}, not creating index")
+            // Log.e("MBIndexManager", "Current status is ${b.getIndexStatus()}, not creating index")
             throw IllegalStateException("Don't try and index a book that should not get it.")
         }
 
@@ -33,10 +35,10 @@ class MBIndexManager(val indexManager: IndexManager) {
                 .observeOn(Schedulers.computation())
                 .subscribe({
                     indexStatus.onNext(b.getIndexStatus())
-                    Log.e("MBIndexManager", "Building index for ${b.getInitials()}, ${b.getIndexStatus()}")
+                    // Log.e("MBIndexManager", "Building index for ${b.getInitials()}, ${b.getIndexStatus()}")
 
                     indexManager scheduleIndexCreation b
-                    Log.e("MBIndexManager", "Done building index for ${b.getInitials()}, ${b.getIndexStatus()}")
+                    // Log.e("MBIndexManager", "Done building index for ${b.getInitials()}, ${b.getIndexStatus()}")
 
                     indexStatus.onNext(b.getIndexStatus())
                     indexStatus.onCompleted()
