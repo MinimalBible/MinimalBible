@@ -8,15 +8,12 @@ import org.bspeice.minimalbible.MinimalBibleModules;
 import org.bspeice.minimalbible.activity.downloader.manager.BookManager;
 import org.bspeice.minimalbible.activity.downloader.manager.DLProgressEvent;
 import org.bspeice.minimalbible.activity.downloader.manager.LocaleManager;
-import org.bspeice.minimalbible.activity.downloader.manager.MBIndexManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
+import org.bspeice.minimalbible.activity.search.MBIndexManager;
 import org.crosswire.jsword.book.BookCategory;
 import org.crosswire.jsword.book.Books;
 import org.crosswire.jsword.book.install.InstallManager;
 import org.crosswire.jsword.book.install.Installer;
-import org.crosswire.jsword.index.IndexManager;
-import org.crosswire.jsword.index.IndexManagerFactory;
-import org.crosswire.jsword.index.IndexPolicyAdapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -129,16 +126,5 @@ public class DownloadActivityModules {
         return new LocaleManager(refreshManager);
     }
 
-    @Provides
-    IndexManager indexManager() {
-        IndexManager manager = IndexManagerFactory.getIndexManager();
-        manager.setIndexPolicy(new IndexPolicyAdapter());
-        return manager;
-    }
 
-    @Provides
-    MBIndexManager mbIndexManager(PublishSubject<DLProgressEvent> downloadEvents,
-                                  IndexManager indexManager) {
-        return new MBIndexManager(downloadEvents, indexManager);
-    }
 }

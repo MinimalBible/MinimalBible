@@ -3,10 +3,14 @@ package org.bspeice.minimalbible;
 import android.app.Application;
 import android.util.Log;
 
+import org.bspeice.minimalbible.activity.search.MBIndexManager;
 import org.bspeice.minimalbible.activity.viewer.BibleViewerPreferences;
 import org.bspeice.minimalbible.service.manager.BookManager;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.Books;
+import org.crosswire.jsword.index.IndexManager;
+import org.crosswire.jsword.index.IndexManagerFactory;
+import org.crosswire.jsword.index.IndexStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +103,8 @@ public class MinimalBibleModules {
 
     @Provides
     @Named("MainBook")
-    Book provideMainBook(BookManager bookManager, final BibleViewerPreferences prefs) {
+    Book provideMainBook(BookManager bookManager, final BibleViewerPreferences prefs,
+                         MBIndexManager indexManager) {
         final AtomicReference<Book> mBook = new AtomicReference<Book>(null);
         bookManager.getInstalledBooks()
                 .first(new Func1<Book, Boolean>() {
@@ -134,20 +139,36 @@ public class MinimalBibleModules {
                         .toBlocking().first();
 
                 prefs.defaultBookInitials(fallback.getName());
-                return fallback;
+                mBook.set(fallback);
             } catch (NoSuchElementException e) {
                 // If no books are installed, there's really nothing we can do...
                 Log.d("BibleViewerModules", "No books are installed, so can't select a main book.");
                 return null;
             }
-        } else {
-            return mBook.get();
         }
+
+        Book b = mBook.get();
+        if (b.getIndexStatus() != IndexStatus.DONE) {
+            indexManager.buildIndex(b);
+        }
+
+        return b;
     }
 
     @Provides
     @Singleton
     BookManager bookManager(List<String> exclude) {
         return new BookManager(exclude);
+    }
+
+    @Provides
+    @Singleton
+    IndexManager indexManager() {
+        return IndexManagerFactory.getIndexManager();
+    }
+
+    @Provides
+    MBIndexManager mbIndexManager(IndexManager indexManager) {
+        return new MBIndexManager(indexManager);
     }
 }

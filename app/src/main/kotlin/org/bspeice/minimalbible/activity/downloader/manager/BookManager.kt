@@ -13,6 +13,7 @@ import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import org.crosswire.jsword.book.BookException
 import org.crosswire.common.progress.Progress
+import org.bspeice.minimalbible.activity.search.MBIndexManager
 
 /**
  * Single point of authority for what is being downloaded and its progress
@@ -107,8 +108,8 @@ class BookManager(private val installedBooks: Books,
             indexManager removeIndex realBook
             return true
         } catch (e: BookException) {
-//            Log.e("InstalledManager",
-//                    "Unable to remove book (already uninstalled?): ${e.getDetailedMessage()}")
+            //            Log.e("InstalledManager",
+            //                    "Unable to remove book (already uninstalled?): ${e.getDetailedMessage()}")
             return false
         }
     }
@@ -150,7 +151,7 @@ class BookManager(private val installedBooks: Books,
     }
 
     override fun workStateChanged(ev: WorkEvent) {
-//        Log.d("BookDownloadManager", ev.toString())
+        //        Log.d("BookDownloadManager", ev.toString())
     }
 
     override fun bookAdded(booksEvent: BooksEvent) {
