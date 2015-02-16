@@ -7,8 +7,8 @@ import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.activity.downloader.DownloadPrefs;
 import org.bspeice.minimalbible.activity.downloader.manager.BookManager;
 import org.bspeice.minimalbible.activity.downloader.manager.DLProgressEvent;
-import org.bspeice.minimalbible.activity.downloader.manager.MBIndexManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
+import org.bspeice.minimalbible.activity.search.MBIndexManager;
 import org.crosswire.common.progress.JobManager;
 import org.crosswire.common.progress.Progress;
 import org.crosswire.common.progress.WorkEvent;
@@ -280,9 +280,8 @@ public class BookManagerTest implements Injector {
 
         @Provides
         @Singleton
-        MBIndexManager mbIndexManager(IndexManager indexManager,
-                                      PublishSubject<DLProgressEvent> events) {
-            return new MBIndexManager(events, indexManager);
+        MBIndexManager mbIndexManager(IndexManager indexManager) {
+            return new MBIndexManager(indexManager);
         }
 
         @Provides
