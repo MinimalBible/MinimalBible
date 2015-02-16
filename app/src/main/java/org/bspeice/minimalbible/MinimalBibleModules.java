@@ -10,7 +10,6 @@ import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.book.Books;
 import org.crosswire.jsword.index.IndexManager;
 import org.crosswire.jsword.index.IndexManagerFactory;
-import org.crosswire.jsword.index.IndexStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +29,7 @@ import rx.functions.Func1;
 /**
  * Entry point for the default modules used by MinimalBible
  */
+@SuppressWarnings("unused")
 @Module(library = true)
 public class MinimalBibleModules {
     MinimalBible app;
@@ -67,7 +67,7 @@ public class MinimalBibleModules {
      * Provide a raw reference to the books installed. Please don't use this, chances are
      * you should go through List<Book> since it excludes the invalid books.
      *
-     * @return
+     * @return The raw reference to JSword Books class
      */
     @Provides
     @Singleton
@@ -102,10 +102,10 @@ public class MinimalBibleModules {
     }
 
     @Provides
+    @Singleton
     @Named("MainBook")
-    Book provideMainBook(BookManager bookManager, final BibleViewerPreferences prefs,
-                         MBIndexManager indexManager) {
-        final AtomicReference<Book> mBook = new AtomicReference<Book>(null);
+    Book provideMainBook(BookManager bookManager, final BibleViewerPreferences prefs) {
+        final AtomicReference<Book> mBook = new AtomicReference<>(null);
         bookManager.getInstalledBooks()
                 .first(new Func1<Book, Boolean>() {
                     @Override
@@ -147,12 +147,7 @@ public class MinimalBibleModules {
             }
         }
 
-        Book b = mBook.get();
-        if (b.getIndexStatus() != IndexStatus.DONE) {
-            indexManager.buildIndex(b);
-        }
-
-        return b;
+        return mBook.get();
     }
 
     @Provides

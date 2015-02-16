@@ -20,8 +20,10 @@ import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 import org.bspeice.minimalbible.activity.search.BasicSearch;
+import org.bspeice.minimalbible.activity.search.MBIndexManager;
 import org.bspeice.minimalbible.activity.settings.MinimalBibleSettings;
 import org.crosswire.jsword.book.Book;
+import org.crosswire.jsword.index.IndexStatus;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,6 +31,7 @@ import javax.inject.Named;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import dagger.ObjectGraph;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
@@ -43,6 +46,9 @@ public class BibleViewer extends BaseActivity implements Injector {
 
     @Inject
     PublishSubject<BookScrollEvent> scrollEventPublisher;
+
+    @Inject
+    MBIndexManager indexManager;
 
     @InjectView(R.id.navigation_drawer)
     BibleMenu bibleMenu;
@@ -145,13 +151,17 @@ public class BibleViewer extends BaseActivity implements Injector {
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
         // And we can't call getActionView() directly, because it needs API 11+
-        MenuItem item = menu.findItem(R.id.action_search);
+        final MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
 
         // The Android docs instruct you to set up search in the current activity.
         // We want the search to actually run elsewhere.
         ComponentName cN = new ComponentName(this, BasicSearch.class);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(cN));
+
+        // Finally, search menu should be hidden by default - show it once we can guarantee
+        // than an index is created for the current book
+        displaySearchMenu(item, mainBook, indexManager);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -168,5 +178,37 @@ public class BibleViewer extends BaseActivity implements Injector {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Display the search menu as needed -
+     * Specifically, make the menu hidden by default, and show it once the book
+     * has actually been indexed.
+     *
+     * @param item         The menu item to switch visibility of
+     * @param b            The book controlling whether the menu is visible
+     * @param indexManager Manager to generate the index if it doesn't yet exist.
+     */
+    public void displaySearchMenu(final MenuItem item, final Book b,
+                                  final MBIndexManager indexManager) {
+        if (b.getIndexStatus() == IndexStatus.DONE) {
+            item.setVisible(true);
+            return;
+        }
+
+        item.setVisible(false);
+
+        if (indexManager.shouldIndex(b)) {
+            indexManager.buildIndex(b)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<IndexStatus>() {
+                        @Override
+                        public void call(IndexStatus indexStatus) {
+                            item.setVisible(indexManager.indexReady(b));
+                        }
+                    });
+        }
+
+        item.setVisible(indexManager.indexReady(b));
     }
 }
