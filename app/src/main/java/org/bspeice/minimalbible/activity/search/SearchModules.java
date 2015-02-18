@@ -18,7 +18,7 @@ public class SearchModules {
     @Provides
     SearchProvider searchProvider(@Named("MainBook") Book book,
                                   IndexManager indexManager) {
-        return new SearchProvider(book, indexManager);
+        return new SearchProvider(indexManager, book);
     }
 
 

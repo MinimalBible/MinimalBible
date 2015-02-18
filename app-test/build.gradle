@@ -6,6 +6,7 @@ apply plugin: 'com.github.kt3k.coveralls'
 evaluationDependsOn(":app")
 
 buildscript {
+    ext.kotlin_version = '0.10.770'
     repositories {
         mavenCentral()
     }
@@ -13,6 +14,7 @@ buildscript {
     dependencies {
         // Version lock for https://github.com/kt3k/coveralls-gradle-plugin/issues/27
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1x'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -20,6 +22,7 @@ repositories {
     maven {
         url 'http://repository.jetbrains.com/repo'
     }
+    mavenCentral()
 }
 
 // TODO: Make sure we test against the Debug variant
@@ -51,9 +54,11 @@ dependencies {
     testCompile firstVariant.javaCompile.classpath
     testCompile firstVariant.javaCompile.outputs.files
     testCompile files(androidModule.plugins.findPlugin("com.android.application").getBootClasspath())
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 def buildExcludeTree(path, excludes) {
+    //noinspection GroovyAssignabilityCheck
     def tree = fileTree(path).exclude(excludes)
     tree
 }
@@ -87,6 +92,6 @@ coveralls {
 }
 
 tasks.withType(Test) {
-    scanForTestClasses = false
+    scanForTestClasses = true
     includes = testIncludes
 }
