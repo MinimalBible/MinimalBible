@@ -10,22 +10,22 @@ import org.crosswire.jsword.index.IndexManager
  * This is the entry point for handling the actual bible search. Likely will support
  * an "advanced" search in the future, but for now, basicTextSearch is what you get.
  */
-class SearchProvider(val indexManager: IndexManager, val b: Book?) {
+class SearchProvider(val indexManager: IndexManager, val book: Book?) {
 
     val defaultSearchType = SearchType.ANY_WORDS
 
     [suppress("UNUSED_PARAMETER")]
     public fun basicTextSearch(text: String): List<Verse> {
         if (!isSearchAvailable()) {
-            Log.w("SearchProvider", "Search unavailable, index status of ${b?.getInitials()}: ${b?.getIndexStatus()}")
+            Log.w("SearchProvider", "Search unavailable, index status of ${book?.getInitials()}: ${book?.getIndexStatus()}")
             return listOf()
         }
 
         val searchText = defaultSearchType decorate text
         // We already checked for null in isSearchAvailable(), but Kotlin
         // doesn't keep track of that (yet)
-        val results = b!!.find(searchText)
-        return results map { it as Verse }
+        return book!!.find(searchText)
+                .map { it as Verse }
     }
 
     /**
@@ -34,7 +34,7 @@ class SearchProvider(val indexManager: IndexManager, val b: Book?) {
      * This check MUST guarantee that the book is not null.
      */
     public fun isSearchAvailable(): Boolean =
-            b != null &&
-            indexManager isIndexed b
+            book != null &&
+                    indexManager isIndexed book
 
 }

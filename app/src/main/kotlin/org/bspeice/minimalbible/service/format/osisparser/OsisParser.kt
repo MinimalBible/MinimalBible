@@ -16,21 +16,39 @@ import org.bspeice.minimalbible.service.format.osisparser.handler.DivineHandler
 
 /**
  * Parse out the OSIS XML into whatever we want!
+ * This takes in a SpannableStringBuilder to modify. Normally I'm not a fan
+ * of mutability, but due to the need for absolute efficiency in this class,
+ * that's what we're going with.
  * TODO: Speed up parsing. This is the single most expensive repeated operation
  */
-class OsisParser(val builder: SpannableStringBuilder) : DefaultHandler() {
+class OsisParser() : DefaultHandler() {
 
     // Don't pass a verse as part of the constructor, but still guarantee
     // that it will exist
     var verseContent: VerseContent by Delegates.notNull()
+    var builder: SpannableStringBuilder by Delegates.notNull()
 
     // TODO: Implement a stack to keep min API 8
     val handlerStack = ArrayDeque<TagHandler>()
 
-    fun appendVerse(b: Book, v: Verse): VerseContent {
+    fun appendVerse(b: Book, v: Verse,
+                    builder: SpannableStringBuilder): VerseContent {
         verseContent = VerseContent(v)
+        this.builder = builder
         BookData(b, v).getSAXEventProvider() provideSAXEvents this
         return verseContent
+    }
+
+    /**
+     * Parse a verse and return its content
+     * Only good for parsing a single verse at a time,
+     * but gives a cleaner API to work with (and means that
+     * we can just use the default constructor)
+     */
+    fun parseVerse(b: Book, v: Verse): SpannableStringBuilder {
+        val mBuilder = SpannableStringBuilder()
+        appendVerse(b, v, mBuilder)
+        return mBuilder
     }
 
     override fun startElement(uri: String, localName: String,

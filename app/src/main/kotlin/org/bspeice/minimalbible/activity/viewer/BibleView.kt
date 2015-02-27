@@ -13,13 +13,13 @@ import org.bspeice.minimalbible.activity.viewer.BookAdapter.ChapterInfo
 import rx.subjects.PublishSubject
 import android.text.SpannableStringBuilder
 import android.util.TypedValue
-import org.bspeice.minimalbible.service.format.osisparser.OsisParser
 import android.util.Log
 import android.content.Context
 import android.util.AttributeSet
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.LinearLayout
 import android.view.View
+import org.bspeice.minimalbible.service.format.osisparser.OsisParser
 
 class BibleView(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, attrs) {
 
@@ -120,7 +120,7 @@ class BookAdapter(val b: Book, val prefs: BibleViewerPreferences)
     override fun getItemCount(): Int = chapterList.size()
 
     public fun bindScrollHandler(provider: PublishSubject<BookScrollEvent>,
-                          lM: RecyclerView.LayoutManager) {
+                                 lM: RecyclerView.LayoutManager) {
         provider subscribe {
             val event = it
             lM scrollToPosition
@@ -145,7 +145,8 @@ class PassageView(val v: TextView, val b: Book)
 
     fun getAllVerses(verses: Progression<Int>, info: ChapterInfo): SpannableStringBuilder {
         val builder = SpannableStringBuilder()
-        verses.forEach { OsisParser(builder).appendVerse(b, buildOrdinal(it, info)) }
+        val parser = OsisParser()
+        verses.forEach { parser.appendVerse(b, buildOrdinal(it, info), builder) }
         return builder
     }
 
