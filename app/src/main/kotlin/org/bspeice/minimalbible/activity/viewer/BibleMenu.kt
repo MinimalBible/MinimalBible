@@ -1,29 +1,27 @@
 package org.bspeice.minimalbible.activity.viewer
 
-import android.widget.BaseExpandableListAdapter
+import android.content.Context
+import android.content.res.Resources
+import android.support.annotation.LayoutRes
+import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import org.crosswire.jsword.book.Book
-import org.crosswire.jsword.book.getVersification
-import org.crosswire.jsword.versification.getBooks
-import org.crosswire.jsword.book.bookName
+import android.widget.BaseExpandableListAdapter
+import android.widget.ExpandableListView
+import android.widget.LinearLayout
 import android.widget.TextView
 import org.bspeice.minimalbible.R
-import android.content.Context
-import android.view.LayoutInflater
-import android.content.res.Resources
-import android.widget.ExpandableListView
-import rx.subjects.PublishSubject
-import android.widget.LinearLayout
-import android.app.Activity
-import android.util.AttributeSet
-import org.bspeice.minimalbible.activity.setInset
-import android.support.annotation.LayoutRes
+import org.crosswire.jsword.book.Book
+import org.crosswire.jsword.book.bookName
+import org.crosswire.jsword.book.getVersification
 import org.crosswire.jsword.versification.BibleBook
+import org.crosswire.jsword.versification.getBooks
+import rx.subjects.PublishSubject
 
 class BibleMenu(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, attrs) {
-    val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    val contentView = inflater.inflate(R.layout.view_bible_menu, this, true)
+    //    val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    //    val contentView = inflater.inflate(R.layout.view_bible_menu, this, true)
     val menuContent = findViewById(R.id._bible_menu) as ExpandableListView
 
     fun doInitialize(b: Book, publisher: PublishSubject<BookScrollEvent>) {
@@ -33,8 +31,6 @@ class BibleMenu(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, a
             menuContent.collapseGroup(adapter.getGroupIdForBook(it.b))
         }
     }
-
-    fun placeInset(a: Activity) = setInset(a)
 }
 
 /**
@@ -62,7 +58,6 @@ class BibleAdapter(val b: Book, val scrollPublisher: PublishSubject<BookScrollEv
     )
 
     var groupHighlighted: Int = 0
-    var childHighlighted: Int = 0
 
     override fun getGroupCount(): Int = menuMappings.count()
 
@@ -135,7 +130,7 @@ class GroupItemHolder(val bindTo: View) {
     val content = bindTo.findViewById(R.id.content) as TextView
     val resources = bindTo.getResources(): Resources
 
-    class object {
+    companion object {
         fun init(v: View, obj: Any, highlighted: Boolean): View {
             val holder =
                     if (v.getTag() != null) v.getTag() as GroupItemHolder
@@ -166,7 +161,7 @@ class ChildItemHolder(val bindTo: View, val book: BibleBook,
     val content2 = bindTo.findViewById(R.id.content2) as TextView
     val content3 = bindTo.findViewById(R.id.content3) as TextView
 
-    class object {
+    companion object {
         fun init(v: View, obj: IntRange, book: BibleBook,
                  scrollPublisher: PublishSubject<BookScrollEvent>): View {
             val holder =

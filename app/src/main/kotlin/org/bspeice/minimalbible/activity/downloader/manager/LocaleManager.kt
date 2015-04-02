@@ -1,8 +1,8 @@
 package org.bspeice.minimalbible.activity.downloader.manager
 
 import org.crosswire.common.util.Language
-import rx.Observable
 import org.crosswire.jsword.book.BookCategory
+import rx.Observable
 import kotlin.platform.platformStatic
 
 /**
@@ -38,7 +38,7 @@ class LocaleManager(val rM: RefreshManager) {
                     // And flatten this into the actual List needed
                     .toBlocking().first()
 
-    class object {
+    companion object {
         platformStatic
         fun compareLanguages(left: Language, right: Language, current: Language) =
                 if (left == right)

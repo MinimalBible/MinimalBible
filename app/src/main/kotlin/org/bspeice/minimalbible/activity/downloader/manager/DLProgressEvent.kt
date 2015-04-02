@@ -7,7 +7,7 @@ import org.crosswire.jsword.book.Book
  */
 data class DLProgressEvent(val progress: Int,
                            val b: Book) {
-    class object {
+    companion object {
         val PROGRESS_COMPLETE = 100
         val PROGRESS_BEGINNING = 0
 

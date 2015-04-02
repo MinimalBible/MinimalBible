@@ -1,19 +1,14 @@
 package org.bspeice.minimalbible.activity.downloader.manager
 
-import org.crosswire.common.progress.JobManager;
-import org.crosswire.common.progress.WorkEvent;
-import org.crosswire.common.progress.WorkListener;
-import org.crosswire.jsword.book.Book;
-import org.crosswire.jsword.book.Books;
-import org.crosswire.jsword.book.BooksEvent;
-import org.crosswire.jsword.book.BooksListener;
-
-import rx.Observable;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
-import org.crosswire.jsword.book.BookException
-import org.crosswire.common.progress.Progress
 import org.bspeice.minimalbible.activity.search.MBIndexManager
+import org.crosswire.common.progress.JobManager
+import org.crosswire.common.progress.Progress
+import org.crosswire.common.progress.WorkEvent
+import org.crosswire.common.progress.WorkListener
+import org.crosswire.jsword.book.*
+import rx.Observable
+import rx.schedulers.Schedulers
+import rx.subjects.PublishSubject
 
 /**
  * Single point of authority for what is being downloaded and its progress
@@ -27,7 +22,6 @@ class BookManager(private val installedBooks: Books,
         WorkListener, BooksListener {
 
     private val bookJobNamePrefix = Progress.INSTALL_BOOK.substringBeforeLast("%s")
-    private val indexJobNamePrefix = Progress.DOWNLOAD_SEARCH_INDEX.substringBeforeLast("%s")
 
     /**
      * List of jobs currently active by their job name
@@ -42,9 +36,9 @@ class BookManager(private val installedBooks: Books,
     /**
      * A list of books that is locally maintained - installedBooks isn't always up-to-date
      */
-    val installedBooksList: MutableList<Book> = installedBooks.getBooks() ?: linkedListOf();
+    val installedBooksList: MutableList<Book> = installedBooks.getBooks() ?: linkedListOf()
 
-    {
+    init {
         JobManager.addWorkListener(this)
         installedBooks.addBooksListener(this)
         downloadEvents.subscribe { this.inProgressDownloads[it.b] = it }

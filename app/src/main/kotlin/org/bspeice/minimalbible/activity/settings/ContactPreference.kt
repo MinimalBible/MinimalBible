@@ -1,17 +1,17 @@
 package org.bspeice.minimalbible.activity.settings
 
 import android.content.Context
-import android.util.AttributeSet
-import android.preference.Preference
 import android.content.Intent
-import org.bspeice.minimalbible.R
-import android.os.Build
 import android.net.Uri
+import android.os.Build
+import android.preference.Preference
+import android.util.AttributeSet
+import org.bspeice.minimalbible.R
 
 class ContactPreference(val ctx: Context, val attrs: AttributeSet)
 : Preference(ctx, attrs), Preference.OnPreferenceClickListener {
 
-    {
+    init {
         setOnPreferenceClickListener(this);
     }
 

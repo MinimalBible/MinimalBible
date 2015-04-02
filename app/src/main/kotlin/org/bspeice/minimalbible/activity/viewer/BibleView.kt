@@ -1,25 +1,25 @@
 package org.bspeice.minimalbible.activity.viewer
 
-import android.support.v7.widget.RecyclerView
-import android.view.ViewGroup
-import org.crosswire.jsword.book.Book
-import android.view.LayoutInflater
-import org.bspeice.minimalbible.R
-import android.widget.TextView
-import org.crosswire.jsword.book.getVersification
-import org.crosswire.jsword.versification.getBooks
-import org.crosswire.jsword.versification.BibleBook
-import org.bspeice.minimalbible.activity.viewer.BookAdapter.ChapterInfo
-import rx.subjects.PublishSubject
-import android.text.SpannableStringBuilder
-import android.util.TypedValue
-import android.util.Log
 import android.content.Context
-import android.util.AttributeSet
 import android.support.v7.widget.LinearLayoutManager
-import android.widget.LinearLayout
+import android.support.v7.widget.RecyclerView
+import android.text.SpannableStringBuilder
+import android.util.AttributeSet
+import android.util.Log
+import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import org.bspeice.minimalbible.R
+import org.bspeice.minimalbible.activity.viewer.BookAdapter.ChapterInfo
 import org.bspeice.minimalbible.service.format.osisparser.OsisParser
+import org.crosswire.jsword.book.Book
+import org.crosswire.jsword.book.getVersification
+import org.crosswire.jsword.versification.BibleBook
+import org.crosswire.jsword.versification.getBooks
+import rx.subjects.PublishSubject
 
 class BibleView(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, attrs) {
 
@@ -28,7 +28,7 @@ class BibleView(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, a
     val contentView: View = inflater.inflate(R.layout.view_bible, this, true)
     val bibleContent = contentView.findViewById(R.id.bible_content) as RecyclerView
 
-    {
+    init {
         bibleContent setLayoutManager layoutManager
     }
 
@@ -96,7 +96,7 @@ class BookAdapter(val b: Book, val prefs: BibleViewerPreferences)
      */
     override fun onCreateViewHolder(parent: ViewGroup?,
                                     position: Int): PassageView {
-        val emptyView = LayoutInflater.from(parent?.getContext())
+        val emptyView = LayoutInflater.from(parent!!.getContext())
                 .inflate(R.layout.viewer_passage_view, parent, false) as TextView
 
         // TODO: Listen for changes to the text size?
@@ -125,14 +125,14 @@ class BookAdapter(val b: Book, val prefs: BibleViewerPreferences)
             val event = it
             lM scrollToPosition
                     // Get all objects in the form (index, object)
-                    chapterList.withIndices()
-                            // Get one that matches our book and chapter
+                    chapterList.withIndex()
+                            // get one that matches our book and chapter
                             .first {
-                                event.b == it.second.bibleBook &&
-                                        event.chapter == it.second.chapter
+                                event.b == it.value.bibleBook &&
+                                        event.chapter == it.value.chapter
                             }
-                            // And get that index value to scroll to
-                            .first
+                            // and get that index value to scroll to
+                            .index
         }
     }
 }

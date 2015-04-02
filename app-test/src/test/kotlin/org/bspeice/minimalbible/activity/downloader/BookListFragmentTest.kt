@@ -1,14 +1,14 @@
 package org.bspeice.minimalbible.activity.downloader
 
+import android.content.DialogInterface
 import org.jetbrains.spek.api.Spek
 import kotlin.test.assertTrue
-import android.content.DialogInterface
 
 /**
  * Created by bspeice on 11/22/14.
  */
 
-class BookListFragmentSpek : Spek() {{
+class BookListFragmentSpek : Spek() {init {
 
     given("A BookListFragment with showDialog() mocked out") {
         val fragment = object : BookListFragment() {

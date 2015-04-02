@@ -1,17 +1,17 @@
 package org.bspeice.minimalbible.activity.search
 
+import com.jayway.awaitility.Awaitility
+import org.crosswire.jsword.book.Book
+import org.crosswire.jsword.index.IndexManager
+import org.crosswire.jsword.index.IndexStatus
 import org.jetbrains.spek.api.Spek
 import org.mockito.Mockito
-import org.crosswire.jsword.index.IndexManager
-import org.crosswire.jsword.book.Book
-import org.crosswire.jsword.index.IndexStatus
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.assertEquals
-import com.jayway.awaitility.Awaitility
-import java.util.concurrent.TimeUnit
-import kotlin.test.assertTrue
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.test.fail
 
 /**
@@ -23,7 +23,7 @@ data class Mocks() {
     val indexManager = MBIndexManager(mockIndex)
 }
 
-class MBIndexManagerSpek() : Spek() {{
+class MBIndexManagerSpek() : Spek() {init {
 
     given("a mock IndexManager, Book, and real MBIndexManager") {
         val mocks = Mocks()

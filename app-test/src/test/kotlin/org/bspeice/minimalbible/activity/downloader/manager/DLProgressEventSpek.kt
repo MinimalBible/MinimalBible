@@ -4,11 +4,12 @@
 
 import org.bspeice.minimalbible.activity.downloader.manager.DLProgressEvent
 import org.crosswire.jsword.book.Book
-import org.mockito.Mockito.mock
 import org.jetbrains.spek.api.Spek
+import org.mockito.Mockito.mock
 import kotlin.test.assertEquals
 
-class DLProgressEventSpek : Spek() {{
+
+class DLProgressEventSpek : Spek() {init {
 
     given("a DLProgressEvent created with 50% progress and a mock book") {
         val mockBook = mock(javaClass<Book>())

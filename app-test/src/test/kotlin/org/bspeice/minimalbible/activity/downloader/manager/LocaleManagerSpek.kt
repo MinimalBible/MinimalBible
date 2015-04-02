@@ -1,13 +1,13 @@
 package org.bspeice.minimalbible.activity.downloader.manager
 
-import org.jetbrains.spek.api.Spek
 import org.crosswire.common.util.Language
+import org.jetbrains.spek.api.Spek
 
 /**
  * Created by bspeice on 12/14/14.
  */
 
-class LocaleManagerSpek() : Spek() {{
+class LocaleManagerSpek() : Spek() {init {
 
     given("some example language objects") {
         val english = Language("en")

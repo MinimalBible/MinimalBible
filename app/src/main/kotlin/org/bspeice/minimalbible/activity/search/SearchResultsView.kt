@@ -1,17 +1,17 @@
 package org.bspeice.minimalbible.activity.search
 
 import android.content.Context
-import android.util.AttributeSet
-import android.widget.LinearLayout
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.util.AttributeSet
 import android.view.LayoutInflater
-import org.bspeice.minimalbible.R
-import org.crosswire.jsword.passage.Verse
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
+import org.bspeice.minimalbible.R
 import org.bspeice.minimalbible.service.format.osisparser.OsisParser
 import org.crosswire.jsword.book.Book
-import android.view.ViewGroup
+import org.crosswire.jsword.passage.Verse
 
 /**
  * Created by bspeice on 2/26/15.
@@ -21,9 +21,9 @@ class SearchResultsListView(val ctx: Context, val attrs: AttributeSet) : LinearL
     val layoutManager = LinearLayoutManager(ctx)
     val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     val contentView = inflater.inflate(R.layout.view_search_results_list, this, true)
-    val searchResults = contentView.findViewById(R.id.search_results) as RecyclerView;
+    val searchResults = contentView.findViewById(R.id.search_results) as RecyclerView
 
-    {
+    init {
         searchResults setLayoutManager layoutManager
     }
 
@@ -69,7 +69,7 @@ class ResultViewHolder(val view: SearchResultView) : RecyclerView.ViewHolder(vie
  * A custom view to wrap showing a search result
  */
 class SearchResultView(val group: ViewGroup?) {
-    val inflater = LayoutInflater.from(group?.getContext())
+    val inflater = LayoutInflater.from(group!!.getContext())
     val contentView = inflater.inflate(R.layout.view_search_result, group, false)
 
     val verseName = contentView.findViewById(R.id.verseName) as TextView

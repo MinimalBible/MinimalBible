@@ -6,7 +6,6 @@ apply plugin: 'com.github.kt3k.coveralls'
 evaluationDependsOn(":app")
 
 buildscript {
-    ext.kotlin_version = '0.10.770'
     repositories {
         mavenCentral()
     }
@@ -49,7 +48,7 @@ dependencies {
     testCompile 'org.robolectric:robolectric:2.+'
     testCompile 'org.mockito:mockito-core:+'
     testCompile 'com.jayway.awaitility:awaitility:+'
-    testCompile 'org.jetbrains.spek:spek:+'
+    testCompile 'org.jetbrains.spek:spek:0.1-SNAPSHOT'
 
     testCompile firstVariant.javaCompile.classpath
     testCompile firstVariant.javaCompile.outputs.files

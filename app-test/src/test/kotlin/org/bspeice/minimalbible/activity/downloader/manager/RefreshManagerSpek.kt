@@ -1,23 +1,23 @@
 package org.bspeice.minimalbible.activity.downloader.manager
 
-import org.jetbrains.spek.api.Spek
-import org.bspeice.minimalbible.activity.downloader.DownloadPrefs
-import java.util.Calendar
-import org.crosswire.jsword.book.install.Installer
-import org.mockito.Mockito.*
-import org.mockito.Matchers.*
-import rx.schedulers.Schedulers
-import java.util.concurrent.atomic.AtomicBoolean
 import com.jayway.awaitility.Awaitility
-import java.util.concurrent.TimeUnit
-import rx.Subscriber
+import org.bspeice.minimalbible.activity.downloader.DownloadPrefs
 import org.crosswire.jsword.book.Book
+import org.crosswire.jsword.book.install.Installer
+import org.jetbrains.spek.api.Spek
+import org.mockito.Matchers.anyLong
+import org.mockito.Mockito.*
+import rx.Subscriber
+import rx.schedulers.Schedulers
+import java.util.Calendar
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Created by bspeice on 1/3/15.
  */
 
-class RefreshManagerSpek() : Spek() {{
+class RefreshManagerSpek() : Spek() {init {
 
     fun buildRefreshmanager(installers: List<Installer>, prefs: DownloadPrefs) =
             RefreshManager(installers, listOf(""), prefs, null)

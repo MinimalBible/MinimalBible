@@ -1,11 +1,11 @@
 package org.bspeice.minimalbible.service.manager
 
-import rx.Observable
-import org.crosswire.jsword.book.Books
-import rx.functions.Action1
-import org.crosswire.jsword.book.Book
-import rx.functions.Action0
 import org.bspeice.minimalbible.exception.NoBooksInstalledException
+import org.crosswire.jsword.book.Book
+import org.crosswire.jsword.book.Books
+import rx.Observable
+import rx.functions.Action0
+import rx.functions.Action1
 import javax.inject.Singleton
 
 /**
@@ -21,9 +21,9 @@ open class BookManager(val ignore: List<String>) {
             ?.filter { !ignore.contains(it!!.getInitials()) }
             ?.cache() ?: throw NoBooksInstalledException()
 
-    var refreshComplete = false;
+    var refreshComplete = false
 
-    {
+    init {
         // TODO: Cleaner way of expressing this?
         installedBooks.subscribe(Action1<Book> { result -> },
                 Action1<Throwable> { error -> },
