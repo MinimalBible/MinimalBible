@@ -20,9 +20,9 @@ import org.crosswire.jsword.versification.getBooks
 import rx.subjects.PublishSubject
 
 class BibleMenu(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, attrs) {
-    //    val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    //    val contentView = inflater.inflate(R.layout.view_bible_menu, this, true)
-    val menuContent = findViewById(R.id._bible_menu) as ExpandableListView
+    val inflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val contentView = inflater.inflate(R.layout.view_bible_menu, this, true)
+    val menuContent = contentView.findViewById(R.id._bible_menu) as ExpandableListView
 
     fun doInitialize(b: Book, publisher: PublishSubject<BookScrollEvent>) {
         val adapter = BibleAdapter(b, publisher)
