@@ -124,12 +124,11 @@ public class BibleViewer extends BaseActivity implements Injector {
 
 
         // If a new chapter is selected, make sure we close the drawer
-        // We can't specify `this` as the subscriber since we can't
-        // extend Action1
+        // It's a long lookup chain, but still holds to Law of Demeter
         scrollEventPublisher.subscribe(new Action1<BookScrollEvent>() {
             @Override
             public void call(BookScrollEvent bookScrollEvent) {
-                closeMenu();
+                BibleViewer.this.drawerLayout.closeDrawers();
             }
         });
 
@@ -137,8 +136,28 @@ public class BibleViewer extends BaseActivity implements Injector {
         bibleContent.doInitialize(mainBook, prefs, scrollEventPublisher);
     }
 
-    public void closeMenu() {
-        drawerLayout.closeDrawers();
+    /**
+     * Re-start the activity
+     * Mostly this is used for handling a search completing, and we need to
+     * display the result.
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        handleSearchIntent(getIntent());
+    }
+
+    /**
+     * Handle navigating to the chapter if we are started by searching.
+     * The scrollNum will be -1 if we weren't started by search.
+     *
+     * @param i The intent the activity was started with
+     */
+    public void handleSearchIntent(Intent i) {
+        Integer scrollNum = ViewerIntent.Companion.decodeSearchResult(i);
+        if (scrollNum > 0) {
+            scrollEventPublisher.onNext(new BookScrollEvent(mainBook, scrollNum));
+        }
     }
 
     @Override
