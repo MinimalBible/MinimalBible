@@ -4,11 +4,13 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
+        classpath 'com.github.triplet.gradle:play-publisher:1.0.2'
     }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'play'
 
 android {
     compileSdkVersion 21
@@ -17,7 +19,12 @@ android {
         applicationId 'org.bspeice.minimalbible'
         minSdkVersion 8
         targetSdkVersion 21
-        versionCode 8
+
+        def travis_code = System.getenv("TRAVIS_BUILD_NUMBER")
+        if (travis_code)
+            versionCode travis_code.toInteger()
+        else
+            versionCode 0
         versionName '0.7'
     }
     packagingOptions {
@@ -32,9 +39,27 @@ android {
         exclude 'NOTICE'
         exclude 'asm-license.txt'
     }
+    signingConfigs {
+        release {
+            storeFile file('src/main/play/MinimalBible.jks')
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias 'minimalbible signing key'
+            keyPassword System.getenv("KEYSTORE_PASSWORD")
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+}
+
+play {
+    serviceAccountEmail = System.getenv("SERVICE_ACCOUNT_EMAIL")
+    pk12File = file('src/main/play/play_api.p12')
 }
 
 dependencies {
@@ -53,7 +78,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.+'
     compile 'com.android.support:recyclerview-v7:21.+'
     compile 'org.apache.commons:commons-lang3:+'
-    compile 'com.google.code.gson:gson:+'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     androidTestCompile 'com.jayway.awaitility:awaitility:+'
