@@ -9,14 +9,16 @@ extra-android-m2repository
 extra-android-support
 extra-google-m2repository"
 
+SDK_VERSION="24.1.2"
+
 echo "Updating packages..."
 sudo apt-get update -qq
 
 echo "Installing Android dependencies..."
 sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch
 
-wget http://dl.google.com/android/android-sdk_r23.0.2-linux.tgz
-tar -zxf android-sdk_r23.0.2-linux.tgz
+wget http://dl.google.com/android/android-sdk_r${SDK_VERSION}-linux.tgz
+tar -zxf android-sdk_r${SDK_VERSION}-linux.tgz
 
 for COMP in ${COMPONENTS}
 do
