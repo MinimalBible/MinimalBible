@@ -13,5 +13,7 @@ script:
 - ./gradlew test --stacktrace
 after_success:
 - ./gradlew jacocoTestReport coveralls
-- if [ $TRAVIS_TAG ]; then echo "Publishing to Play store..." ./gradlew publishRelease
+- if [ $TRAVIS_TAG ];
+  then echo "Publishing to Play store...";
+  ./gradlew publishRelease;
   fi
