@@ -7,7 +7,7 @@ env:
   - secure: BezK2LQRlHA4bgfShHH9l8/N0roGcMCxzAXV3CoGw4OWp6npUbIGvj1H4scA2OAMpct7u6fS9T0//FQehe6tbsHniVfsRxrmwsj8SqXQ6E3tQ4lZeFu9q6dy2qgIaktY9q2SIkf+/1DG5b7gd/KJX4luU8LX1RErorco6+MGuoQ=
 before_install:
 - openssl aes-256-cbc -K $encrypted_b017c1e684ac_key -iv $encrypted_b017c1e684ac_iv
-  -in play_api.p12.enc -out play_api.p12 -d
+  -in app/src/main/play/play_api.p12.enc -out app/src/main/play/play_api.p12 -d
 - bash android_install.sh
 script:
 - ./gradlew test
