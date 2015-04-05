@@ -4,7 +4,7 @@ env:
   - ANDROID_HOME="./android-sdk-linux"
   global:
   - secure: FFXEK5dnQaJ2nSyaggVO66uNfpM6WYdS962qjY4ry9OumoK9OHg25MeQPrWmQurUaDDRfzdjMTs0UicWvJAnka846dDpYVbt0bpWbnNsq8vb05h1XhCsjjnEwcgPzbbyoAecmx7m1noAhkjFVnqmUhnjoYIsNd/pIRplO+r+0PY=
-  - secure: ST7fOgOrFFcjmxvnfu0mlQIi1uQ3/59hQk/LDRjucPCvhW1XjSfJVZvT7k9qgX7lgQf+fie0UekR26bX4RdxcJxLkJ9QH0ykr2WFlGWqXRuI0QcFMM4JMhwzCR65+2JMeI77SRvPLvCCRUO2thAEFze+rICqzIjwghcf4/2tc6w=
+  - secure: jrti7lGbCxscGDzOVgcVuIMSFnTUfJSbL5VtvhZXKllRoKeuM4tJ8HMubUKG0UXR0VGZl3XPcj3Ga7W6gxxSOavA9zmkT1kC9v/ya9QPQI1hCn1kq0GESxj3uFeYyiSa3T/0GcEO0bB660ttRSfpSwQ+MZknJUzIIdTt7K3LjXA=
 before_install:
 - openssl aes-256-cbc -K $encrypted_b017c1e684ac_key -iv $encrypted_b017c1e684ac_iv
   -in app/src/main/play/play_api.p12.enc -out app/src/main/play/play_api.p12 -d
@@ -13,7 +13,5 @@ script:
 - ./gradlew test --stacktrace
 after_success:
 - ./gradlew jacocoTestReport coveralls
-- if [ $TRAVIS_TAG ]; then
-  echo "Publishing to Play store..."
-  ./gradlew publishRelease
+- if [ $TRAVIS_TAG ]; then echo "Publishing to Play store..." ./gradlew publishRelease
   fi
