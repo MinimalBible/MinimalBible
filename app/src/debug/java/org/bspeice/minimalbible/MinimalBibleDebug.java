@@ -1,5 +1,8 @@
 package org.bspeice.minimalbible;
 
+import com.orhanobut.logger.LogLevel;
+import com.orhanobut.logger.Logger;
+
 /**
  * Create a MinimalBible application that we can extend from the main release
  * Currently it's not doing much, but would allow for shenanigans during testing in the future
@@ -15,6 +18,9 @@ public class MinimalBibleDebug extends MinimalBible implements Injector {
     @Override
     public void onCreate() {
         super.onCreate();
+        Logger.init("MinimalBible")
+                .setLogLevel(LogLevel.FULL);
+        Logger.d("Beginning application run...");
 //        ACRA.init(this);
     }
 }

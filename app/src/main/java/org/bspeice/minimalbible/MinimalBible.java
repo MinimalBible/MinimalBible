@@ -2,7 +2,9 @@ package org.bspeice.minimalbible;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
+
+import com.orhanobut.logger.LogLevel;
+import com.orhanobut.logger.Logger;
 
 import org.crosswire.jsword.book.sword.SwordBookPath;
 
@@ -24,6 +26,7 @@ public class MinimalBible extends Application implements Injector {
     @Override
     public void onCreate() {
         super.onCreate();
+        Logger.init().setLogLevel(LogLevel.NONE);
         buildObjGraph();
         setJswordHome();
     }
@@ -49,10 +52,10 @@ public class MinimalBible extends Application implements Injector {
         // We need to set the download directory for jSword to stick with
         // Android.
         String home = this.getFilesDir().toString();
-        Log.d(TAG, "Setting jsword.home to: " + home);
+        Logger.d(TAG, "Setting jsword.home to: " + home);
         System.setProperty("jsword.home", home);
         System.setProperty("sword.home", home);
         SwordBookPath.setDownloadDir(new File(home));
-        Log.d(TAG, "Sword download path: " + SwordBookPath.getSwordDownloadDir());
+        Logger.d(TAG, "Sword download path: " + SwordBookPath.getSwordDownloadDir());
     }
 }
