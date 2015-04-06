@@ -1,18 +1,17 @@
 package org.bspeice.minimalbible.service.format.osisparser
 
-import org.xml.sax.helpers.DefaultHandler
-import org.crosswire.jsword.passage.Verse
-import java.util.ArrayDeque
-import org.xml.sax.Attributes
-import org.crosswire.jsword.book.OSISUtil
-import org.crosswire.jsword.book.BookData
-import org.crosswire.jsword.book.Book
-import kotlin.properties.Delegates
-import org.bspeice.minimalbible.service.format.osisparser.handler.TagHandler
-import org.bspeice.minimalbible.service.format.osisparser.handler.VerseHandler
-import org.bspeice.minimalbible.service.format.osisparser.handler.UnknownHandler
 import android.text.SpannableStringBuilder
-import org.bspeice.minimalbible.service.format.osisparser.handler.DivineHandler
+import org.bspeice.minimalbible.MinimalBible
+import org.bspeice.minimalbible.R
+import org.bspeice.minimalbible.service.format.osisparser.handler.*
+import org.crosswire.jsword.book.Book
+import org.crosswire.jsword.book.BookData
+import org.crosswire.jsword.book.OSISUtil
+import org.crosswire.jsword.passage.Verse
+import org.xml.sax.Attributes
+import org.xml.sax.helpers.DefaultHandler
+import java.util.ArrayDeque
+import kotlin.properties.Delegates
 
 /**
  * Parse out the OSIS XML into whatever we want!
@@ -56,12 +55,17 @@ class OsisParser() : DefaultHandler() {
         when (localName) {
             OSISUtil.OSIS_ELEMENT_VERSE -> handlerStack push VerseHandler()
             "divineName" -> handlerStack push DivineHandler()
+            "q" -> handlerStack push QHandler(MinimalBible.getAppContext()
+                    .getResources().getColor(R.color.divineSpeech))
             else -> handlerStack push UnknownHandler(localName)
         }
+
+        handlerStack.peek().start(attributes, verseContent, builder)
     }
 
     override fun endElement(uri: String, localName: String, qName: String) {
-        handlerStack.pop()
+        val tagHandler = handlerStack.pop()
+        tagHandler.end(verseContent, builder)
     }
 
     override fun characters(ch: CharArray, start: Int, length: Int) {

@@ -1,28 +1,28 @@
 package org.bspeice.minimalbible.service.format.osisparser.handler
 
-import android.text.SpannableStringBuilder
-import org.bspeice.minimalbible.service.format.osisparser.VerseContent
-import android.text.style.StyleSpan
 import android.graphics.Typeface
-import android.text.style.SuperscriptSpan
+import android.text.SpannableStringBuilder
 import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
+import android.text.style.SuperscriptSpan
+import org.bspeice.minimalbible.service.format.osisparser.VerseContent
+import org.xml.sax.Attributes
 
-/**
- * Created by bspeice on 12/1/14.
- */
 class VerseHandler() : TagHandler {
-    var isVerseStart = true
 
-    override fun render(builder: SpannableStringBuilder, info: VerseContent, chars: String) {
-        buildVerseHeader(info.chapter, info.verseNum, isVerseStart) apply builder
-        builder append chars
-        isVerseStart = false
+    override fun end(info: VerseContent, builder: SpannableStringBuilder) {
     }
 
-    fun buildVerseHeader(chapter: Int, verseNum: Int, verseStart: Boolean): AppendArgs =
-            when {
-                !verseStart -> AppendArgs("", null)
-                verseNum == 1 -> AppendArgs("$chapter ", StyleSpan(Typeface.BOLD))
-                else -> AppendArgs("${verseNum}", listOf(SuperscriptSpan(), RelativeSizeSpan(.75f)))
-            }
+    override fun start(attrs: Attributes, info: VerseContent,
+                       builder: SpannableStringBuilder) {
+        when {
+            info.verseNum == 1 -> AppendArgs("${info.chapter} ", StyleSpan(Typeface.BOLD))
+            else -> AppendArgs("${info.verseNum}",
+                    listOf(SuperscriptSpan(), RelativeSizeSpan(.75f)))
+        } apply builder
+    }
+
+    override fun render(builder: SpannableStringBuilder, info: VerseContent, chars: String) {
+        builder append chars
+    }
 }

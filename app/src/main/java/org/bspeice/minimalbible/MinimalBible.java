@@ -16,16 +16,22 @@ import dagger.ObjectGraph;
  * Set up the application!
  */
 public class MinimalBible extends Application implements Injector {
-    private String TAG = "MinimalBible";
+    private static Context mContext;
     private ObjectGraph mObjectGraph;
 
     public static MinimalBible get(Context ctx) {
         return (MinimalBible) ctx.getApplicationContext();
     }
 
+    public static Context getAppContext() {
+        Logger.w("Statically accessing context, please refactor that.");
+        return mContext;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        mContext = this;
         Logger.init().setLogLevel(LogLevel.NONE);
         buildObjGraph();
         setJswordHome();
@@ -52,10 +58,10 @@ public class MinimalBible extends Application implements Injector {
         // We need to set the download directory for jSword to stick with
         // Android.
         String home = this.getFilesDir().toString();
-        Logger.d(TAG, "Setting jsword.home to: " + home);
+        Logger.d("Setting jsword.home to: " + home);
         System.setProperty("jsword.home", home);
         System.setProperty("sword.home", home);
         SwordBookPath.setDownloadDir(new File(home));
-        Logger.d(TAG, "Sword download path: " + SwordBookPath.getSwordDownloadDir());
+        Logger.d("Sword download path: " + SwordBookPath.getSwordDownloadDir());
     }
 }

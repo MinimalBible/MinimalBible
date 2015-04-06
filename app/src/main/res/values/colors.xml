@@ -13,4 +13,6 @@
 
     <color name="settingsTextColor">@color/textColor</color>
     <color name="settingsTextColorSecondary">@color/textColorSecondary</color>
+
+    <color name="divineSpeech">@color/colorPrimary</color>
 </resources>
