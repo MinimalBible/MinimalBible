@@ -13,12 +13,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'play'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 22
     buildToolsVersion '21.1.2'
     defaultConfig {
         applicationId 'org.bspeice.minimalbible'
         minSdkVersion 8
-        targetSdkVersion 21
+        targetSdkVersion 22
 
         def travis_code = System.getenv("TRAVIS_BUILD_NUMBER")
         if (travis_code)
@@ -68,15 +68,14 @@ dependencies {
     compile 'com.squareup.dagger:dagger:+'
     provided 'com.squareup.dagger:dagger-compiler:+'
 
-    // TODO: Figure out why I need to force 2.1.0 and can't just use +
-    compile 'de.devland.esperandro:esperandro-api:2.1.0'
-    provided 'de.devland.esperandro:esperandro:2.1.0'
-
+    compile 'de.devland.esperandro:esperandro-api:+'
+    provided 'de.devland.esperandro:esperandro:+'
     compile 'com.jakewharton:butterknife:+'
     compile 'com.readystatesoftware.systembartint:systembartint:+'
     compile 'com.netflix.rxjava:rxjava-android:+'
-    compile 'com.android.support:appcompat-v7:21.+'
-    compile 'com.android.support:recyclerview-v7:21.+'
+    compile 'com.android.support:appcompat-v7:+'
+    compile 'com.android.support:recyclerview-v7:+'
+    compile 'com.android.support:cardview-v7:+'
     compile 'org.apache.commons:commons-lang3:+'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 

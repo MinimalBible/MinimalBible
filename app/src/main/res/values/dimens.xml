@@ -11,4 +11,6 @@
     <dimen name="toolbar_height">56dp</dimen>
 
     <dimen name="biblemenu_child_padding">8dp</dimen>
+
+    <dimen name="cardview_padding">4dp</dimen>
 </resources>
