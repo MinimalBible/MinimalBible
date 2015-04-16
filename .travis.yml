@@ -12,4 +12,8 @@ before_install:
 script:
 - ./gradlew test --stacktrace
 after_success:
-- ./gradlew jacocoTestReport coveralls publishRelease
+- ./gradlew jacocoTestReport coveralls
+- if [ $TRAVIS_TAG ];
+  then echo "Publishing to Play store...";
+  ./gradlew publishRelease;
+  fi
