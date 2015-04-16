@@ -24,7 +24,7 @@ public class MinimalBible extends Application implements Injector {
     }
 
     public static Context getAppContext() {
-        Logger.w("Statically accessing context, please refactor that.");
+        Logger.v("Statically accessing context, please refactor that.");
         return mContext;
     }
 

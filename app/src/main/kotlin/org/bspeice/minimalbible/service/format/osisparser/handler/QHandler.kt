@@ -7,14 +7,16 @@ import org.xml.sax.Attributes
 
 class QHandler(val color: Int) : TagHandler {
 
-    override fun start(attrs: Attributes, info: VerseContent, builder: SpannableStringBuilder) {
-    }
+    fun retrieveMarker(attrs: Attributes) =
+            AppendArgs(attrs getValue "marker" ?: "")
 
-    override fun render(builder: SpannableStringBuilder, info: VerseContent, chars: String) {
-        AppendArgs(chars, ForegroundColorSpan(color)) apply builder
-    }
+    override fun start(attrs: Attributes, info: VerseContent, builder: SpannableStringBuilder,
+                       state: ParseState) = state append retrieveMarker(attrs)
 
-    override fun end(info: VerseContent, builder: SpannableStringBuilder) {
-        AppendArgs(" ", null) apply builder
-    }
+    override fun render(builder: SpannableStringBuilder, info: VerseContent, chars: String,
+                        state: ParseState) =
+            state append AppendArgs(chars.trim() + " ", ForegroundColorSpan(color))
+
+    override fun end(info: VerseContent, builder: SpannableStringBuilder,
+                     state: ParseState) = state
 }

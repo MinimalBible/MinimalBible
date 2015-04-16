@@ -6,12 +6,29 @@ import org.bspeice.minimalbible.service.format.osisparser.VerseContent
 import org.xml.sax.Attributes
 
 trait TagHandler {
-    fun start(attrs: Attributes, info: VerseContent, builder: SpannableStringBuilder)
-    fun render(builder: SpannableStringBuilder, info: VerseContent, chars: String)
-    fun end(info: VerseContent, builder: SpannableStringBuilder)
+    fun start(attrs: Attributes, info: VerseContent, builder: SpannableStringBuilder,
+              state: ParseState): ParseState
+
+    fun render(builder: SpannableStringBuilder, info: VerseContent, chars: String,
+               state: ParseState): ParseState
+
+    fun end(info: VerseContent, builder: SpannableStringBuilder,
+            state: ParseState): ParseState
 }
 
-data class AppendArgs(val text: String, val span: Any?) {
+class ParseState(val spans: List<AppendArgs>) {
+
+    fun build(builder: SpannableStringBuilder): ParseState {
+        spans.forEach { it apply builder }
+        return ParseState(listOf())
+    }
+
+    fun append(arg: AppendArgs) = ParseState(spans + arg)
+
+    fun append(args: List<AppendArgs>) = ParseState(spans + args)
+}
+
+data class AppendArgs(val text: String, val span: Any? = null) {
     fun apply(builder: SpannableStringBuilder) {
         val offset = builder.length()
         builder.append(text)

@@ -25,7 +25,10 @@ class OsisParser() : DefaultHandler() {
     // Don't pass a verse as part of the constructor, but still guarantee
     // that it will exist
     var verseContent: VerseContent by Delegates.notNull()
+
     var builder: SpannableStringBuilder by Delegates.notNull()
+
+    var state: ParseState = ParseState(listOf())
 
     // TODO: Implement a stack to keep min API 8
     val handlerStack = ArrayDeque<TagHandler>()
@@ -52,23 +55,25 @@ class OsisParser() : DefaultHandler() {
 
     override fun startElement(uri: String, localName: String,
                               qName: String, attributes: Attributes) {
-        when (localName) {
-            OSISUtil.OSIS_ELEMENT_VERSE -> handlerStack push VerseHandler()
-            "divineName" -> handlerStack push DivineHandler()
-            "q" -> handlerStack push QHandler(MinimalBible.getAppContext()
+        val tag = when (localName) {
+            OSISUtil.OSIS_ELEMENT_VERSE -> VerseHandler()
+            "divineName" -> DivineHandler()
+            "q" -> QHandler(MinimalBible.getAppContext()
                     .getResources().getColor(R.color.divineSpeech))
-            else -> handlerStack push UnknownHandler(localName)
+            else -> UnknownHandler(localName)
         }
 
-        handlerStack.peek().start(attributes, verseContent, builder)
+        state = tag.start(attributes, verseContent, builder, state)
+        handlerStack push tag
     }
 
     override fun endElement(uri: String, localName: String, qName: String) {
         val tagHandler = handlerStack.pop()
-        tagHandler.end(verseContent, builder)
+        state = tagHandler.end(verseContent, builder, state) build builder
     }
 
     override fun characters(ch: CharArray, start: Int, length: Int) {
-        handlerStack.peek().render(builder, verseContent, String(ch))
+        val tag = handlerStack.peek()
+        state = tag.render(builder, verseContent, String(ch), state)
     }
 }

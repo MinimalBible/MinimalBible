@@ -10,19 +10,19 @@ import org.xml.sax.Attributes
 
 class VerseHandler() : TagHandler {
 
-    override fun end(info: VerseContent, builder: SpannableStringBuilder) {
-    }
+    override fun end(info: VerseContent, builder: SpannableStringBuilder,
+                     state: ParseState) =
+            state append AppendArgs(" ")
 
     override fun start(attrs: Attributes, info: VerseContent,
-                       builder: SpannableStringBuilder) {
-        when {
+                       builder: SpannableStringBuilder, state: ParseState) =
+            state append when {
             info.verseNum == 1 -> AppendArgs("${info.chapter} ", StyleSpan(Typeface.BOLD))
             else -> AppendArgs("${info.verseNum}",
                     listOf(SuperscriptSpan(), RelativeSizeSpan(.75f)))
-        } apply builder
-    }
+            }
 
-    override fun render(builder: SpannableStringBuilder, info: VerseContent, chars: String) {
-        builder append chars
-    }
+    override fun render(builder: SpannableStringBuilder, info: VerseContent, chars: String,
+                        state: ParseState) =
+            state append AppendArgs(chars)
 }
