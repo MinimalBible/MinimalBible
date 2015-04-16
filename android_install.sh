@@ -4,7 +4,7 @@ COMPONENTS="
 tools
 platform-tools
 build-tools-21.1.2
-android-21
+android-22
 extra-android-m2repository
 extra-android-support
 extra-google-m2repository"
