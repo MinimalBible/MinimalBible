@@ -8,6 +8,7 @@ android:
   components:
     - platform-tools
     - tools
+    - android-22
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_b017c1e684ac_key -iv $encrypted_b017c1e684ac_iv
