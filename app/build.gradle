@@ -22,18 +22,15 @@ apply plugin: 'play'
 android {
     compileSdkVersion 22
     buildToolsVersion '21.1.2'
+
     defaultConfig {
         applicationId 'org.bspeice.minimalbible'
         minSdkVersion 8
         targetSdkVersion 22
-
-        def travis_code = System.getenv("TRAVIS_BUILD_NUMBER")
-        if (travis_code)
-            versionCode travis_code.toInteger()
-        else
-            versionCode 0
         versionName '0.7'
+        versionCode System.getenv("TRAVIS_BUILD_NUMBER")?.toInteger() ?: 0
     }
+
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
@@ -46,6 +43,7 @@ android {
         exclude 'NOTICE'
         exclude 'asm-license.txt'
     }
+
     signingConfigs {
         release {
             storeFile file('src/main/play/MinimalBible.jks')
@@ -54,11 +52,13 @@ android {
             keyPassword System.getenv("KEYSTORE_PASSWORD")
         }
     }
+
     buildTypes {
         release {
             signingConfig signingConfigs.release
         }
     }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
