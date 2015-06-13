@@ -1,2 +1,1 @@
-include ':app', ':app-test'
-include ':jsword-minimalbible'
+include ':app', ':jsword-minimalbible'

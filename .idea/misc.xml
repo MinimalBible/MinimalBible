@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CheckstyleConfigurable">
+    <option name="suppFilterFilename" value="" />
+    <option name="suppCommentFilter" value="false" />
+    <option name="offComment" value="CHECKSTYLE\:OFF" />
+    <option name="onComment" value="CHECKSTYLE\:ON" />
+    <option name="checkFormat" value=".*" />
+    <option name="messageFormat" value="" />
+    <option name="checkCPP" value="true" />
+    <option name="checkC" value="true" />
+    <option name="suppNearbyCommentFilter" value="false" />
+    <option name="snCommentFormat" value="SUPPRESS CHECKSTYLE (\w+)" />
+    <option name="snCheckFormat" value="$1" />
+    <option name="snMessageFormat" value="" />
+    <option name="snInfluenceFormat" value="0" />
+    <option name="snCheckCPP" value="true" />
+    <option name="snCheckC" value="true" />
+    <option name="pathToUserRulesConfiguration" value="" />
+    <option name="pathToJarWithRules" value="" />
+  </component>
+  <component name="EntryPointsManager">
+    <entry_points version="2.0" />
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="butterknife.OnClick" />
+      <item index="1" class="java.lang.String" itemvalue="dagger.Provides" />
+    </list>
+  </component>
+  <component name="FindBugsConfigurable">
+    <option name="make" value="true" />
+    <option name="effort" value="default" />
+    <option name="priority" value="Medium" />
+    <option name="excludeFilter" value="" />
+  </component>
+  <component name="IdProvider" IDEtalkID="15F212A1B560F3382F7D6643192A3A39" />
+  <component name="PDMPlugin">
+    <option name="options">
+      <map>
+        <entry key="Encoding" value="" />
+        <entry key="Target JDK" value="1.6" />
+      </map>
+    </option>
+    <option name="options">
+      <map>
+        <entry key="Encoding" value="" />
+        <entry key="Target JDK" value="1.6" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/classes" />
+  </component>
+  <component name="SuppressionsComponent">
+    <option name="suppComments" value="[]" />
+  </component>
+</project>
+

@@ -1,10 +1,17 @@
 buildscript {
     repositories {
         mavenCentral()
+
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
         classpath 'com.github.triplet.gradle:play-publisher:1.0.2'
+    }
+}
+
+repositories {
+    maven {
+        url "http://repository.jetbrains.com/all"
     }
 }
 
@@ -54,6 +61,7 @@ android {
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
     }
 }
 
@@ -63,7 +71,7 @@ play {
 }
 
 dependencies {
-    compile project(path: ':jsword-minimalbible', configuration: 'buildJSword')
+    compile project(':jsword-minimalbible')
 
     compile 'com.squareup.dagger:dagger:+'
     provided 'com.squareup.dagger:dagger-compiler:+'
@@ -80,8 +88,15 @@ dependencies {
     compile 'com.orhanobut:logger:+'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
+    // Instrumentation Test dependencies
     androidTestCompile 'com.jayway.awaitility:awaitility:+'
     androidTestCompile 'org.mockito:mockito-core:+'
+
+    // Unit Test dependencies
+    testCompile 'junit:junit:4.12'
+    testCompile 'com.jayway.awaitility:awaitility:+'
+    testCompile 'org.mockito:mockito-core:+'
+    testCompile 'org.jetbrains.spek:spek:+'
 
     // Email debug reports if I crash...
     debugCompile('ch.acra:acra:+') {

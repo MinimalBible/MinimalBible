@@ -1,10 +1,6 @@
 .gradle
-/local.properties
-/.idea
+local.properties
 .DS_Store
 /build
-*.iml
-/node_modules
-app/src/main/assets/node_modules/
-npm-debug.log
 *.swp
+*.hprof
