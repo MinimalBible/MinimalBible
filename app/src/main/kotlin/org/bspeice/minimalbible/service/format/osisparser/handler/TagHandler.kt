@@ -1,11 +1,9 @@
 package org.bspeice.minimalbible.service.format.osisparser.handler
 
-import android.text.SpannableStringBuilder
-import android.text.style.CharacterStyle
 import org.bspeice.minimalbible.service.format.osisparser.VerseContent
 import org.xml.sax.Attributes
 
-trait TagHandler {
+interface TagHandler {
     fun start(attrs: Attributes, info: VerseContent, builder: SpannableStringBuilder,
               state: ParseState): ParseState
 

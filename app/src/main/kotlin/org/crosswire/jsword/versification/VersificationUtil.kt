@@ -6,7 +6,7 @@ import java.util.ArrayList
  * VersificationUtil class allows Java to easily reach in to Kotlin
  */
 object INTRO_BOOKS {
-    val INTROS = array(
+    val INTROS = arrayOf(
             BibleBook.INTRO_BIBLE,
             BibleBook.INTRO_OT,
             BibleBook.INTRO_NT

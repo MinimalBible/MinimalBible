@@ -1,16 +1,6 @@
 package org.bspeice.minimalbible.activity.viewer
 
-import android.content.Context
-import android.content.res.Resources
-import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.ExpandableListView
-import android.widget.LinearLayout
-import android.widget.TextView
 import org.bspeice.minimalbible.R
-import org.crosswire.jsword.book.Book
-import org.crosswire.jsword.versification.BibleBook
 import rx.subjects.PublishSubject
 
 class BibleMenu(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, attrs) {
@@ -29,7 +19,7 @@ class BibleMenu(val ctx: Context, val attrs: AttributeSet) : LinearLayout(ctx, a
 
 class BibleMenuGroup(val bindTo: View) {
     val content = bindTo.findViewById(R.id.content) as TextView
-    val resources = bindTo.getResources(): Resources
+    val resources = bindTo.getResources()
 
     companion object {
         fun init(v: View, obj: Any, highlighted: Boolean): View {

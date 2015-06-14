@@ -1,11 +1,5 @@
 package org.bspeice.minimalbible.activity.search
 
-import org.crosswire.jsword.passage.Verse
-import org.crosswire.jsword.index.search.SearchType
-import org.crosswire.jsword.book.Book
-import android.util.Log
-import org.crosswire.jsword.index.IndexManager
-
 /**
  * This is the entry point for handling the actual bible search. Likely will support
  * an "advanced" search in the future, but for now, basicTextSearch is what you get.
@@ -14,7 +8,7 @@ class SearchProvider(val indexManager: IndexManager, val book: Book?) {
 
     val defaultSearchType = SearchType.ANY_WORDS
 
-    [suppress("UNUSED_PARAMETER")]
+    @suppress("UNUSED_PARAMETER")
     public fun basicTextSearch(text: String): List<Verse> {
         if (!isSearchAvailable()) {
             Log.w("SearchProvider", "Search unavailable, index status of ${book?.getInitials()}: ${book?.getIndexStatus()}")

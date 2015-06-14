@@ -1,17 +1,9 @@
 package org.bspeice.minimalbible.activity.downloader.manager
 
-import org.crosswire.jsword.book.install.Installer
+import org.bspeice.minimalbible.activity.downloader.DownloadPrefs
 import rx.Observable
-import org.crosswire.jsword.book.Book
 import rx.schedulers.Schedulers
 import java.util.Calendar
-import org.bspeice.minimalbible.activity.downloader.DownloadPrefs
-import android.net.ConnectivityManager
-import org.crosswire.jsword.book.BookComparators
-
-/**
- * Created by bspeice on 10/22/14.
- */
 
 class RefreshManager(val installers: Collection<Installer>,
                      val exclude: List<String>,
@@ -44,7 +36,7 @@ class RefreshManager(val installers: Collection<Installer>,
                     // Lists -> Single list
                     .flatMap { Observable.from(it) }
 
-    val flatModulesSorted = flatModules.toSortedList {(book1, book2) ->
+    val flatModulesSorted = flatModules.toSortedList { book1, book2 ->
         BookComparators.getInitialComparator().compare(book1, book2)
     }
 
