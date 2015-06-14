@@ -53,5 +53,7 @@
   <component name="SuppressionsComponent">
     <option name="suppComments" value="[]" />
   </component>
+  <component name="UnicodeBrowser">
+    <option name="fontName" value="Source Code Pro" />
+  </component>
 </project>
-

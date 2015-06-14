@@ -14,6 +14,9 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_b017c1e684ac_key -iv $encrypted_b017c1e684ac_iv
     -in app/src/main/play/play_api.p12.enc -out app/src/main/play/play_api.p12 -d
 
+  # We have to make sure the actual JSword is updated
+  - git submodule update --init --recursive
+
 after_success:
   - ./gradlew jacocoTestReport coveralls
   - if [ $TRAVIS_TAG ];
