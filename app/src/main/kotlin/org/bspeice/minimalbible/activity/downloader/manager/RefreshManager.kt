@@ -1,6 +1,9 @@
 package org.bspeice.minimalbible.activity.downloader.manager
 
+import android.net.ConnectivityManager
 import org.bspeice.minimalbible.activity.downloader.DownloadPrefs
+import org.crosswire.jsword.book.Book
+import org.crosswire.jsword.book.install.Installer
 import rx.Observable
 import rx.schedulers.Schedulers
 import java.util.Calendar
@@ -35,10 +38,6 @@ class RefreshManager(val installers: Collection<Installer>,
                     .flatMap { Observable.from(it.values()) }
                     // Lists -> Single list
                     .flatMap { Observable.from(it) }
-
-    val flatModulesSorted = flatModules.toSortedList { book1, book2 ->
-        BookComparators.getInitialComparator().compare(book1, book2)
-    }
 
     fun doReload(downloadEnabled: Boolean, lastUpdated: Long,
                  networkState: Int? = ConnectivityManager.TYPE_DUMMY): Boolean =

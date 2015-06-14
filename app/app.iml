@@ -138,5 +138,6 @@
     <orderEntry type="library" exported="" name="commons-net-3.3" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="awaitility-1.6.3" level="project" />
     <orderEntry type="library" exported="" name="jdom2-2.0.5" level="project" />
+    <orderEntry type="module" module-name="jsword-minimalbible" />
   </component>
 </module>
