@@ -1,1 +1,1 @@
-include ':app', ':jsword-minimalbible'
+include 'app', 'jsword-minimalbible'
