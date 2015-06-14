@@ -9,13 +9,21 @@ android:
     - platform-tools
     - tools
     - android-22
+    - sys-img-x86-android-22
 
 before_install:
+  # -in is a switch to openssl
   - openssl aes-256-cbc -K $encrypted_b017c1e684ac_key -iv $encrypted_b017c1e684ac_iv
     -in app/src/main/play/play_api.p12.enc -out app/src/main/play/play_api.p12 -d
 
   # We have to make sure the actual JSword is updated
   - git submodule update --init --recursive
+
+before_script:
+  - echo no | android create avd --force -n test -t android-22 --abi x86_64
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
 
 after_success:
   - ./gradlew jacocoTestReport coveralls
