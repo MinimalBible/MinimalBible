@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jsword-minimalbible.jsword">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/jsword-minimalbible/distribution/jsword.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
