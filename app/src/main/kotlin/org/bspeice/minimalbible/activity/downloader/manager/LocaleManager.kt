@@ -1,5 +1,6 @@
 package org.bspeice.minimalbible.activity.downloader.manager
 
+import android.util.Log
 import org.crosswire.common.util.Language
 import org.crosswire.jsword.book.BookCategory
 import rx.Observable
@@ -33,6 +34,7 @@ class LocaleManager(val rM: RefreshManager) {
 
     fun sortedLanguagesForCategory(cat: BookCategory): List<Language> =
             languagesForCategory(cat)
+                    .doOnNext { Log.d("LocaleManager", "Just trying to do something... ${it}") }
                     // Finally, sort all languages, prioritizing the current
                     .toSortedList { left, right -> compareLanguages(left, right, currentLanguage) }
                     // And flatten this into the actual List needed

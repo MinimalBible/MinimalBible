@@ -13,9 +13,11 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import org.bspeice.minimalbible.Injector;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseFragment;
+import org.bspeice.minimalbible.activity.downloader.injection.ActivityContextModule;
+import org.bspeice.minimalbible.activity.downloader.injection.BookListFragmentComponent;
+import org.bspeice.minimalbible.activity.downloader.injection.DaggerBookListFragmentComponent;
 import org.bspeice.minimalbible.activity.downloader.manager.LocaleManager;
 import org.bspeice.minimalbible.activity.downloader.manager.RefreshManager;
 import org.crosswire.common.util.Language;
@@ -69,8 +71,12 @@ public class BookListFragment extends BaseFragment {
      * Returns a new instance of this fragment for the given section number.
      * TODO: Switch to AutoFactory/@Provides rather than inline creation.
      */
-    public static BookListFragment newInstance(BookCategory c) {
+    public static BookListFragment newInstance(BookCategory c, DownloadActivity activity) {
         BookListFragment fragment = new BookListFragment();
+        DaggerBookListFragmentComponent.builder()
+                .activityContextModule(new ActivityContextModule(activity))
+                .build()
+                .injectBookListFragment(fragment);
         Bundle args = new Bundle();
         args.putString(ARG_BOOK_CATEGORY, c.toString());
         fragment.setArguments(args);
@@ -80,7 +86,10 @@ public class BookListFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        ((Injector)getActivity()).inject(this);
+        BookListFragmentComponent component = DaggerBookListFragmentComponent.builder()
+                .activityContextModule(new ActivityContextModule((DownloadActivity) getActivity()))
+                .build();
+        component.injectBookListFragment(this);
 
         bookCategory = BookCategory.fromString(getArguments().getString(ARG_BOOK_CATEGORY));
         availableLanguages = localeManager.sortedLanguagesForCategory(bookCategory);

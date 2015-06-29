@@ -1,25 +1,19 @@
 package org.bspeice.minimalbible.activity.search;
 
-import org.bspeice.minimalbible.MinimalBibleModules;
+import android.support.annotation.Nullable;
+
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.index.IndexManager;
-
-import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
 
-@Module(
-        injects = BasicSearch.class,
-        addsTo = MinimalBibleModules.class
-)
+@Module
 public class SearchModules {
 
     @Provides
-    SearchProvider searchProvider(@Named("MainBook") Book book,
+    SearchProvider searchProvider(@Nullable Book book,
                                   IndexManager indexManager) {
         return new SearchProvider(indexManager, book);
     }
-
-
 }

@@ -5,8 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
-import dagger.ObjectGraph;
-
 /**
  * Holding location for activity object graphs.
  * This technique could be extended to other things, but honestly,
@@ -14,10 +12,10 @@ import dagger.ObjectGraph;
  * an ObjectGraph anyway.
  * This works because getSupportFragmentManager() is scoped to each activity.
  */
-public class OGHolder extends Fragment {
+public class OGHolder<T> extends Fragment {
     private final static String TAG = "OGHolder";
 
-    private ObjectGraph mObjectGraph;
+    private T mComponent;
 
     public static OGHolder get(FragmentActivity activity) {
         FragmentManager manager = activity.getSupportFragmentManager();
@@ -35,11 +33,11 @@ public class OGHolder extends Fragment {
         setRetainInstance(true);
     }
 
-    public void persistGraph(ObjectGraph graph) {
-        mObjectGraph = graph;
+    public T getmComponent() {
+        return mComponent;
     }
 
-    public ObjectGraph fetchGraph() {
-        return mObjectGraph;
+    public void setmComponent(T mComponent) {
+        this.mComponent = mComponent;
     }
 }

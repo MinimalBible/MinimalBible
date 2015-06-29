@@ -15,10 +15,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import org.bspeice.minimalbible.Injector;
-import org.bspeice.minimalbible.MinimalBible;
-import org.bspeice.minimalbible.OGHolder;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
+import org.bspeice.minimalbible.activity.downloader.injection.DaggerDownloadActivityComponent;
+import org.bspeice.minimalbible.activity.downloader.injection.DownloadActivityComponent;
 import org.bspeice.minimalbible.activity.settings.MinimalBibleSettings;
 import org.crosswire.jsword.book.BookCategory;
 import org.jetbrains.annotations.NotNull;
@@ -26,18 +26,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import dagger.ObjectGraph;
 
 public class DownloadActivity extends BaseActivity implements
         Injector,
         AdapterView.OnItemClickListener {
 
     @Inject
-    @Named("ValidCategories")
     List<BookCategory> validCategories;
 
     @InjectView(R.id.navigation_drawer)
@@ -52,30 +49,10 @@ public class DownloadActivity extends BaseActivity implements
     @InjectView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
 
-    private ObjectGraph daObjectGraph;
-
-    /**
-     * Build a scoped object graph for anything used by the DownloadActivity
-     */
-    private void buildObjGraph() {
-        if (daObjectGraph == null) {
-            OGHolder holder = OGHolder.get(this);
-            ObjectGraph holderGraph = holder.fetchGraph();
-            if (holderGraph == null) {
-                daObjectGraph = MinimalBible.get(this)
-                        .plus(new DownloadActivityModules(this));
-                holder.persistGraph(daObjectGraph);
-            } else {
-                daObjectGraph = holderGraph;
-            }
-        }
-        daObjectGraph.inject(this);
-    }
-
-    @Override
     public void inject(Object o) {
-        buildObjGraph();
-        daObjectGraph.inject(o);
+        // TODO: Cache the component
+        DownloadActivityComponent component = DaggerDownloadActivityComponent.create();
+        component.injectDownloadActivity(this);
     }
 
     @Override
@@ -138,7 +115,7 @@ public class DownloadActivity extends BaseActivity implements
         fragmentManager
                 .beginTransaction()
                 .replace(R.id.content,
-                        BookListFragment.newInstance(validCategories.get(position)))
+                        BookListFragment.newInstance(validCategories.get(position), this))
                 .commit();
 
         drawerLayout.closeDrawers();

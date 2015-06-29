@@ -64,6 +64,11 @@ public class BookItemHolder {
     public void bindHolder() {
         acronym.setText(b.getInitials());
         itemName.setText(b.getName());
+        // TODO: I shouldn't have to check for this condition.
+        if (bookManager == null) {
+            displayInstalled();
+            return;
+        }
         DLProgressEvent dlProgressEvent = bookManager.getDownloadProgress(b);
         if (dlProgressEvent != null) {
             displayProgress(dlProgressEvent);

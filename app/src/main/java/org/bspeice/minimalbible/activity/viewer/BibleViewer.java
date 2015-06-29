@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,32 +14,31 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import org.bspeice.minimalbible.Injector;
-import org.bspeice.minimalbible.MinimalBible;
-import org.bspeice.minimalbible.OGHolder;
 import org.bspeice.minimalbible.R;
 import org.bspeice.minimalbible.activity.BaseActivity;
 import org.bspeice.minimalbible.activity.downloader.DownloadActivity;
 import org.bspeice.minimalbible.activity.search.BasicSearch;
 import org.bspeice.minimalbible.activity.search.MBIndexManager;
 import org.bspeice.minimalbible.activity.settings.MinimalBibleSettings;
+import org.bspeice.minimalbible.activity.viewer.injection.BibleViewerModules;
+import org.bspeice.minimalbible.activity.viewer.injection.DaggerViewerComponent;
+import org.bspeice.minimalbible.activity.viewer.injection.ViewerComponent;
+import org.bspeice.minimalbible.common.injection.MainBookModule;
 import org.crosswire.jsword.book.Book;
 import org.crosswire.jsword.index.IndexStatus;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import dagger.ObjectGraph;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
-public class BibleViewer extends BaseActivity implements Injector {
+public class BibleViewer extends BaseActivity {
 
     @Inject
-    @Named("MainBook")
+    @Nullable
     Book mainBook;
 
     @Inject
@@ -62,30 +62,14 @@ public class BibleViewer extends BaseActivity implements Injector {
     @InjectView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
 
-    private ObjectGraph bvObjectGraph;
-
-    /**
-     * Build a scoped object graph for anything used by the BibleViewer
-     * and inject ourselves
-     * TODO: Refactor so buildObjGraph doesn't have side effects
-     */
-    private void buildObjGraph() {
-        if (bvObjectGraph == null) {
-            OGHolder holder = OGHolder.get(this);
-            bvObjectGraph = holder.fetchGraph();
-            if (bvObjectGraph == null) {
-                bvObjectGraph = MinimalBible.get(this)
-                        .plus(new BibleViewerModules(this));
-                holder.persistGraph(bvObjectGraph);
-            }
-        }
-        bvObjectGraph.inject(this);
-    }
-
-    @Override
-    public void inject(Object o) {
-        buildObjGraph();
-        bvObjectGraph.inject(o);
+    public void inject() {
+        // TODO: Cache the component
+        // TODO: Refactor the component design
+        ViewerComponent component = DaggerViewerComponent.builder()
+                .mainBookModule(new MainBookModule(this))
+                .bibleViewerModules(new BibleViewerModules(this))
+                .build();
+        component.injectBibleViewer(this);
     }
 
     /**
@@ -96,7 +80,7 @@ public class BibleViewer extends BaseActivity implements Injector {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.inject(this);
+        this.inject();
 
         // Check that we have a book installed
         if (mainBook == null) {

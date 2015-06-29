@@ -1,10 +1,11 @@
 buildscript {
     repositories {
         mavenCentral()
-
+        jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
         classpath 'com.github.triplet.gradle:play-publisher:1.0.2'
     }
 }
@@ -16,6 +17,7 @@ repositories {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'kotlin-android'
 apply plugin: 'play'
 
@@ -75,14 +77,16 @@ play {
 }
 
 dependencies {
-    compile project(':jsword-minimalbible')
+    compile project(path: ':jsword-minimalbible', configuration: 'buildJSword')
 
-    compile 'com.squareup.dagger:dagger:+'
-    provided 'com.squareup.dagger:dagger-compiler:+'
+    compile 'com.google.dagger:dagger:+'
+    apt 'com.google.dagger:dagger-compiler:+'
+    provided 'javax.annotation:javax.annotation-api:1.2'
 
     compile 'de.devland.esperandro:esperandro-api:+'
-    provided 'de.devland.esperandro:esperandro:+'
-    compile 'com.jakewharton:butterknife:+'
+    apt 'de.devland.esperandro:esperandro:+'
+
+    compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.readystatesoftware.systembartint:systembartint:+'
     compile 'com.netflix.rxjava:rxjava-android:+'
     compile 'com.android.support:appcompat-v7:+'

@@ -13,7 +13,7 @@ import com.orhanobut.logger.Logger;
         mode = ReportingInteractionMode.SILENT
 )
 */
-public class MinimalBibleDebug extends MinimalBible implements Injector {
+public class MinimalBibleDebug extends MinimalBible {
 
     @Override
     public void onCreate() {

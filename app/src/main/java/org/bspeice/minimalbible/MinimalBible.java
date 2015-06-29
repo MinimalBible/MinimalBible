@@ -10,14 +10,11 @@ import org.crosswire.jsword.book.sword.SwordBookPath;
 
 import java.io.File;
 
-import dagger.ObjectGraph;
-
 /**
  * Set up the application!
  */
-public class MinimalBible extends Application implements Injector {
+public class MinimalBible extends Application {
     private static Context mContext;
-    private ObjectGraph mObjectGraph;
 
     public static MinimalBible get(Context ctx) {
         return (MinimalBible) ctx.getApplicationContext();
@@ -33,20 +30,7 @@ public class MinimalBible extends Application implements Injector {
         super.onCreate();
         mContext = this;
         Logger.init().setLogLevel(LogLevel.NONE);
-        buildObjGraph();
         setJswordHome();
-    }
-
-    public void buildObjGraph() {
-        mObjectGraph = ObjectGraph.create(Modules.list(this));
-    }
-
-    public void inject(Object o) {
-        mObjectGraph.inject(o);
-    }
-
-    public ObjectGraph plus(Object... modules) {
-        return mObjectGraph.plus(modules);
     }
 
     /**

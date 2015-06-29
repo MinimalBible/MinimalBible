@@ -1,8 +1,7 @@
-package org.bspeice.minimalbible.activity.viewer;
+package org.bspeice.minimalbible.activity.viewer.injection;
 
-import org.bspeice.minimalbible.MinimalBibleModules;
-
-import javax.inject.Singleton;
+import org.bspeice.minimalbible.activity.viewer.BibleViewer;
+import org.bspeice.minimalbible.activity.viewer.BookScrollEvent;
 
 import dagger.Module;
 import dagger.Provides;
@@ -11,13 +10,7 @@ import rx.subjects.PublishSubject;
 /**
  * Modules used for the BibleViewer activity
  */
-@Module(
-        injects = {
-                BibleViewer.class,
-        },
-        addsTo = MinimalBibleModules.class
-)
-@SuppressWarnings("unused")
+@Module
 public class BibleViewerModules {
     BibleViewer activity;
 
@@ -27,7 +20,6 @@ public class BibleViewerModules {
 
 
     @Provides
-    @Singleton
     PublishSubject<BookScrollEvent> scrollEventPublisher() {
         return PublishSubject.create();
     }
